@@ -1,7 +1,8 @@
 {
   "name": "Mi App",
   "short_name": "MiApp",
-  "start_url": "/",
+  "start_url": "/Control-financiero-personal/",
+  "scope": "/Control-financiero-personal/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0d6efd",
