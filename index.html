@@ -53,7 +53,15 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: -webkit-fill-available;
+        }
+
         body {
+
+            min-height: 100dvh;
+            min-height: -webkit-fill-available;
+
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--color-bg-base);
             background-image: 
@@ -62,7 +70,9 @@
             color: var(--color-text-primary);
             line-height: 1.6;
             padding: 2px;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
+
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+
             max-width: 1200px;
             margin: 0 auto;
             overflow-x: hidden;
@@ -886,10 +896,7 @@
                 👤 <span style="color: var(--color-primary); font-weight: bold;" id="currentUserDisplay">Usuario</span>
             </div>
             <button class="btn btn-danger" onclick="logoutUser()" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                🚪 Salir
-            </button>
-            <button class="btn btn-danger" onclick="deleteCurrentUser()" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                🗑️ Eliminar Usuario
+                🚪 cerrar sesión
             </button>
         </div>
     </div>
@@ -913,12 +920,7 @@
                 Seguimiento en tiempo real de tus finanzas durante el mes en curso.
             </p>
 
-            <div class="summary-cards">
-                <div class="card">
-                    <div class="card-title">Balance Total Global</div>
-                    <div class="card-value" id="balanceTotal">$0</div>
-                    <small class="card-subtitle">Ingresos - Gastos totales</small>
-                </div>
+            <div class="summary-cards">              
                 <div class="card">
                     <div class="card-title">Total Ingresos</div>
                     <div class="card-value positive" id="totalIngresos">$0</div>
@@ -947,7 +949,7 @@
                     <div class="card-value positive" id="currentMonthIncome">$0</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">📤 Gastos</div>
+                    <div class="card-title">📤 Gastos del mes</div>
                     <div class="card-value negative" id="currentMonthExpense">$0</div>
                 </div>
                 <div class="card">
@@ -1312,19 +1314,7 @@
     </div>
 
     <!-- CONFIGURACIÓN -->
-    <div id="configuracion" class="tab-content">
-        <div class="form-section">
-            <h2>⚙️ Configurar Balance Inicial del Año</h2>
-            <div class="form-grid" style="grid-template-columns: 1fr auto; align-items: end;">
-                <div class="form-group">
-                    <label for="previousBalance">Balance del Mes Anterior (COP)</label>
-                    <input type="text" id="previousBalance" placeholder="0">
-                </div>
-                <button class="btn btn-primary" onclick="setMonthlyBalance()" style="height: fit-content;">💾 Guardar Balance</button>
-            </div>
-            <div id="balanceStatus" style="margin-top: 1rem;"></div>
-        </div>
-
+    <div id="configuracion" class="tab-content"> 
         <div class="form-section">
             <h2>📤 Exportar e Importar Datos</h2>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -1356,6 +1346,13 @@
                 </div>
             </div>
         </div>
+        <div class="form-section">
+            <h2>👤 Usuario</h2>
+
+            <button class="btn btn-danger" onclick="deleteCurrentUser()" style="margin-top:1rem;">
+                🗑️ Eliminar Usuario
+            </button>
+        </div>    
     </div>
 
     <script>
@@ -1482,7 +1479,6 @@
                 'fixedIncomeAmount',
                 'goalAmount',
                 'goalCurrent',
-                'previousBalance'
             ];
 
             amountInputs.forEach(id => {
@@ -1511,10 +1507,13 @@
         /* ============================================
            PERSISTENCIA
            ============================================ */
+        
         function saveToLocalStorage() {
-            if (!AppState.currentUser) return;
 
-            const userData = {
+            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+            if (!user) return;
+
+            user.data = {
                 transactions: AppState.transactions,
                 fixedExpenses: AppState.fixedExpenses,
                 fixedIncomes: AppState.fixedIncomes,
@@ -1522,27 +1521,27 @@
                 monthlyBalance: AppState.monthlyBalance
             };
 
-            localStorage.setItem(`finanzas_user_${AppState.currentUser}`, JSON.stringify(userData));
+            localStorage.setItem('finanzas_user', JSON.stringify(user));
         }
 
         function loadFromLocalStorage() {
-            if (!AppState.currentUser) return;
 
-            const stored = localStorage.getItem(`finanzas_user_${AppState.currentUser}`);
-            if (stored) {
-                const userData = JSON.parse(stored);
-                AppState.transactions = userData.transactions || [];
-                AppState.fixedExpenses = userData.fixedExpenses || [];
-                AppState.fixedIncomes = userData.fixedIncomes || [];
-                AppState.savingsGoals = userData.savingsGoals || [];
-                AppState.monthlyBalance = userData.monthlyBalance || 0;
-            } else {
-                AppState.transactions = [];
-                AppState.fixedExpenses = [];
-                AppState.fixedIncomes = [];
-                AppState.savingsGoals = [];
-                AppState.monthlyBalance = 0;
+            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+
+            if (!user) {
+                initUserSystem(); //solo muestra login si no hay usuario
+                return;
             }
+
+                if (!user.data) {
+                user.data = {};
+            }
+
+            AppState.transactions = user.data.transactions || [];
+            AppState.fixedExpenses = user.data.fixedExpenses || [];
+            AppState.fixedIncomes = user.data.fixedIncomes || [];
+            AppState.savingsGoals = user.data.savingsGoals || [];
+            AppState.monthlyBalance = user.data.monthlyBalance || 0;
         }
 
         /* ============================================
@@ -1646,13 +1645,15 @@
             const loginScreen = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)),
                             url('fondo.jpg') center / cover no-repeat; /* rgba(15, 23, 42, 0.95); */backdrop-filter: blur(10px); z-index: 9999; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-out;">
-                    <div style="background: var(--color-bg-elevated); padding: 3rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); max-width: 420px; width: 90%; border: 1px solid rgba(56, 189, 248, 0.2); animation: scaleIn 0.4s ease-out;">
+                    <div class="login-container" style="background: var(--color-bg-elevated); padding: 1.5rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); border: 1px solid rgba(56, 189, 248, 0.2); animation: scaleIn 0.4s ease-out;">
                         <h1 style="text-align: center; margin-bottom: 0.5rem; color: var(--color-primary); font-size: 2rem;">💰 Control Financiero personal</h1>
                         <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 2rem; font-size: 0.875rem;">Ingresa tu contraseña</p>
                         
                         <div style="text-align: center; margin-bottom: 1.5rem;">
-                            <button class="btn btn-primary" onclick="showCreateUserModal()" style="width: 100%; margin-bottom: 0.5rem;">➕ Crear Nuevo Usuario</button>
-                            <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-top: 0.5rem;">Usuarios registrados: <span id="userCount">0</span>/10</p>
+                            <button id="createUserBtn" class="btn btn-primary" onclick="showCreateUserModal()" style="width: 100%; margin-bottom: 0.5rem;">
+                                ➕ Crear Nuevo Usuario
+                            </button>
+                            <p id="userStatusText" style="color: var(--color-text-muted); font-size: 0.75rem; margin-top: 0.5rem;"></p>
                         </div>
 
                         <div id="pinDisplay" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
@@ -1763,21 +1764,56 @@
                             transform: scale(1);
                         }
                     }
+                    .login-container{
+                        width: 95%;
+                        max-width: 420px;
+                        max-height: 90vh;
+                    }
+
+                    @media (max-width: 600px){
+                        .login-container{
+                            width: 100%;
+                            max-width: none;
+                            max-height: 100vh;
+                            border-radius: 0,
+                            padding: 1.5rem;
+                        }
+                    }    
                 </style>
             `;
 
             document.body.insertAdjacentHTML('afterbegin', loginScreen);
-            updateUserCount();
+            updateUserStatusMessage();
         }
 
         let currentPin = '';
 
-        function updateUserCount() {
-            const users = JSON.parse(localStorage.getItem('finanzas_users') || '{}');
-            const count = Object.keys(users).length;
-            const countElement = document.getElementById('userCount');
-            if (countElement) {
-                countElement.textContent = count;
+        function showLoginMessage(message, color = 'red') {
+            const messageBox = document.getElementById('pinError');
+            if (!messageBox) return;
+
+            messageBox.style.color = color;
+            messageBox.textContent = message;
+
+            setTimeout(() => {
+                messageBox.textContent = '';
+            }, 3000);
+        }
+
+        function updateUserStatusMessage() {
+            const user = JSON.parse(localStorage.getItem('finanzas_user') || 'null');
+
+            const statusText = document.getElementById('userStatusText');
+            const createBtn = document.getElementById('createUserBtn');
+
+            if (!statusText || !createBtn) return;
+
+            if (user) {
+                statusText.textContent = "Usuario configurado correctamente.";
+                createBtn.style.display = "none";
+            } else {
+                statusText.textContent = "Crea tu usuario y define un PIN de acceso seguro.";
+                createBtn.style.display = "block";
             }
         }
 
@@ -1817,57 +1853,67 @@
         function showCreateUserModal() {
             const name = prompt('Ingresa tu nombre (máx 15 caracteres):');
             if (!name || name.trim() === '') {
-                alert('❌ Debes ingresar un nombre');
+                showLoginMessage('Debes ingresar un nombre', 'red');
                 return;
             }
 
             if (name.length > 15) {
-                alert('❌ El nombre no puede tener más de 15 caracteres');
+                showLoginMessage('El nombre no puede tener más de 15 caracteres', 'red');
                 return;
             }
 
             const pin = prompt('Crea tu PIN de 4 dígitos:');
             if (!pin || !/^\d{4}$/.test(pin)) {
-                alert('❌ El PIN debe tener exactamente 4 dígitos');
+                showLoginMessage('El PIN debe tener exactamente 4 dígitos', 'red');
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('finanzas_users') || '{}');
+            const existingUser = JSON.parse(localStorage.getItem('finanzas_user'));
 
-            if (Object.keys(users).length >= 10) {
-                alert('❌ Límite de usuarios alcanzado (máximo 10)');
+            if (existingUser) {
+                showLoginMessage('⚠️ Ya existe un usuario registrado. Elimínalo si deseas crear otro.', 'orage');
                 return;
             }
 
-            if (users[pin]) {
-                alert('❌ Este PIN ya está en uso');
-                return;
-            }
+            const newUser = {
+                name: name.trim(),
+                pin: pin,
+                data: {
+                    transactions: [],
+                    fixedExpenses: [],
+                    fixedIncomes: [],
+                    savingsGoals: [],
+                    monthlyBalance: 0
+                }
+            };
 
-            users[pin] = { name: name.trim() };
-            localStorage.setItem('finanzas_users', JSON.stringify(users));
+            localStorage.setItem('finanzas_user', JSON.stringify(newUser));
 
-            alert(`✅ Usuario "${name}" creado correctamente`);
-            updateUserCount();
+            showLoginMessage(`✅ Usuario "${name}" creado correctamente`, 'green');
+            updateUserStatusMessage();
         }
 
         function loginUser() {
+
             if (currentPin.length !== 4) {
-                document.getElementById('pinError').textContent = '⚠️ Ingresa los 4 dígitos del PIN';
+                showLoginMessage('Ingresa los 4 dígitos del PIN', 'orange');
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('finanzas_users') || '{}');
+            const user = JSON.parse(localStorage.getItem('finanzas_user'));
 
-            if (!users[currentPin]) {
-                document.getElementById('pinError').textContent = '❌ PIN incorrecto';
-                setTimeout(() => {
-                    clearPin();
-                }, 1000);
+            if (!user) {
+                showLoginMessage('No hay usuario registrado', 'red');
+                return;
+            }
+ 
+            if (user.pin !== currentPin) {
+                showLoginMessage('PIN incorrecto', 'red');
+                setTimeout(() => clearPin(), 1000);
                 return;
             }
 
-            AppState.currentUser = currentPin;
+            AppState.currentUser = true;
             loadFromLocalStorage();
 
             const loginScreen = document.querySelector('[style*="z-index: 9999"]');
@@ -1889,16 +1935,16 @@
         }
 
         function deleteCurrentUser() {
-            if (!AppState.currentUser) return;
 
-            const users = JSON.parse(localStorage.getItem('finanzas_users') || '{}');
-            const userName = users[AppState.currentUser]?.name || 'Usuario';
+            const user = JSON.parse(localStorage.getItem('finanzas_user'));
 
-            if (confirm(`¿Estás seguro de eliminar el usuario "${userName}"? Esta acción no se puede deshacer.`)) {
-                localStorage.removeItem(`finanzas_user_${AppState.currentUser}`);
-                delete users[AppState.currentUser];
-                localStorage.setItem('finanzas_users', JSON.stringify(users));
-                alert('✅ Usuario eliminado correctamente');
+            if (!user) {
+                showLoginMessage('No hay usuario para eliminar', 'orange');
+                return;
+            }
+
+            if (confirm(`¿Estás seguro de eliminar el usuario "${user.name}"?`)) {
+                localStorage.removeItem('finanzas_user');
                 location.reload();
             }
         }
@@ -2116,10 +2162,11 @@
         }
 
         function updateUserDisplay() {
-            if (AppState.currentUser) {
-                const users = JSON.parse(localStorage.getItem('finanzas_users') || '{}');
-                const userName = users[AppState.currentUser]?.name || `Usuario ${parseInt(AppState.currentUser)}`;
-                document.getElementById('currentUserDisplay').textContent = userName;
+            const user = JSON.parse(localStorage.getItem('finanzas_user') || 'null');
+
+            if (user) {
+                
+                document.getElementById('currentUserDisplay').textContent = user.name;
             }
         }
 
@@ -2130,17 +2177,8 @@
             const fixedExpenses = AppState.fixedExpenses.reduce((sum, f) => sum + f.amount, 0);
 
             document.getElementById('totalIngresos').textContent = formatCurrency(totalIncome);
-            document.getElementById('totalGastos').textContent = formatCurrency(totalExpense);
-            document.getElementById('balanceTotal').textContent = formatCurrency(balance);
-            document.getElementById('totalFijos').textContent = formatCurrency(fixedExpenses);
-
-            const balanceElement = document.getElementById('balanceTotal');
-            balanceElement.className = 'card-value';
-            if (balance > 0) {
-                balanceElement.classList.add('positive');
-            } else if (balance < 0) {
-                balanceElement.classList.add('negative');
-            }
+            document.getElementById('totalGastos').textContent = formatCurrency(totalExpense);           
+            document.getElementById('totalFijos').textContent = formatCurrency(fixedExpenses);       
         }
 
         /* ============================================
@@ -2654,6 +2692,21 @@
                 if (goal.current >= goal.amount && !goal.completed) {
                     goal.completed = true;
                     
+                    // Registrar gasto por meta cumplida en el historial
+                    const transaction = {
+                        id: Date.now(),
+                        type: "expense",
+                        amount: goal.amount,
+                        category: "Meta cumplida",
+                        description: "Meta alcanzada: " + goal.name,
+                        date: new Date().toISOString()
+                    };
+
+                    AppState.transactions.push(transaction);
+
+                    // 🔄 actualizar inmediatamente todo el sistema
+                    AppState.notifyStateChange();
+
                     showCloudAlert(
                         `¡Has completado tu meta "${goal.name}"! 🎉`,
                         '✅ Meta Cumplida',
@@ -2790,32 +2843,6 @@
 
         function importFromCSV() {
             alert('⚠️ Función de importación en desarrollo');
-        }
-
-        /* ============================================
-           CONFIGURACIÓN DE BALANCE
-           ============================================ */
-        function setMonthlyBalance() {
-            const input = document.getElementById('previousBalance');
-            const amount = parseFormattedNumber(input.value);
-
-            if (isNaN(amount)) {
-                alert('⚠️ Ingresa un monto válido');
-                return;
-            }
-
-            AppState.updateMonthlyBalance(amount);
-
-            const statusDiv = document.getElementById('balanceStatus');
-            statusDiv.innerHTML = `
-                <div class="alert-badge alert-success">
-                    ✅ Balance inicial guardado: ${formatCurrency(amount)}
-                </div>
-            `;
-
-            setTimeout(() => {
-                statusDiv.innerHTML = '';
-            }, 3000);
         }
 
         /* ============================================
