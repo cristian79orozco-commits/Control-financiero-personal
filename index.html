@@ -902,7 +902,7 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" data-tab="mesactual">📍 Mes Actual</button>
+        <button class="tab-btn active" data-tab="mesactual">📍 Seguimiento Financiero</button>
         <button class="tab-btn" data-tab="ingresos">➕ Ingresos</button>
         <button class="tab-btn" data-tab="gastos">➖ Gastos</button>
         <button class="tab-btn" data-tab="gastosfijos">📌 Gastos Fijos</button>
@@ -912,12 +912,12 @@
         <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
     </div>
 
-    <!-- MES ACTUAL -->
+    <!-- SEGUIMIENTO FINANCIERO -->
     <div id="mesactual" class="tab-content active">
         <div class="form-section">
-            <h2>📍 Control del Mes Actual - <span id="currentMonthName"></span></h2>
+            <h2>📍 Balance General - <span id="currentMonthName"></span></h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-                Seguimiento en tiempo real de tus finanzas durante el mes en curso.
+                Seguimiento en tiempo real de tus finanzas.
             </p>
 
             <div class="summary-cards">              
@@ -995,26 +995,12 @@
                 <div id="budgetProgressBar"></div>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-label">📊 Ingreso Total</div>
-                    <div class="stat-value positive" id="projectedTotalIncome">$0</div>
-                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">Incluye balance anterior + ingresos confirmados</small>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">💸 Gasto Diario Promedio</div>
-                    <div class="stat-value negative" id="avgDailyExpense">$0</div>
-                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">Lo que gastas por día</small>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">📉 Ritmo de Gasto</div>
-                    <div class="stat-value" id="spendingPace">0%</div>
-                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">Del mes transcurrido</small>
-                </div>
+            <div class="stats-grid">  
+
                 <div class="stat-item">
                     <div class="stat-label">💵 Puede Gastar por Día</div>
                     <div class="stat-value" id="canSpendPerDay">$0</div>
-                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">Cálculo basado en saldo confirmado y reserva obligatoria</small>
+                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">disponible diario solo para gastos no prioritarios</small>
                 </div>
             </div>
 
@@ -2004,8 +1990,8 @@
             const available = AppState.getCurrentAvailable();
             
             const baseCalculation = Math.max(0, available);
-            const reservaObligatoria = baseCalculation * 0.60;
-            const gastoNoPrioritario = baseCalculation * 0.40;
+            const reservaObligatoria = baseCalculation * 0.70;
+            const gastoNoPrioritario = baseCalculation * 0.30;
 
             document.getElementById('nonp-base-calculation').textContent = formatCurrency(baseCalculation);
             document.getElementById('nonp-minimum-balance').textContent = formatCurrency(reservaObligatoria);
@@ -2078,15 +2064,7 @@
             const availableElement = document.getElementById('currentAvailable');
             availableElement.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
 
-            document.getElementById('projectedTotalIncome').textContent = formatCurrency(totalIncome);
-
-            const avgDaily = daysPassed > 0 ? monthExpense / daysPassed : 0;
-            document.getElementById('avgDailyExpense').textContent = formatCurrency(avgDaily);
-
-            const percentBudgetUsed = totalIncome > 0 ? (totalExpense / totalIncome) * 100 : 0;
-            document.getElementById('spendingPace').textContent = percentBudgetUsed.toFixed(1) + '%';
-
-            const baseReal = Math.max(0, available - (available * 0.60));
+            const baseReal = Math.max(0, available - (available * 0.70));
             const canSpendDaily = daysRemaining > 0 ? baseReal / daysRemaining : 0;
             document.getElementById('canSpendPerDay').textContent = formatCurrency(Math.max(0, canSpendDaily));
 
