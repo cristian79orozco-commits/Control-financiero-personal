@@ -706,6 +706,150 @@
             border-color: var(--color-primary);
         }
 
+        /* ============================================
+           CUENTAS FINANCIERAS
+           ============================================ */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .account-card {
+            background: var(--color-bg-elevated);
+            border-radius: 14px;
+            padding: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover));
+        }
+
+        .account-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+        }
+
+        .account-card-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .account-card-name {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.35rem;
+        }
+
+        .account-card-balance {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .account-card-balance.negative {
+            color: var(--color-danger);
+        }
+
+        .account-card-actions {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+        }
+
+        .account-card-actions button {
+            flex: 1;
+            padding: 0.4rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .account-total-card {
+            background: linear-gradient(135deg, rgba(56,189,248,0.12) 0%, rgba(14,165,233,0.06) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: 14px;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .account-total-label {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        .account-total-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .account-select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .accounts-inline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+            gap: 0.75rem;
+        }
+
+        .account-inline-item {
+            background: var(--color-bg-surface);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            border-left: 4px solid var(--color-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-inline-name {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        .account-inline-balance {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .account-inline-balance.negative {
+            color: var(--color-danger);
+        }
+
+        .no-accounts-notice {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid var(--color-warning);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            color: var(--color-warning);
+            margin-bottom: 1rem;
+        }
+
         /* 3️⃣ ALERTAS TIPO NUBE */
         .cloud-alerts-container {
             position: fixed;
@@ -903,6 +1047,7 @@
 
     <div class="tabs">
         <button class="tab-btn active" data-tab="mesactual">📍 Seguimiento Financiero</button>
+        <button class="tab-btn" data-tab="cuentas">🏦 Cuentas</button>
         <button class="tab-btn" data-tab="ingresos">➕ Ingresos</button>
         <button class="tab-btn" data-tab="gastos">➖ Gastos</button>
         <button class="tab-btn" data-tab="gastosfijos">📌 Gastos Fijos</button>
@@ -988,6 +1133,13 @@
                 </div>
 
                 <div id="nonp-recommendations" style="margin-top: 1rem;"></div>
+
+                <!-- "Puede gastar por día" integrado aquí — pertenece semánticamente
+                     a la capacidad de gasto no prioritario -->
+                <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--color-bg-base); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">💵 Disponible diario (no prioritario):</span>
+                    <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary);" id="canSpendPerDay">$0</span>
+                </div>
             </div>
 
             <div class="chart-container">
@@ -995,41 +1147,39 @@
                 <div id="budgetProgressBar"></div>
             </div>
 
-            <div class="stats-grid">  
-
-                <div class="stat-item">
-                    <div class="stat-label">💵 Puede Gastar por Día</div>
-                    <div class="stat-value" id="canSpendPerDay">$0</div>
-                    <small style="color: var(--color-text-muted); font-size: 0.75rem;">disponible diario solo para gastos no prioritarios</small>
+            <!-- Desglose financiero colapsable -->
+            <div class="chart-container" style="padding-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;"
+                     onclick="toggleDesglose()">
+                    <h3 class="chart-title" style="margin-bottom: 0;">📊 Desglose Financiero</h3>
+                    <span id="desgloseToggleIcon" style="font-size: 1rem; color: var(--color-primary); font-weight: 600;">▼ Ver</span>
                 </div>
-            </div>
-
-            <div class="chart-container">
-                <h3 class="chart-title">📊 Desglose Financiero del Mes</h3>
-                <div class="savings-details">
-                    <div class="savings-row" style="background: rgba(56, 189, 248, 0.1); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
-                        <span class="savings-label">💰 Ingresos Del Mes Anterior:</span>
-                        <span class="savings-value" style="color: var(--color-primary); font-size: 1.125rem;" id="breakdown-previous-balance">$0</span>
-                    </div>
-                    <div class="savings-row">
-                        <span class="savings-label">➕ Ingreso Del Mes:</span>
-                        <span class="savings-value" id="breakdown-confirmed-income">$0</span>
-                    </div>
-                    <div class="savings-row" style="border-top: 2px solid var(--color-primary); padding-top: 0.75rem;">
-                        <span class="savings-label"><strong>= Ingreso Total:</strong></span>
-                        <span class="savings-value" style="color: var(--color-success);" id="breakdown-total-income">$0</span>
-                    </div>
-                    <div class="savings-row" style="margin-top: 1rem;">
-                        <span class="savings-label">➖ Gasto Total:</span>
-                        <span class="savings-value" id="breakdown-confirmed-expense">$0</span>
-                    </div>
-                    <div class="savings-row">
-                        <span class="savings-label">🎯 Ahorro en Metas:</span>
-                        <span class="savings-value" style="color: var(--color-warning);" id="breakdown-total-saved">$0</span>
-                    </div>
-                    <div class="savings-row" style="margin-top: 1rem; border-top: 3px solid var(--color-primary); padding-top: 0.75rem;">
-                        <span class="savings-label"><strong>💰 Disponible Actual:</strong></span>
-                        <span class="savings-value" style="font-size: 1.25rem;" id="breakdown-remaining">$0</span>
+                <div id="desgloseContent" style="display: none; margin-top: 1rem;">
+                    <div class="savings-details">
+                        <div class="savings-row" style="background: rgba(56, 189, 248, 0.1); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                            <span class="savings-label" id="breakdown-prev-label">💰 Saldos Iniciales de Cuentas:</span>
+                            <span class="savings-value" style="color: var(--color-primary); font-size: 1.125rem;" id="breakdown-previous-balance">$0</span>
+                        </div>
+                        <div class="savings-row">
+                            <span class="savings-label">➕ Total Ingresos Registrados:</span>
+                            <span class="savings-value" id="breakdown-confirmed-income">$0</span>
+                        </div>
+                        <div class="savings-row" style="border-top: 2px solid var(--color-primary); padding-top: 0.75rem;">
+                            <span class="savings-label"><strong>= Subtotal Bruto:</strong></span>
+                            <span class="savings-value" style="color: var(--color-success);" id="breakdown-total-income">$0</span>
+                        </div>
+                        <div class="savings-row" style="margin-top: 1rem;">
+                            <span class="savings-label">➖ Total Gastos Registrados:</span>
+                            <span class="savings-value" id="breakdown-confirmed-expense">$0</span>
+                        </div>
+                        <div class="savings-row">
+                            <span class="savings-label">🎯 Ahorro en Metas:</span>
+                            <span class="savings-value" style="color: var(--color-warning);" id="breakdown-total-saved">$0</span>
+                        </div>
+                        <div class="savings-row" style="margin-top: 1rem; border-top: 3px solid var(--color-primary); padding-top: 0.75rem;">
+                            <span class="savings-label"><strong>💰 Disponible Actual:</strong></span>
+                            <span class="savings-value" style="font-size: 1.25rem;" id="breakdown-remaining">$0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1038,13 +1188,114 @@
         </div>
 
         <div class="chart-container">
-            <h3 class="chart-title">📈 Distribución de Gastos por Categoría (General)</h3>
-            <div id="categoryChart"></div>
+            <h3 class="chart-title">🏦 Distribución por Cuentas</h3>
+            <div id="accountsBreakdownSection">
+                <div class="no-accounts-notice">⚠️ Aún no tienes cuentas creadas. Ve a la pestaña <strong>🏦 Cuentas</strong> para agregarlas.</div>
+            </div>
         </div>
 
         <div class="chart-container">
-            <h3 class="chart-title">📈 Gastos del Mes Actual por Categoría</h3>
-            <div id="currentMonthCategoryChart"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;">
+                <h3 class="chart-title" style="margin-bottom:0;">📈 Gastos por Categoría</h3>
+                <div style="display:flex;gap:0.5rem;">
+                    <button id="catToggleGeneral"
+                        onclick="switchCategoryChart('general')"
+                        style="padding:0.4rem 1rem;font-size:0.8rem;min-height:36px;border:none;border-radius:6px;cursor:pointer;font-weight:500;background:var(--color-primary);color:#0f172a;transition:all 0.2s;">
+                        📊 General
+                    </button>
+                    <button id="catToggleMes"
+                        onclick="switchCategoryChart('mes')"
+                        style="padding:0.4rem 1rem;font-size:0.8rem;min-height:36px;border:none;border-radius:6px;cursor:pointer;font-weight:500;background:var(--color-bg-surface);color:var(--color-text-secondary);transition:all 0.2s;">
+                        📅 Este Mes
+                    </button>
+                </div>
+            </div>
+            <div id="categoryChartUnified"></div>
+        </div>
+        <!-- IDs legacy ocultos: requeridos por renderCategoryCharts() para historial -->
+        <div id="categoryChart" style="display:none;"></div>
+        <div id="currentMonthCategoryChart" style="display:none;"></div>
+    </div>
+
+    <!-- CUENTAS -->
+    <div id="cuentas" class="tab-content">
+        <div class="form-section">
+            <h2>🏦 Mis Cuentas Financieras</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+                Gestiona tus cuentas bancarias, billeteras digitales y efectivo. El saldo de cada cuenta se actualiza automáticamente con cada operación que registres.
+            </p>
+
+            <div class="account-total-card">
+                <div>
+                    <div class="account-total-label">💰 Total en todas las cuentas</div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">Suma de saldos iniciales + movimientos</div>
+                </div>
+                <div class="account-total-value" id="accountsTotalValue">$0</div>
+            </div>
+            <div id="accountsSyncBadge" style="display:none; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--color-bg-surface); border-radius:8px; font-size:0.85rem; margin-bottom:1rem;"></div>
+
+            <div id="accountsGrid" class="accounts-grid">
+                <div class="empty-state"><p>No hay cuentas creadas</p></div>
+            </div>
+
+            <h3 style="margin-bottom: 1rem; margin-top: 1rem; color: var(--color-primary);">➕ Crear Nueva Cuenta</h3>
+            <form id="accountForm">
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="form-group">
+                        <label for="accountName">Nombre de la Cuenta</label>
+                        <input type="text" id="accountName" placeholder="Ej: Bancolombia, Nequi, Efectivo">
+                    </div>
+                    <div class="form-group">
+                        <label for="accountIcon">Ícono</label>
+                        <select id="accountIcon">
+                            <option value="🏦">🏦 Banco</option>
+                            <option value="📱">📱 Billetera Digital</option>
+                            <option value="💵">💵 Efectivo</option>
+                            <option value="💳">💳 Tarjeta</option>
+                            <option value="🏧">🏧 Cuenta de Ahorros</option>
+                            <option value="💰">💰 Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountInitialBalance">Saldo Inicial (COP)</label>
+                        <input type="text" id="accountInitialBalance" placeholder="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">🏦 Crear Cuenta</button>
+            </form>
+        </div>
+
+        <!-- TRANSFERENCIAS ENTRE CUENTAS -->
+        <div class="form-section" id="transferSection">
+            <h2>↔️ Transferencia entre Cuentas</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.875rem;">
+                Mueve dinero entre tus cuentas sin afectar ingresos ni gastos. El movimiento queda registrado en el historial como transferencia interna.
+            </p>
+            <form id="transferForm">
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="form-group">
+                        <label for="transferFrom">🏦 Cuenta Origen</label>
+                        <select id="transferFrom">
+                            <option value="">Selecciona cuenta origen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transferTo">🏦 Cuenta Destino</label>
+                        <select id="transferTo">
+                            <option value="">Selecciona cuenta destino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transferAmount">💵 Monto (COP)</label>
+                        <input type="text" id="transferAmount" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="transferDescription">📝 Descripción (opcional)</label>
+                        <input type="text" id="transferDescription" placeholder="Ej: Pago Nequi a Bancolombia">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning" style="margin-top:0.5rem;">↔️ Realizar Transferencia</button>
+            </form>
         </div>
     </div>
 
@@ -1077,6 +1328,12 @@
                             <option value="Inversiones">Inversiones</option>
                             <option value="Bonos">Bonos</option>
                             <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeAccount">🏦 Cuenta Destino</label>
+                        <select id="incomeAccount">
+                            <option value="">Sin cuenta asignada</option>
                         </select>
                     </div>
                 </div>
@@ -1121,6 +1378,12 @@
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="expenseAccount">🏦 Cuenta Origen</label>
+                        <select id="expenseAccount">
+                            <option value="">Sin cuenta asignada</option>
+                        </select>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">💸 Agregar Gasto</button>
             </form>
@@ -1157,6 +1420,12 @@
                             <option value="Seguros">Seguros</option>
                             <option value="Suscripciones">Suscripciones</option>
                             <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fixedExpenseAccount">🏦 Cuenta Origen</label>
+                        <select id="fixedExpenseAccount">
+                            <option value="">Sin cuenta asignada</option>
                         </select>
                     </div>
                 </div>
@@ -1204,6 +1473,12 @@
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="fixedIncomeAccount">🏦 Cuenta Destino</label>
+                        <select id="fixedIncomeAccount">
+                            <option value="">Sin cuenta asignada</option>
+                        </select>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">💵 Agregar Ingreso Fijo</button>
             </form>
@@ -1231,6 +1506,9 @@
                 <option value="Gasto">Gastos</option>
                 <option value="Gasto Fijo">Gastos Fijos</option>
                 <option value="Ingreso Fijo">Ingresos Fijos</option>
+                <option value="Transferencia Meta">Aportes a Metas</option>
+                <option value="Transferencia Salida">Transferencias Salida</option>
+                <option value="Transferencia Entrada">Transferencias Entrada</option>
             </select>
         </div>
 
@@ -1277,11 +1555,17 @@
                     </div>
                     <div class="form-group">
                         <label for="goalCurrent">Monto Actual (COP)</label>
-                        <input type="text" id="goalCurrent" placeholder="0" value="0" required>
+                        <input type="text" id="goalCurrent" placeholder="0" required>
                     </div>
                     <div class="form-group">
                         <label for="goalDate">Fecha Objetivo</label>
                         <input type="date" id="goalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalAccount">🏦 Cuenta de Ahorro</label>
+                        <select id="goalAccount">
+                            <option value="">Sin cuenta asignada</option>
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">🎯 Crear Meta</button>
@@ -1351,6 +1635,7 @@
             fixedExpenses: [],
             fixedIncomes: [],
             savingsGoals: [],
+            accounts: [],
             monthlyBalance: 0,
             shownAlerts: new Set(),
 
@@ -1377,6 +1662,38 @@
             updateMonthlyBalance(newBalance) {
                 this.monthlyBalance = newBalance;
                 this.notifyStateChange();
+            },
+
+            getAccountBalance(accountId) {
+                const account = this.accounts.find(a => a.id === accountId);
+                if (!account) return 0;
+                const income = this.transactions
+                    .filter(t => t.accountId === accountId && (t.type === 'Ingreso' || t.type === 'Ingreso Fijo' || t.type === 'Transferencia Entrada'))
+                    .reduce((s, t) => s + t.amount, 0);
+                const expense = this.transactions
+                    .filter(t => t.accountId === accountId && (t.type === 'Gasto' || t.type === 'Gasto Fijo' || t.type === 'Transferencia Meta' || t.type === 'Transferencia Salida'))
+                    .reduce((s, t) => s + t.amount, 0);
+                // Saldo = inicial + todos los ingresos propios - todos los gastos propios
+                return (account.initialBalance || 0) + income - expense;
+            },
+
+            getTotalAccountsBalance() {
+                // Suma de todas las cuentas. Si hay cuentas, debe coincidir
+                // con getCurrentAvailable() (asumiendo que todas las
+                // transacciones tienen cuenta asignada).
+                return this.accounts.reduce((sum, a) => sum + this.getAccountBalance(a.id), 0);
+            },
+
+            getUnassignedBalance() {
+                // Dinero en transacciones sin cuenta asignada.
+                // Se muestra informativamente; ya está incluido en getCurrentAvailable().
+                const income = this.transactions
+                    .filter(t => !t.accountId && (t.type === 'Ingreso' || t.type === 'Ingreso Fijo'))
+                    .reduce((s, t) => s + t.amount, 0);
+                const expense = this.transactions
+                    .filter(t => !t.accountId && (t.type === 'Gasto' || t.type === 'Gasto Fijo'))
+                    .reduce((s, t) => s + t.amount, 0);
+                return income - expense;
             },
 
             notifyStateChange() {
@@ -1429,17 +1746,32 @@
                 return this.savingsGoals.reduce((sum, g) => sum + g.current, 0);
             },
 
+            getInitialAccountsTotal() {
+                // Suma de saldos iniciales de todas las cuentas.
+                // Si no hay cuentas, retorna 0 (el sistema sigue usando monthlyBalance).
+                return this.accounts.reduce((sum, a) => sum + (a.initialBalance || 0), 0);
+            },
+
             getCurrentAvailable() {
                 const currentDate = new Date();
                 const currentMonth = currentDate.getMonth();
                 const currentYear = currentDate.getFullYear();
 
-                const currentMonthBalance = calculateAccumulatedBalance(currentMonth, currentYear);
-                const totalIncome = this.getCurrentMonthIncome() + currentMonthBalance;
-                const totalExpense = this.getCurrentMonthExpense();
-                const totalSaved = this.getTotalSaved();
+                // Base: si hay cuentas creadas, la fuente de verdad es la suma
+                // de sus saldos iniciales + flujos de transacciones de todos los meses.
+                // Si no hay cuentas, se usa el sistema legacy (monthlyBalance).
+                let base;
+                if (this.accounts.length > 0) {
+                    base = this.getInitialAccountsTotal();
+                } else {
+                    base = calculateAccumulatedBalance(currentMonth, currentYear);
+                }
 
-                return totalIncome - totalExpense - totalSaved;
+                const totalIncome  = this.getTotalIncome();
+                const totalExpense = this.getTotalExpense();
+                const totalSaved   = this.getTotalSaved();
+
+                return base + totalIncome - totalExpense - totalSaved;
             }
         };
 
@@ -1465,6 +1797,8 @@
                 'fixedIncomeAmount',
                 'goalAmount',
                 'goalCurrent',
+                'accountInitialBalance',
+                'transferAmount',
             ];
 
             amountInputs.forEach(id => {
@@ -1494,6 +1828,19 @@
            PERSISTENCIA
            ============================================ */
         
+        function renderUserName() {
+            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+            const el = document.getElementById('currentUserDisplay');
+
+            if (!el) return;
+
+            if (user && (user.name || user.username)) {
+                el.textContent = user.name || user.username;
+            } else {
+                el.textContent = 'Usuario';
+            }
+        }
+        
         function saveToLocalStorage() {
 
             const user = JSON.parse(localStorage.getItem('finanzas_user'));
@@ -1504,6 +1851,7 @@
                 fixedExpenses: AppState.fixedExpenses,
                 fixedIncomes: AppState.fixedIncomes,
                 savingsGoals: AppState.savingsGoals,
+                accounts: AppState.accounts,
                 monthlyBalance: AppState.monthlyBalance
             };
 
@@ -1527,7 +1875,10 @@
             AppState.fixedExpenses = user.data.fixedExpenses || [];
             AppState.fixedIncomes = user.data.fixedIncomes || [];
             AppState.savingsGoals = user.data.savingsGoals || [];
+            AppState.accounts = user.data.accounts || [];
             AppState.monthlyBalance = user.data.monthlyBalance || 0;
+
+            renderUserName();
         }
 
         /* ============================================
@@ -1869,6 +2220,7 @@
                     fixedExpenses: [],
                     fixedIncomes: [],
                     savingsGoals: [],
+                    accounts: [],
                     monthlyBalance: 0
                 }
             };
@@ -1971,14 +2323,20 @@
         function checkMonthlyReset() {
             if (!AppState.currentUser) return;
 
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const lastReset = localStorage.getItem(`lastReset_${AppState.currentUser}`);
+            const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const resetKey = `lastReset_${AppState.currentUser}`;
+            const lastReset = localStorage.getItem(resetKey);
 
-            if (lastReset !== currentMonth) {
-                AppState.fixedExpenses.forEach(f => f.status = 'pending');
-                AppState.fixedIncomes.forEach(f => f.status = 'pending');
-                
-                localStorage.setItem(`lastReset_${AppState.currentUser}`, currentMonth);
+            if (lastReset !== currentMonthYear) {
+                // Reinicio de estado UI solamente — NO genera impacto financiero.
+                // Solo habilita los botones para que el usuario pueda confirmar
+                // los movimientos del nuevo mes. Las transacciones históricas
+                // permanecen intactas; no se reaplican ni se revierten.
+                AppState.fixedExpenses.forEach(f => { f.status = 'pending'; });
+                AppState.fixedIncomes.forEach(f => { f.status = 'pending'; });
+
+                localStorage.setItem(resetKey, currentMonthYear);
+                // Persistir solo el cambio de estado (sin disparar updateAllViews extra)
                 saveToLocalStorage();
             }
         }
@@ -2048,30 +2406,50 @@
 
             document.getElementById('daysRemaining').textContent = daysRemaining;
 
-            const monthIncome = AppState.getCurrentMonthIncome();
+            const monthIncome  = AppState.getCurrentMonthIncome();
             const monthExpense = AppState.getCurrentMonthExpense();
-            const currentMonthBalance = calculateAccumulatedBalance(currentMonth, currentYear);
+            const totalSaved   = AppState.getTotalSaved();
 
-            const totalIncome = monthIncome + currentMonthBalance;
-            const totalExpense = monthExpense;
-            const totalSaved = AppState.getTotalSaved();
-            const available = totalIncome - totalExpense - totalSaved;
+            // Fuente de verdad unificada: usa cuentas si existen, legacy si no.
+            const available = AppState.getCurrentAvailable();
 
-            document.getElementById('currentMonthIncome').textContent = formatCurrency(monthIncome);
+            // Para el desglose visual: base = saldos iniciales de cuentas O balance acumulado legacy
+            const hasAccounts = AppState.accounts.length > 0;
+            const baseLabel   = hasAccounts ? 'Saldos Iniciales de Cuentas' : 'Balance Acumulado';
+            const baseValue   = hasAccounts
+                ? AppState.getInitialAccountsTotal()
+                : calculateAccumulatedBalance(currentMonth, currentYear);
+
+            // totalIncome del desglose = base + TODOS los ingresos (no solo del mes)
+            const allIncome  = AppState.getTotalIncome();
+            const allExpense = AppState.getTotalExpense();
+
+            // "Ingresos del Mes": cuando hay cuentas, incluir saldos iniciales
+            // como punto de partida del patrimonio (son el "ingreso base" del sistema).
+            // Cuando no hay cuentas, se mantiene el comportamiento original.
+            const displayMonthIncome = hasAccounts
+                ? (AppState.getInitialAccountsTotal() + monthIncome)
+                : monthIncome;
+
+            document.getElementById('currentMonthIncome').textContent = formatCurrency(displayMonthIncome);
             document.getElementById('currentMonthExpense').textContent = formatCurrency(monthExpense);
             document.getElementById('currentAvailable').textContent = formatCurrency(available);
 
             const availableElement = document.getElementById('currentAvailable');
             availableElement.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
 
-            const baseReal = Math.max(0, available - (available * 0.70));
+            const baseReal = Math.max(0, available * 0.30);
             const canSpendDaily = daysRemaining > 0 ? baseReal / daysRemaining : 0;
             document.getElementById('canSpendPerDay').textContent = formatCurrency(Math.max(0, canSpendDaily));
 
-            document.getElementById('breakdown-previous-balance').textContent = formatCurrency(currentMonthBalance);
-            document.getElementById('breakdown-confirmed-income').textContent = formatCurrency(monthIncome);
-            document.getElementById('breakdown-total-income').textContent = formatCurrency(totalIncome);
-            document.getElementById('breakdown-confirmed-expense').textContent = formatCurrency(monthExpense);
+            // Actualizar etiqueta dinámica del desglose
+            const prevBalLabel = document.getElementById('breakdown-prev-label');
+            if (prevBalLabel) prevBalLabel.textContent = baseLabel + ':';
+
+            document.getElementById('breakdown-previous-balance').textContent = formatCurrency(baseValue);
+            document.getElementById('breakdown-confirmed-income').textContent = formatCurrency(allIncome);
+            document.getElementById('breakdown-total-income').textContent = formatCurrency(baseValue + allIncome);
+            document.getElementById('breakdown-confirmed-expense').textContent = formatCurrency(allExpense);
             document.getElementById('breakdown-total-saved').textContent = formatCurrency(totalSaved);
             document.getElementById('breakdown-remaining').textContent = formatCurrency(available);
 
@@ -2079,7 +2457,9 @@
             remainingElement.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
 
             const budgetBar = document.getElementById('budgetProgressBar');
-            const percentUsed = totalIncome > 0 ? Math.min((totalExpense / totalIncome) * 100, 100) : 0;
+            // Ingreso total real = base (cuentas o legacy) + todas las transacciones de ingreso
+            const totalIncomeReal = baseValue + allIncome;
+            const percentUsed = totalIncomeReal > 0 ? Math.min((allExpense / totalIncomeReal) * 100, 100) : 0;
 
             let barColor = 'var(--color-success)';
             if (percentUsed >= 90) {
@@ -2137,6 +2517,9 @@
             updateStatistics();
             updateFilterOptions();
             updateUserDisplay();
+            renderAccountsTab();
+            renderAccountsBreakdown();
+            populateAccountSelectors();
         }
 
         function updateUserDisplay() {
@@ -2149,14 +2532,20 @@
         }
 
         function calculateTotals() {
-            const totalIncome = AppState.getTotalIncome();
-            const totalExpense = AppState.getTotalExpense();
-            const balance = AppState.getBalance();
+            const totalIncome   = AppState.getTotalIncome();
+            const totalExpense  = AppState.getTotalExpense();
             const fixedExpenses = AppState.fixedExpenses.reduce((sum, f) => sum + f.amount, 0);
 
-            document.getElementById('totalIngresos').textContent = formatCurrency(totalIncome);
-            document.getElementById('totalGastos').textContent = formatCurrency(totalExpense);           
-            document.getElementById('totalFijos').textContent = formatCurrency(fixedExpenses);       
+            // "Total Ingresos" = saldos iniciales de cuentas + transacciones de ingreso confirmadas.
+            // Cuando no hay cuentas, se usa monthlyBalance como base (sistema legacy).
+            const accountsBase  = AppState.accounts.length > 0
+                ? AppState.getInitialAccountsTotal()
+                : AppState.monthlyBalance;
+            const displayIncome = accountsBase + totalIncome;
+
+            document.getElementById('totalIngresos').textContent = formatCurrency(displayIncome);
+            document.getElementById('totalGastos').textContent   = formatCurrency(totalExpense);
+            document.getElementById('totalFijos').textContent    = formatCurrency(fixedExpenses);
         }
 
         /* ============================================
@@ -2170,11 +2559,21 @@
                 return;
             }
 
-            expenseList.innerHTML = AppState.fixedExpenses.map((item, index) => `
+            expenseList.innerHTML = AppState.fixedExpenses.map((item, index) => {
+                // Buscar la última transacción de este gasto fijo para mostrar su mes de ejecución
+                const lastTx = [...AppState.transactions].reverse().find(t =>
+                    t.type === 'Gasto Fijo' &&
+                    t.description === `${item.name} (Gasto Fijo)` &&
+                    t.amount === item.amount
+                );
+                const execLabel = lastTx && lastTx.monthYear
+                    ? ` • Ejecutado: ${lastTx.monthYear}`
+                    : '';
+                return `
                 <div class="fixed-item ${item.status}">
                     <div class="fixed-item-info">
                         <h4>${item.name}</h4>
-                        <p>${item.category} • Día ${item.paymentDay} • ${item.status === 'paid' ? '✅ Pagado' : '⏳ Pendiente'}</p>
+                        <p>${item.category} • Día ${item.paymentDay} • ${item.status === 'paid' ? '✅ Pagado este mes' + execLabel : '⏳ Pendiente'}${item.accountId ? ' • 🏦 ' + (AppState.accounts.find(a => a.id === item.accountId)?.name || '') : ''}</p>
                     </div>
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <div class="fixed-item-amount" style="color: var(--color-danger);">${formatCurrency(item.amount)}</div>
@@ -2186,14 +2585,29 @@
                         <button class="btn btn-danger" onclick="deleteFixedExpense(${index})">🗑️</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function markFixedExpenseAsPaid(index) {
             const expense = AppState.fixedExpenses[index];
+            const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
 
             if (expense.status === 'paid') {
-                alert('⚠️ Este gasto ya fue marcado como pagado');
+                alert('⚠️ Este gasto ya fue marcado como pagado este mes');
+                return;
+            }
+
+            // Guardia adicional: verificar que no exista ya una transacción para este mes.
+            // Previene doble ejecución incluso ante fallos del reinicio mensual.
+            const yaEjecutado = AppState.transactions.some(t =>
+                t.type === 'Gasto Fijo' &&
+                t.description === `${expense.name} (Gasto Fijo)` &&
+                t.amount === expense.amount &&
+                t.monthYear === currentMonthYear
+            );
+            if (yaEjecutado) {
+                alert('⚠️ Este gasto ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
                 return;
             }
 
@@ -2205,7 +2619,9 @@
                     description: `${expense.name} (Gasto Fijo)`,
                     amount: expense.amount,
                     date: new Date().toISOString().split('T')[0],
-                    category: expense.category
+                    monthYear: currentMonthYear,   // identificador de mes para control de unicidad
+                    category: expense.category,
+                    accountId: expense.accountId || null
                 };
 
                 AppState.transactions.push(transaction);
@@ -2254,11 +2670,20 @@
                 return;
             }
 
-            incomeList.innerHTML = AppState.fixedIncomes.map((item, index) => `
+            incomeList.innerHTML = AppState.fixedIncomes.map((item, index) => {
+                const lastTx = [...AppState.transactions].reverse().find(t =>
+                    t.type === 'Ingreso Fijo' &&
+                    t.description === `${item.name} (Ingreso Fijo)` &&
+                    t.amount === item.amount
+                );
+                const execLabel = lastTx && lastTx.monthYear
+                    ? ` • Recibido: ${lastTx.monthYear}`
+                    : '';
+                return `
                 <div class="fixed-item ${item.status}">
                     <div class="fixed-item-info">
                         <h4>${item.name}</h4>
-                        <p>${item.category} • Día ${item.paymentDay} • ${item.status === 'received' ? '✅ Recibido' : '⏳ Pendiente'}</p>
+                        <p>${item.category} • Día ${item.paymentDay} • ${item.status === 'received' ? '✅ Recibido este mes' + execLabel : '⏳ Pendiente'}${item.accountId ? ' • 🏦 ' + (AppState.accounts.find(a => a.id === item.accountId)?.name || '') : ''}</p>
                     </div>
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <div class="fixed-item-amount" style="color: var(--color-success);">${formatCurrency(item.amount)}</div>
@@ -2270,14 +2695,28 @@
                         <button class="btn btn-danger" onclick="deleteFixedIncome(${index})">🗑️</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function markFixedIncomeAsReceived(index) {
             const income = AppState.fixedIncomes[index];
+            const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
 
             if (income.status === 'received') {
-                alert('⚠️ Este ingreso ya fue marcado como recibido');
+                alert('⚠️ Este ingreso ya fue marcado como recibido este mes');
+                return;
+            }
+
+            // Guardia adicional: verificar unicidad mensual
+            const yaEjecutado = AppState.transactions.some(t =>
+                t.type === 'Ingreso Fijo' &&
+                t.description === `${income.name} (Ingreso Fijo)` &&
+                t.amount === income.amount &&
+                t.monthYear === currentMonthYear
+            );
+            if (yaEjecutado) {
+                alert('⚠️ Este ingreso ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
                 return;
             }
 
@@ -2289,7 +2728,9 @@
                     description: `${income.name} (Ingreso Fijo)`,
                     amount: income.amount,
                     date: new Date().toISOString().split('T')[0],
-                    category: income.category
+                    monthYear: currentMonthYear,   // identificador de mes para control de unicidad
+                    category: income.category,
+                    accountId: income.accountId || null
                 };
 
                 AppState.transactions.push(transaction);
@@ -2357,18 +2798,38 @@
             listElement.innerHTML = sortedTransactions.map(transaction => {
                 const index = AppState.transactions.indexOf(transaction);
                 const isFixed = transaction.type === 'Gasto Fijo' || transaction.type === 'Ingreso Fijo';
+                const isTransfer = transaction.type === 'Transferencia Meta' || transaction.type === 'Transferencia Salida' || transaction.type === 'Transferencia Entrada';
 
+                const acct = transaction.accountId ? AppState.accounts.find(a => a.id === transaction.accountId) : null;
+                const acctLabel = acct ? `<span class="category-badge" style="background: rgba(56,189,248,0.15); color: var(--color-primary); margin-left: 0.5rem;">${acct.icon} ${acct.name}</span>` : '';
+                const isIncome = transaction.type === 'Ingreso' || transaction.type === 'Ingreso Fijo' || transaction.type === 'Transferencia Entrada';
+                let flowLabel;
+                if (transaction.type === 'Transferencia Meta') {
+                    flowLabel = `<span style="font-size:0.7rem; color: var(--color-warning); margin-left:0.4rem;">🎯 Meta</span>`;
+                } else if (transaction.type === 'Transferencia Salida') {
+                    flowLabel = `<span style="font-size:0.7rem; color: var(--color-warning); margin-left:0.4rem;">↔️ Transferencia salida</span>`;
+                } else if (transaction.type === 'Transferencia Entrada') {
+                    flowLabel = `<span style="font-size:0.7rem; color: var(--color-warning); margin-left:0.4rem;">↔️ Transferencia entrada</span>`;
+                } else if (isIncome) {
+                    flowLabel = `<span style="font-size:0.7rem; color: var(--color-success); margin-left:0.4rem;">▲ Ingreso</span>`;
+                } else {
+                    flowLabel = `<span style="font-size:0.7rem; color: var(--color-danger); margin-left:0.4rem;">▼ Egreso</span>`;
+                }
+                const amountColor = isTransfer ? 'style="color: var(--color-warning);"' : '';
+                const amountSign = isIncome ? '+' : isTransfer ? '↔' : '-';
                 return `
                     <div class="transaction-item">
                         <div class="transaction-info">
                             <h3>${transaction.description}${isFixed ? ' 🔒' : ''}</h3>
                             <div class="transaction-meta">
                                 <span class="category-badge">${transaction.category}</span>
+                                ${acctLabel}
+                                ${flowLabel}
                                 <span style="margin-left: 0.5rem;">${formatDate(transaction.date)}</span>
                             </div>
                         </div>
-                        <div class="transaction-amount ${transaction.type === 'Ingreso' || transaction.type === 'Ingreso Fijo' ? 'income' : 'expense'}">
-                            ${transaction.type === 'Ingreso' || transaction.type === 'Ingreso Fijo' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                        <div class="transaction-amount ${isIncome ? 'income' : isTransfer ? '' : 'expense'}" ${amountColor}>
+                            ${amountSign}${formatCurrency(transaction.amount)}
                         </div>
                         <button class="btn btn-danger" onclick="deleteTransaction(${index})" ${isFixed ? 'disabled title="Los gastos/ingresos fijos se eliminan desde su pestaña"' : ''}>🗑️</button>
                     </div>
@@ -2393,19 +2854,53 @@
         /* ============================================
            RENDERIZADO DE GRÁFICOS
            ============================================ */
+
+        // Estado del toggle del gráfico unificado en Seguimiento Financiero
+        let _catChartMode = 'general';
+
+        function switchCategoryChart(mode) {
+            _catChartMode = mode;
+            // Actualizar estilos de los botones del toggle
+            const btnG = document.getElementById('catToggleGeneral');
+            const btnM = document.getElementById('catToggleMes');
+            if (btnG && btnM) {
+                if (mode === 'general') {
+                    btnG.style.background = 'var(--color-primary)';
+                    btnG.style.color = '#0f172a';
+                    btnM.style.background = 'var(--color-bg-surface)';
+                    btnM.style.color = 'var(--color-text-secondary)';
+                } else {
+                    btnM.style.background = 'var(--color-primary)';
+                    btnM.style.color = '#0f172a';
+                    btnG.style.background = 'var(--color-bg-surface)';
+                    btnG.style.color = 'var(--color-text-secondary)';
+                }
+            }
+            // Re-renderizar solo el gráfico unificado
+            const expenses = AppState.transactions.filter(t => t.type === 'Gasto' || t.type === 'Gasto Fijo');
+            const monthExpenses = AppState.getCurrentMonthTransactions().filter(t => t.type === 'Gasto' || t.type === 'Gasto Fijo');
+            renderCategoryChart('categoryChartUnified', mode === 'general' ? expenses : monthExpenses);
+        }
+
         function renderCategoryCharts() {
             const expenses = AppState.transactions.filter(t => t.type === 'Gasto' || t.type === 'Gasto Fijo');
             const incomes = AppState.transactions.filter(t => t.type === 'Ingreso' || t.type === 'Ingreso Fijo');
             const currentMonthExpenses = AppState.getCurrentMonthTransactions().filter(t => t.type === 'Gasto' || t.type === 'Gasto Fijo');
 
+            // Gráficos del historial (IDs legacy, ahora ocultos pero siguen funcionando)
             renderCategoryChart('categoryChart', expenses);
             renderCategoryChart('expenseCategoryChart', expenses);
             renderCategoryChart('incomeCategoryChart', incomes);
             renderCategoryChart('currentMonthCategoryChart', currentMonthExpenses);
+
+            // Gráfico unificado en Seguimiento Financiero (según modo del toggle)
+            const activeData = _catChartMode === 'general' ? expenses : currentMonthExpenses;
+            renderCategoryChart('categoryChartUnified', activeData);
         }
 
         function renderCategoryChart(elementId, transactions) {
             const element = document.getElementById(elementId);
+            if (!element) return;  // el elemento no existe en el DOM actual → saltar
 
             if (transactions.length === 0) {
                 element.innerHTML = '<div class="empty-state"><p>No hay datos para mostrar</p></div>';
@@ -2495,13 +2990,22 @@
                     alertMessage = '⚠️ Requiere ahorro mayor al disponible actual';
                 }
 
+                // Resolver cuenta asignada a esta meta
+                const goalAcct = goal.accountId
+                    ? AppState.accounts.find(a => a.id === goal.accountId)
+                    : null;
+                const acctBadge = goalAcct
+                    ? `<span class="category-badge" style="background:rgba(56,189,248,0.15);color:var(--color-primary);margin-top:0.3rem;display:inline-block;">${goalAcct.icon} ${goalAcct.name}</span>`
+                    : `<span class="category-badge" style="opacity:0.55;margin-top:0.3rem;display:inline-block;">Sin cuenta asignada</span>`;
+
                 return `
                     <div class="goal-item">
                         <div class="goal-header">
                             <span class="goal-name">${goal.name}</span>
                             <span class="goal-progress-text">${progress.toFixed(1)}%</span>
                         </div>
-                        <div class="progress-bar">
+                        <div>${acctBadge}</div>
+                        <div class="progress-bar" style="margin-top:0.5rem;">
                             <div class="progress-fill" style="width: ${Math.min(progress, 100)}%;"></div>
                         </div>
                         <div style="margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
@@ -2614,9 +3118,31 @@
             }
 
             goal.current += parsedAmount;
+
+            // Registrar movimiento en la cuenta asignada (si existe) como Transferencia Meta.
+            // Este tipo NO afecta gastos generales ni métricas de egresos.
+            if (goal.accountId) {
+                const acct = AppState.accounts.find(a => a.id === goal.accountId);
+                if (acct) {
+                    AppState.transactions.push({
+                        type: 'Transferencia Meta',
+                        description: 'Ahorro → ' + goal.name,
+                        amount: parsedAmount,
+                        date: new Date().toISOString().split('T')[0],
+                        category: 'Ahorro / Meta',
+                        accountId: goal.accountId
+                    });
+                }
+            }
+
             AppState.notifyStateChange();
 
-            alert(`✅ Se agregaron ${formatCurrency(parsedAmount)} a la meta "${goal.name}"\n\nNuevo ahorro acumulado: ${formatCurrency(goal.current)}\nFaltante: ${formatCurrency(goal.amount - goal.current)}`);
+            const acctInfo = goal.accountId
+                ? (AppState.accounts.find(a => a.id === goal.accountId)
+                    ? '\n🏦 Cuenta: ' + AppState.accounts.find(a => a.id === goal.accountId).icon + ' ' + AppState.accounts.find(a => a.id === goal.accountId).name
+                    : '')
+                : '';
+            alert('✅ Se agregaron ' + formatCurrency(parsedAmount) + ' a la meta "' + goal.name + '"' + acctInfo + '\n\nNuevo ahorro acumulado: ' + formatCurrency(goal.current) + '\nFaltante: ' + formatCurrency(goal.amount - goal.current));
         }
 
         function editGoal(index) {
@@ -2657,8 +3183,23 @@
 
         function deleteGoal(index) {
             const goal = AppState.savingsGoals[index];
+            const acctMeta = goal.accountId ? AppState.accounts.find(a => a.id === goal.accountId) : null;
 
-            if (confirm(`¿Estás seguro de eliminar la meta "${goal.name}"?\n\n⚠️ IMPORTANTE: El dinero ya ahorrado (${formatCurrency(goal.current)}) NO regresará al disponible. Se considera ya comprometido o utilizado.`)) {
+            // Mensaje adaptado según si hay cuenta asignada o no
+            const moneyNote = acctMeta && goal.current > 0
+                ? '\n\n🏦 Los movimientos de ahorro en "' + acctMeta.icon + ' ' + acctMeta.name + '" serán revertidos y el saldo se restaurará.'
+                : '\n\n⚠️ El dinero ya ahorrado (' + formatCurrency(goal.current) + ') NO regresará al disponible general.';
+
+            if (confirm('¿Estás seguro de eliminar la meta "' + goal.name + '"?' + moneyNote)) {
+                // Si hay cuenta asignada, revertir las transacciones de ahorro asociadas
+                if (acctMeta && goal.current > 0) {
+                    AppState.transactions = AppState.transactions.filter(t =>
+                        !(t.type === 'Transferencia Meta' &&
+                          t.description === 'Ahorro → ' + goal.name &&
+                          t.accountId === goal.accountId &&
+                          t.category === 'Ahorro / Meta')
+                    );
+                }
                 AppState.savingsGoals.splice(index, 1);
                 AppState.notifyStateChange();
                 alert('✅ Meta eliminada correctamente');
@@ -2669,20 +3210,8 @@
             AppState.savingsGoals.forEach((goal, index) => {
                 if (goal.current >= goal.amount && !goal.completed) {
                     goal.completed = true;
-                    
-                    // Registrar gasto por meta cumplida en el historial
-                    const transaction = {
-                        id: Date.now(),
-                        type: "expense",
-                        amount: goal.amount,
-                        category: "Meta cumplida",
-                        description: "Meta alcanzada: " + goal.name,
-                        date: new Date().toISOString()
-                    };
 
-                    AppState.transactions.push(transaction);
-
-                    // 🔄 actualizar inmediatamente todo el sistema
+                    // 🔄 actualizar inmediatamente todo el sistema (sin registrar gasto duplicado)
                     AppState.notifyStateChange();
 
                     showCloudAlert(
@@ -2692,7 +3221,7 @@
                     );
 
                     setTimeout(() => {
-                        if (confirm(`🎉 ¡Felicitaciones!\n\nHas completado la meta "${goal.name}".\n\n¿Deseas eliminarla del listado?\n\nRecuerda: El dinero NO regresará al disponible.`)) {
+                        if (confirm(`🎉 ¡Felicitaciones!\n\nHas completado la meta "${goal.name}".\n\n¿Deseas eliminarla del listado?\n\nRecuerda: El dinero ahorrado permanece en tu cuenta.`)) {
                             AppState.savingsGoals.splice(index, 1);
                             AppState.notifyStateChange();
                         }
@@ -2859,12 +3388,14 @@
             document.getElementById('incomeForm').addEventListener('submit', (e) => {
                 e.preventDefault();
 
+                const incomeAccountId = document.getElementById('incomeAccount').value || null;
                 const transaction = {
                     type: 'Ingreso',
                     description: document.getElementById('incomeDescription').value,
                     amount: parseFormattedNumber(document.getElementById('incomeAmount').value),
                     date: document.getElementById('incomeDate').value,
-                    category: document.getElementById('incomeCategory').value
+                    category: document.getElementById('incomeCategory').value,
+                    accountId: incomeAccountId
                 };
 
                 AppState.transactions.push(transaction);
@@ -2878,12 +3409,14 @@
             document.getElementById('expenseForm').addEventListener('submit', (e) => {
                 e.preventDefault();
 
+                const expenseAccountId = document.getElementById('expenseAccount').value || null;
                 const transaction = {
                     type: 'Gasto',
                     description: document.getElementById('expenseDescription').value,
                     amount: parseFormattedNumber(document.getElementById('expenseAmount').value),
                     date: document.getElementById('expenseDate').value,
-                    category: document.getElementById('expenseCategory').value
+                    category: document.getElementById('expenseCategory').value,
+                    accountId: expenseAccountId
                 };
 
                 AppState.transactions.push(transaction);
@@ -2902,6 +3435,7 @@
                     amount: parseFormattedNumber(document.getElementById('fixedExpenseAmount').value),
                     paymentDay: parseInt(document.getElementById('fixedExpenseDay').value),
                     category: document.getElementById('fixedExpenseCategory').value,
+                    accountId: document.getElementById('fixedExpenseAccount').value || null,
                     status: 'pending'
                 };
 
@@ -2920,6 +3454,7 @@
                     amount: parseFormattedNumber(document.getElementById('fixedIncomeAmount').value),
                     paymentDay: parseInt(document.getElementById('fixedIncomeDay').value),
                     category: document.getElementById('fixedIncomeCategory2').value,
+                    accountId: document.getElementById('fixedIncomeAccount').value || null,
                     status: 'pending'
                 };
 
@@ -2937,7 +3472,8 @@
                     name: document.getElementById('goalName').value,
                     amount: parseFormattedNumber(document.getElementById('goalAmount').value),
                     current: parseFormattedNumber(document.getElementById('goalCurrent').value),
-                    date: document.getElementById('goalDate').value
+                    date: document.getElementById('goalDate').value,
+                    accountId: document.getElementById('goalAccount').value || null
                 };
 
                 AppState.savingsGoals.push(goal);
@@ -2946,6 +3482,65 @@
                 e.target.reset();
                 alert('✅ Meta de ahorro creada correctamente');
             });
+
+            const accountFormEl = document.getElementById('accountForm');
+            if (accountFormEl) {
+                accountFormEl.addEventListener('submit', (e) => {
+                    e.preventDefault();
+
+                    // Validación manual (el form puede estar en tab oculto, required HTML no funciona ahí)
+                    const nameInput    = document.getElementById('accountName');
+                    const iconInput    = document.getElementById('accountIcon');
+                    const balanceInput = document.getElementById('accountInitialBalance');
+
+                    const name           = (nameInput    ? nameInput.value.trim()    : '');
+                    const icon           = (iconInput    ? iconInput.value            : '🏦');
+                    const rawBalance     = (balanceInput ? balanceInput.value         : '0');
+                    const initialBalance = parseFormattedNumber(rawBalance || '0');
+
+                    // Validaciones
+                    if (!name) {
+                        alert('⚠️ Debes ingresar un nombre para la cuenta.');
+                        if (nameInput) nameInput.focus();
+                        return;
+                    }
+                    if (name.length > 30) {
+                        alert('⚠️ El nombre no puede tener más de 30 caracteres.');
+                        return;
+                    }
+                    if (isNaN(initialBalance) || initialBalance < 0) {
+                        alert('⚠️ El saldo inicial debe ser 0 o mayor.');
+                        if (balanceInput) balanceInput.focus();
+                        return;
+                    }
+                    // Verificar nombre duplicado
+                    const duplicate = AppState.accounts.find(a => a.name.toLowerCase() === name.toLowerCase());
+                    if (duplicate) {
+                        alert(`⚠️ Ya existe una cuenta con el nombre "${name}". Usa un nombre diferente.`);
+                        return;
+                    }
+
+                    // Crear objeto cuenta
+                    const account = {
+                        id:             'acc_' + Date.now(),
+                        name:           name,
+                        icon:           icon,
+                        initialBalance: initialBalance
+                    };
+
+                    // Agregar al estado global
+                    AppState.accounts.push(account);
+
+                    // Persistir y actualizar TODAS las vistas (incluye renderAccountsTab)
+                    AppState.notifyStateChange();
+
+                    // Limpiar formulario
+                    e.target.reset();
+
+                    // Confirmación visual
+                    alert(`✅ Cuenta "${name}" creada correctamente.\n💰 Saldo inicial: ${formatCurrency(initialBalance)}`);
+                });
+            }
 
             document.getElementById('searchTransaction').addEventListener('input', () => {
                 renderTransactions();
@@ -2958,6 +3553,304 @@
             document.getElementById('filterType').addEventListener('change', () => {
                 renderTransactions();
             });
+
+            // ── TRANSFERENCIAS ENTRE CUENTAS ──────────────────────────────
+            const transferFormEl = document.getElementById('transferForm');
+            if (transferFormEl) {
+                transferFormEl.addEventListener('submit', (e) => {
+                    e.preventDefault();
+
+                    const fromId  = document.getElementById('transferFrom').value;
+                    const toId    = document.getElementById('transferTo').value;
+                    const rawAmt  = document.getElementById('transferAmount').value;
+                    const desc    = document.getElementById('transferDescription').value.trim();
+                    const amount  = parseFormattedNumber(rawAmt);
+
+                    // Validaciones
+                    if (!fromId) { alert('⚠️ Selecciona la cuenta origen.'); return; }
+                    if (!toId)   { alert('⚠️ Selecciona la cuenta destino.'); return; }
+                    if (fromId === toId) { alert('⚠️ La cuenta origen y destino no pueden ser la misma.'); return; }
+                    if (isNaN(amount) || amount <= 0) { alert('⚠️ Ingresa un monto válido mayor a 0.'); return; }
+
+                    const fromAcct = AppState.accounts.find(a => a.id === fromId);
+                    const toAcct   = AppState.accounts.find(a => a.id === toId);
+                    const fromBalance = AppState.getAccountBalance(fromId);
+
+                    if (amount > fromBalance) {
+                        alert(`⚠️ Saldo insuficiente en "${fromAcct.icon} ${fromAcct.name}".\n\nDisponible: ${formatCurrency(fromBalance)}\nIntentaste transferir: ${formatCurrency(amount)}`);
+                        return;
+                    }
+
+                    const today = new Date().toISOString().split('T')[0];
+                    const label = desc || `Transferencia ${fromAcct.icon} ${fromAcct.name} → ${toAcct.icon} ${toAcct.name}`;
+
+                    // Registro de salida en cuenta origen
+                    AppState.transactions.push({
+                        type: 'Transferencia Salida',
+                        description: label,
+                        amount: amount,
+                        date: today,
+                        category: 'Transferencia Interna',
+                        accountId: fromId
+                    });
+
+                    // Registro de entrada en cuenta destino
+                    AppState.transactions.push({
+                        type: 'Transferencia Entrada',
+                        description: label,
+                        amount: amount,
+                        date: today,
+                        category: 'Transferencia Interna',
+                        accountId: toId
+                    });
+
+                    AppState.notifyStateChange();
+                    e.target.reset();
+                    alert(`✅ Transferencia realizada correctamente\n\n↗️ Salida de ${fromAcct.icon} ${fromAcct.name}: ${formatCurrency(amount)}\n↙️ Entrada a ${toAcct.icon} ${toAcct.name}: ${formatCurrency(amount)}`);
+                });
+            }
+        }
+
+
+        /* ============================================
+           GESTIÓN DE CUENTAS FINANCIERAS
+           ============================================ */
+
+        function renderAccountsTab() {
+            const grid = document.getElementById('accountsGrid');
+            const totalEl = document.getElementById('accountsTotalValue');
+            if (!grid || !totalEl) return;
+
+            const accounts  = AppState.accounts;
+            const available = AppState.getCurrentAvailable();
+            const acctTotal = AppState.getTotalAccountsBalance();
+            const unassigned = AppState.getUnassignedBalance();
+            // Total real = cuentas + sin-asignar - metas (igual que disponible)
+            const reconciled = acctTotal + unassigned - AppState.getTotalSaved();
+            const diff = Math.abs(reconciled - available);
+            const inSync = diff < 1; // tolerancia de 1 peso por redondeo
+
+            totalEl.textContent = formatCurrency(acctTotal);
+            totalEl.style.color = acctTotal >= 0 ? 'var(--color-primary)' : 'var(--color-danger)';
+
+            // Mostrar badge de sincronización
+            const syncBadge = document.getElementById('accountsSyncBadge');
+            if (syncBadge) {
+                if (accounts.length === 0) {
+                    syncBadge.style.display = 'none';
+                } else {
+                    syncBadge.style.display = 'flex';
+                    syncBadge.innerHTML = inSync
+                        ? `<span style="color:var(--color-success);">✅ Sincronizado con Disponible Actual: ${formatCurrency(available)}</span>`
+                        : `<span style="color:var(--color-warning);">⚠️ Diferencia vs Disponible: ${formatCurrency(diff)} (transacciones sin cuenta asignada)</span>`;
+                }
+            }
+
+            if (!accounts || accounts.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><p>No hay cuentas creadas. Crea tu primera cuenta abajo.</p></div>';
+                return;
+            }
+
+            // Renderizar cada cuenta — siempre ejecuta, nunca retorna sin actualizar el grid
+            grid.innerHTML = accounts.map((account, index) => {
+                if (!account || !account.id) return ''; // guard contra datos corruptos
+                const balance    = AppState.getAccountBalance(account.id);
+                const isNeg      = balance < 0;
+                const txCount    = AppState.transactions.filter(t => t.accountId === account.id).length;
+                return `
+                    <div class="account-card">
+                        <div class="account-card-icon">${account.icon || '🏦'}</div>
+                        <div class="account-card-name">${account.name || 'Sin nombre'}</div>
+                        <div class="account-card-balance ${isNeg ? 'negative' : ''}">${formatCurrency(balance)}</div>
+                        <div style="font-size:0.75rem; color: var(--color-text-muted); margin-top:0.2rem;">
+                            Saldo inicial: ${formatCurrency(account.initialBalance || 0)}
+                            &nbsp;·&nbsp; ${txCount} transacción${txCount !== 1 ? 'es' : ''}
+                        </div>
+                        <div class="account-card-actions">
+                            <button style="background: var(--color-primary); color: #0f172a;" onclick="editAccount(${index})">✏️ Editar</button>
+                            <button style="background: var(--color-danger); color: white;" onclick="deleteAccount(${index})">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAccountsBreakdown() {
+            const section = document.getElementById('accountsBreakdownSection');
+            if (!section) return;
+
+            const accounts = AppState.accounts;
+            if (accounts.length === 0) {
+                section.innerHTML = '<div class="no-accounts-notice">⚠️ Aún no tienes cuentas creadas. Ve a la pestaña <strong>🏦 Cuentas</strong> para agregarlas.</div>';
+                return;
+            }
+
+            const available      = AppState.getCurrentAvailable();
+            const totalSaved     = AppState.getTotalSaved();
+            const accountsTotal  = AppState.getTotalAccountsBalance();
+            const unassigned     = AppState.getUnassignedBalance();
+
+            // El disponible neto en cuentas = suma de cuentas - lo que ya está en metas
+            // El total de cuentas + sin-asignar = disponible antes de metas
+            const displayTotal = accountsTotal + unassigned;
+
+            section.innerHTML = `
+                <div class="accounts-inline-grid">
+                    ${accounts.map(account => {
+                        const balance = AppState.getAccountBalance(account.id);
+                        const pct = displayTotal !== 0 ? ((balance / displayTotal) * 100).toFixed(1) : '0.0';
+                        const isNeg = balance < 0;
+                        return `
+                            <div class="account-inline-item">
+                                <div>
+                                    <div style="font-size:1.25rem; margin-bottom:0.2rem;">${account.icon}</div>
+                                    <div class="account-inline-name">${account.name}</div>
+                                    <div style="font-size:0.7rem; color: var(--color-text-muted); margin-top:0.2rem;">${pct}% del total</div>
+                                </div>
+                                <div class="account-inline-balance ${isNeg ? 'negative' : ''}">${formatCurrency(balance)}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${unassigned !== 0 ? `
+                        <div class="account-inline-item" style="border-left-color: var(--color-text-muted); opacity:0.75;">
+                            <div>
+                                <div style="font-size:1.25rem; margin-bottom:0.2rem;">📋</div>
+                                <div class="account-inline-name">Sin cuenta asignada</div>
+                                <div style="font-size:0.7rem; color: var(--color-text-muted); margin-top:0.2rem;">Transacciones sin cuenta</div>
+                            </div>
+                            <div class="account-inline-balance ${unassigned < 0 ? 'negative' : ''}">${formatCurrency(unassigned)}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div style="margin-top:1rem; padding:0.75rem 1rem; background: var(--color-bg-surface); border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${totalSaved > 0 ? '0.5rem' : '0'};">
+                        <span style="font-size:0.875rem; color:var(--color-text-secondary);">💰 Subtotal en cuentas</span>
+                        <span style="font-weight:600; color: var(--color-text-primary);">${formatCurrency(accountsTotal + unassigned)}</span>
+                    </div>
+                    ${totalSaved > 0 ? `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <span style="font-size:0.875rem; color:var(--color-text-secondary);">🎯 Comprometido en metas</span>
+                        <span style="font-weight:600; color: var(--color-warning);">-${formatCurrency(totalSaved)}</span>
+                    </div>` : ''}
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top: 2px solid var(--color-primary); padding-top:0.5rem; margin-top:0.5rem;">
+                        <span style="font-size:0.875rem; color:var(--color-text-secondary); font-weight:600;">= Disponible Actual</span>
+                        <span style="font-weight:700; font-size:1.1rem; color:${available >= 0 ? 'var(--color-success)' : 'var(--color-danger)'};">${formatCurrency(available)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateAccountSelectors() {
+            const selectors = [
+                'incomeAccount',
+                'expenseAccount',
+                'fixedExpenseAccount',
+                'fixedIncomeAccount',
+                'goalAccount'
+            ];
+
+            selectors.forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const currentVal = sel.value;
+                sel.innerHTML = '<option value="">Sin cuenta asignada</option>' +
+                    AppState.accounts.map(a =>
+                        `<option value="${a.id}">${a.icon} ${a.name}</option>`
+                    ).join('');
+                if (currentVal && AppState.accounts.find(a => a.id === currentVal)) {
+                    sel.value = currentVal;
+                }
+            });
+
+            // Selectores de transferencia (sin opción vacía por defecto)
+            ['transferFrom', 'transferTo'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const currentVal = sel.value;
+                sel.innerHTML = '<option value="">Selecciona cuenta</option>' +
+                    AppState.accounts.map(a =>
+                        `<option value="${a.id}">${a.icon} ${a.name} — ${formatCurrency(AppState.getAccountBalance(a.id))}</option>`
+                    ).join('');
+                if (currentVal && AppState.accounts.find(a => a.id === currentVal)) {
+                    sel.value = currentVal;
+                }
+            });
+
+            // Mostrar/ocultar sección de transferencias según si hay ≥2 cuentas
+            const transferSection = document.getElementById('transferSection');
+            if (transferSection) {
+                transferSection.style.display = AppState.accounts.length >= 2 ? 'block' : 'none';
+            }
+        }
+
+        function editAccount(index) {
+            const account = AppState.accounts[index];
+
+            const newName = prompt('✏️ Nombre de la cuenta:', account.name);
+            if (newName === null) return;
+            if (!newName.trim()) { alert('⚠️ El nombre no puede estar vacío'); return; }
+
+            const iconOptions = ['🏦','📱','💵','💳','🏧','💰'];
+            const iconStr = prompt(
+                `Ícono (escribe uno de los siguientes o déjalo igual):
+${iconOptions.join('  ')}
+
+Actual: ${account.icon}`,
+                account.icon
+            );
+            if (iconStr === null) return;
+
+            const newBalStr = prompt(`💰 Nuevo saldo inicial (actual: ${formatCurrency(account.initialBalance)}):`, account.initialBalance);
+            if (newBalStr === null) return;
+            const newBal = parseFormattedNumber(String(newBalStr));
+            if (isNaN(newBal) || newBal < 0) { alert('⚠️ Monto inválido. Debe ser 0 o mayor.'); return; }
+
+            account.name          = newName.trim();
+            account.icon          = (iconStr || '').trim() || account.icon;
+            account.initialBalance = newBal;
+
+            // Forzar actualización global para reflejar el nuevo saldo inicial
+            // en todas las vistas (balance general, disponible actual, cuentas)
+            AppState.notifyStateChange();
+            alert('✅ Cuenta actualizada correctamente');
+        }
+
+        function deleteAccount(index) {
+            const account = AppState.accounts[index];
+            const txCount = AppState.transactions.filter(t => t.accountId === account.id).length;
+            const warning = txCount > 0
+                ? `\n\n⚠️ Esta cuenta tiene ${txCount} transacción(es) asociada(s). Las transacciones quedarán sin cuenta asignada.`
+                : '';
+            if (confirm(`¿Eliminar la cuenta "${account.name}"?${warning}`)) {
+                // Disassociate transactions
+                AppState.transactions.forEach(t => {
+                    if (t.accountId === account.id) t.accountId = null;
+                });
+                AppState.fixedExpenses.forEach(f => {
+                    if (f.accountId === account.id) f.accountId = null;
+                });
+                AppState.fixedIncomes.forEach(f => {
+                    if (f.accountId === account.id) f.accountId = null;
+                });
+                AppState.savingsGoals.forEach(g => {
+                    if (g.accountId === account.id) g.accountId = null;
+                });
+                AppState.accounts.splice(index, 1);
+                AppState.notifyStateChange();
+                alert('✅ Cuenta eliminada correctamente');
+            }
+        }
+
+        /* ============================================
+           TOGGLE DESGLOSE FINANCIERO
+           ============================================ */
+        function toggleDesglose() {
+            const content = document.getElementById('desgloseContent');
+            const icon    = document.getElementById('desgloseToggleIcon');
+            if (!content || !icon) return;
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            icon.textContent = isHidden ? '▲ Ocultar' : '▼ Ver';
         }
 
         /* ============================================
@@ -2969,6 +3862,12 @@
             initForms();
             setDefaultDate();
             updateAllViews();
+            // Renderizado explícito de cuentas tras inicialización completa
+            // (garantiza que el grid y los selectores estén poblados desde el inicio)
+            setTimeout(() => {
+                renderAccountsTab();
+                populateAccountSelectors();
+            }, 0);
         }
 
         /* ============================================
