@@ -1046,7 +1046,7 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" data-tab="mesactual">📍 Seguimiento Financiero</button>
+        <button class="tab-btn active" data-tab="mesactual">📈 Panel</button>
         <button class="tab-btn" data-tab="cuentas">🏦 Cuentas</button>
         <button class="tab-btn" data-tab="ingresos">➕ Ingresos</button>
         <button class="tab-btn" data-tab="gastos">➖ Gastos</button>
@@ -1057,12 +1057,12 @@
         <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
     </div>
 
-    <!-- SEGUIMIENTO FINANCIERO -->
+    <!-- PANEL -->
     <div id="mesactual" class="tab-content active">
         <div class="form-section">
             <h2>📍 Balance General - <span id="currentMonthName"></span></h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-                Seguimiento en tiempo real de tus finanzas.
+                Seguimiento hasta la fecha.
             </p>
 
             <div class="summary-cards">              
@@ -1086,16 +1086,16 @@
             <h3 style="margin-bottom: 1rem; color: var(--color-primary);">📊 Estado del Mes Actual</h3>
             <div class="summary-cards">
                 <div class="card">
-                    <div class="card-title">💰 Disponible Actual</div>
-                    <div class="card-value" id="currentAvailable">$0</div>
-                </div>
-                <div class="card">
                     <div class="card-title">📥 Ingresos del Mes</div>
                     <div class="card-value positive" id="currentMonthIncome">$0</div>
                 </div>
                 <div class="card">
                     <div class="card-title">📤 Gastos del mes</div>
                     <div class="card-value negative" id="currentMonthExpense">$0</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">💰 Disponible Actual</div>
+                    <div class="card-value" id="currentAvailable">$0</div>
                 </div>
                 <div class="card">
                     <div class="card-title">⏳ Días Restantes</div>
@@ -1246,7 +1246,7 @@
                         <input type="text" id="accountName" placeholder="Ej: Bancolombia, Nequi, Efectivo">
                     </div>
                     <div class="form-group">
-                        <label for="accountIcon">Ícono</label>
+                        <label for="accountIcon">Tipo</label>
                         <select id="accountIcon">
                             <option value="🏦">🏦 Banco</option>
                             <option value="📱">📱 Billetera Digital</option>
