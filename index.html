@@ -1030,6 +1030,451 @@
             background-size: 12px;
             padding-right: 2.5rem;
         }
+
+        /* ============================================
+           PANEL — DASHBOARD FINANCIERO
+           ============================================ */
+
+        /* Hero card — Disponible actual */
+        .panel-hero {
+            background: linear-gradient(135deg, rgba(56,189,248,0.18) 0%, rgba(14,165,233,0.08) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: 20px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-hero::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            background: rgba(56,189,248,0.07);
+            pointer-events: none;
+        }
+        .panel-hero-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+        .panel-hero-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--color-text-primary);
+            margin-bottom: 0.4rem;
+        }
+        .panel-hero-sub {
+            font-size: 0.82rem;
+            color: var(--color-text-muted);
+        }
+        .panel-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 0.75rem;
+        }
+
+        /* Fila de 3 métricas rápidas */
+        .panel-trio {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        @media (max-width: 520px) {
+            .panel-trio { grid-template-columns: 1fr; }
+            .panel-hero-amount { font-size: 2.2rem; }
+        }
+        .panel-trio-item {
+            background: var(--color-bg-elevated);
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-trio-item::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+        }
+        .panel-trio-item.income::after  { background: var(--color-success); }
+        .panel-trio-item.expense::after { background: var(--color-danger); }
+        .panel-trio-item.days::after    { background: var(--color-warning); }
+        .panel-trio-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .panel-trio-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        .panel-trio-sub {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 0.15rem;
+        }
+
+        /* Sección de capacidad de gasto */
+        .panel-spend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        @media (max-width: 480px) {
+            .panel-spend-grid { grid-template-columns: 1fr; }
+        }
+        .panel-spend-card {
+            background: var(--color-bg-elevated);
+            border-radius: 14px;
+            padding: 1.1rem 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .panel-spend-card.highlight {
+            background: linear-gradient(135deg, rgba(56,189,248,0.13) 0%, rgba(14,165,233,0.05) 100%);
+            border: 1.5px solid var(--color-primary);
+        }
+        .panel-spend-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+        .panel-spend-amount {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+        .panel-spend-desc {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+
+        /* Barra de presupuesto con etiquetas */
+        .panel-budget-wrap {
+            background: var(--color-bg-elevated);
+            border-radius: 14px;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .panel-budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 0.6rem;
+        }
+        .panel-budget-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        .panel-budget-pct {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-text-primary);
+        }
+        .panel-budget-track {
+            width: 100%;
+            height: 14px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .panel-budget-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-budget-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+        .panel-budget-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.6rem;
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Distribución de cuentas en el panel */
+        .panel-accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(160px,100%), 1fr));
+            gap: 0.65rem;
+            margin-bottom: 0.75rem;
+        }
+        .panel-account-chip {
+            background: var(--color-bg-surface);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            border-left: 4px solid var(--color-primary);
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-account-chip-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-account-icon-name {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        .panel-account-balance {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        .panel-account-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.35rem;
+        }
+        .panel-account-bar-fill {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 4px;
+            transition: width 0.7s ease;
+        }
+        .panel-account-pct {
+            font-size: 0.68rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Desglose colapsable */
+        .panel-desglose-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.75rem 1rem;
+            background: var(--color-bg-surface);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            transition: background 0.2s;
+        }
+        .panel-desglose-toggle:hover {
+            background: rgba(56,189,248,0.08);
+        }
+        .panel-desglose-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        .panel-desglose-icon {
+            font-size: 0.8rem;
+            color: var(--color-primary);
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+        .panel-desglose-icon.open {
+            transform: rotate(180deg);
+        }
+
+        /* Metas mini en panel */
+        .panel-goals-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(220px,100%), 1fr));
+            gap: 0.65rem;
+        }
+        .panel-goal-chip {
+            background: var(--color-bg-surface);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+        }
+        .panel-goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+        .panel-goal-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 65%;
+        }
+        .panel-goal-pct {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-warning);
+        }
+        .panel-goal-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.35rem;
+        }
+        .panel-goal-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-warning), #fb923c);
+            border-radius: 4px;
+            transition: width 0.7s ease;
+        }
+        .panel-goal-amounts {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Sección reserva obligatoria */
+        .panel-reserve-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        @media (max-width: 480px) {
+            .panel-reserve-block { grid-template-columns: 1fr; }
+        }
+        .panel-reserve-item {
+            background: var(--color-bg-elevated);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .panel-reserve-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+        .panel-reserve-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .panel-reserve-desc {
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+
+        /* Fijos pendientes en panel */
+        .panel-fixed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .panel-fixed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.85rem;
+            background: var(--color-bg-surface);
+            border-radius: 10px;
+            border-left: 3px solid var(--color-warning);
+        }
+        .panel-fixed-item.done {
+            border-left-color: var(--color-success);
+            opacity: 0.65;
+        }
+        .panel-fixed-name {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+        .panel-fixed-day {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+        }
+        .panel-fixed-amount {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* Sección wrapper con título */
+        .panel-section {
+            background: var(--color-bg-elevated);
+            border-radius: 16px;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .panel-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .panel-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            letter-spacing: 0.2px;
+        }
+        .panel-section-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Divider mes */
+        .panel-month-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .panel-month-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--color-text-primary);
+        }
+        .panel-month-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            flex-shrink: 0;
+            box-shadow: 0 0 8px var(--color-primary);
+        }
     </style>
 </head>
 <body>
@@ -1059,162 +1504,210 @@
 
     <!-- PANEL -->
     <div id="mesactual" class="tab-content active">
-        <div class="form-section">
-            <h2>📍 Balance General - <span id="currentMonthName"></span></h2>
-            <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-                Seguimiento hasta la fecha.
+
+        <!-- Encabezado: mes actual -->
+        <div class="panel-month-header">
+            <div class="panel-month-dot"></div>
+            <div class="panel-month-name" id="currentMonthName">Cargando...</div>
+            <div style="font-size:0.75rem; color:var(--color-text-muted); margin-left:auto;">
+                <span id="daysRemaining">0</span> días restantes
+            </div>
+        </div>
+
+        <!-- ① HERO — Disponible actual -->
+        <div class="panel-hero">
+            <div class="panel-hero-label">💰 Disponible Actual</div>
+            <div class="panel-hero-amount" id="currentAvailable">$0</div>
+            <div class="panel-hero-sub">Dinero real disponible después de gastos, fijos y metas comprometidas</div>
+            <div id="nonp-status" class="panel-hero-badge status-stable">
+                <span id="nonp-status-icon">●</span>
+                <span id="nonp-status-text">Calculando...</span>
+            </div>
+        </div>
+
+        <!-- ② TRÍO — Ingresos · Gastos · Días -->
+        <div class="panel-trio">
+            <div class="panel-trio-item income">
+                <div class="panel-trio-label">📥 Ingresos del mes</div>
+                <div class="panel-trio-value positive" id="currentMonthIncome">$0</div>
+                <div class="panel-trio-sub">Total registrado: <span id="totalIngresos" style="color:var(--color-success);font-weight:600;">$0</span></div>
+            </div>
+            <div class="panel-trio-item expense">
+                <div class="panel-trio-label">📤 Gastos del mes</div>
+                <div class="panel-trio-value negative" id="currentMonthExpense">$0</div>
+                <div class="panel-trio-sub">Total registrado: <span id="totalGastos" style="color:var(--color-danger);font-weight:600;">$0</span></div>
+            </div>
+            <div class="panel-trio-item days">
+                <div class="panel-trio-label">📌 Gastos fijos</div>
+                <div class="panel-trio-value" id="totalFijos">$0</div>
+                <div class="panel-trio-sub">Obligaciones recurrentes del mes</div>
+            </div>
+        </div>
+
+        <!-- ③ BARRA PRESUPUESTO -->
+        <div class="panel-budget-wrap">
+            <div class="panel-budget-header">
+                <div>
+                    <div class="panel-budget-title">🎯 Presupuesto utilizado</div>
+                    <div style="font-size:0.72rem; color:var(--color-text-muted); margin-top:0.15rem;">
+                        Gastos vs. ingreso total disponible
+                    </div>
+                </div>
+                <div class="panel-budget-pct" id="budgetPctDisplay">0%</div>
+            </div>
+            <div class="panel-budget-track">
+                <div class="panel-budget-fill" id="budgetBarFill" style="width:0%;"></div>
+            </div>
+            <div class="panel-budget-legend">
+                <span>$0 gastado</span>
+                <span id="budgetLegendRight">de $0 disponible</span>
+            </div>
+        </div>
+
+        <!-- ④ CAPACIDAD DE GASTO — Reserva + Libre -->
+        <div class="panel-section">
+            <div class="panel-section-header">
+                <div class="panel-section-title">💳 Capacidad de Gasto</div>
+                <div id="nonp-recommendations"></div>
+            </div>
+            <p style="font-size:0.78rem; color:var(--color-text-muted); margin-bottom:1rem; line-height:1.5;">
+                Basado en tu <strong style="color:var(--color-text-secondary);">Disponible Actual</strong>. El 70% se reserva como colchón obligatorio para imprevistos y compromisos. Solo el 30% es seguro para gastar libremente.
             </p>
-
-            <div class="summary-cards">              
-                <div class="card">
-                    <div class="card-title">Total Ingresos</div>
-                    <div class="card-value positive" id="totalIngresos">$0</div>
-                    <small class="card-subtitle">Todos los registros</small>
+            <div class="panel-reserve-block">
+                <div class="panel-reserve-item">
+                    <div class="panel-reserve-label">🛡️ Reserva Obligatoria (70%)</div>
+                    <div class="panel-reserve-value" style="color:var(--color-warning);" id="nonp-minimum-balance">$0</div>
+                    <div class="panel-reserve-desc">No toques este dinero — cubre imprevistos, deudas y obligaciones futuras</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Total Gastos</div>
-                    <div class="card-value negative" id="totalGastos">$0</div>
-                    <small class="card-subtitle">Todos los registros</small>
-                </div>
-                <div class="card">
-                    <div class="card-title">Gastos Fijos Mensuales</div>
-                    <div class="card-value" id="totalFijos">$0</div>
-                    <small class="card-subtitle">Obligaciones recurrentes</small>
+                <div class="panel-reserve-item" style="border:1.5px solid var(--color-primary); background:linear-gradient(135deg,rgba(56,189,248,0.1) 0%,rgba(14,165,233,0.04) 100%);">
+                    <div class="panel-reserve-label">✅ Libre para gastar (30%)</div>
+                    <div class="panel-reserve-value" style="color:var(--color-primary);" id="nonp-safe-spending">$0</div>
+                    <div class="panel-reserve-desc">Puedes usar esto sin comprometer tu estabilidad financiera</div>
                 </div>
             </div>
-
-            <h3 style="margin-bottom: 1rem; color: var(--color-primary);">📊 Estado del Mes Actual</h3>
-            <div class="summary-cards">
-                <div class="card">
-                    <div class="card-title">📥 Ingresos del Mes</div>
-                    <div class="card-value positive" id="currentMonthIncome">$0</div>
+            <!-- Gasto diario -->
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--color-bg-base); border-radius:10px; padding:0.75rem 1rem;">
+                <div>
+                    <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); margin-bottom:0.15rem;">💵 Límite diario recomendado</div>
+                    <div style="font-size:0.75rem; color:var(--color-text-muted);">Para los días restantes del mes, sin exceder el gasto libre</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">📤 Gastos del mes</div>
-                    <div class="card-value negative" id="currentMonthExpense">$0</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">💰 Disponible Actual</div>
-                    <div class="card-value" id="currentAvailable">$0</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">⏳ Días Restantes</div>
-                    <div class="card-value" id="daysRemaining">0</div>
-                    <small class="card-subtitle">del mes actual</small>
-                </div>
+                <div style="font-size:1.75rem; font-weight:800; color:var(--color-primary); white-space:nowrap; margin-left:1rem;" id="canSpendPerDay">$0</div>
             </div>
-
-            <div class="non-priority-card">
-                <h3 style="margin-bottom: 1rem; color: var(--color-primary);">💳 Capacidad de Gasto No Prioritario</h3>
-                <p style="color: var(--color-text-secondary); margin-bottom: 1rem; font-size: 0.875rem;">
-                    Basado exclusivamente en tu <strong>Disponible Actual</strong>. Muestra cuánto puedes gastar de forma segura sin comprometer obligaciones.
-                </p>
-                
-                <div class="savings-details">
-                    <div class="savings-row">
-                        <span class="savings-label">💰 Base de Cálculo (Disponible Actual):</span>
-                        <span class="savings-value" id="nonp-base-calculation">$0</span>
-                    </div>
-                    <div class="savings-row">
-                        <span class="savings-label">🛡️ Reserva Obligatoria:</span>
-                        <span class="savings-value" id="nonp-minimum-balance">$0</span>
-                    </div>
-                    <div class="savings-row" style="margin-top: 1rem; border-top: 3px solid var(--color-primary); padding-top: 0.75rem;">
-                        <span class="savings-label"><strong>💵 Gasto No Prioritario Seguro:</strong></span>
-                        <span class="savings-value" style="font-size: 1.5rem; color: var(--color-primary);" id="nonp-safe-spending">$0</span>
-                    </div>
-                </div>
-
-                <div style="margin-top: 1rem;">
-                    <div class="status-indicator" id="nonp-status">
-                        <span id="nonp-status-icon">●</span>
-                        <span id="nonp-status-text">Calculando...</span>
-                    </div>
-                </div>
-
-                <div id="nonp-recommendations" style="margin-top: 1rem;"></div>
-
-                <!-- "Puede gastar por día" integrado aquí — pertenece semánticamente
-                     a la capacidad de gasto no prioritario -->
-                <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--color-bg-base); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">💵 Disponible diario (no prioritario):</span>
-                    <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary);" id="canSpendPerDay">$0</span>
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <h3 class="chart-title">🎯 Presupuesto vs Gastado</h3>
-                <div id="budgetProgressBar"></div>
-            </div>
-
-            <!-- Desglose financiero colapsable -->
-            <div class="chart-container" style="padding-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;"
-                     onclick="toggleDesglose()">
-                    <h3 class="chart-title" style="margin-bottom: 0;">📊 Desglose Financiero</h3>
-                    <span id="desgloseToggleIcon" style="font-size: 1rem; color: var(--color-primary); font-weight: 600;">▼ Ver</span>
-                </div>
-                <div id="desgloseContent" style="display: none; margin-top: 1rem;">
-                    <div class="savings-details">
-                        <div class="savings-row" style="background: rgba(56, 189, 248, 0.1); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
-                            <span class="savings-label" id="breakdown-prev-label">💰 Saldos Iniciales de Cuentas:</span>
-                            <span class="savings-value" style="color: var(--color-primary); font-size: 1.125rem;" id="breakdown-previous-balance">$0</span>
-                        </div>
-                        <div class="savings-row">
-                            <span class="savings-label">➕ Total Ingresos Registrados:</span>
-                            <span class="savings-value" id="breakdown-confirmed-income">$0</span>
-                        </div>
-                        <div class="savings-row" style="border-top: 2px solid var(--color-primary); padding-top: 0.75rem;">
-                            <span class="savings-label"><strong>= Subtotal Bruto:</strong></span>
-                            <span class="savings-value" style="color: var(--color-success);" id="breakdown-total-income">$0</span>
-                        </div>
-                        <div class="savings-row" style="margin-top: 1rem;">
-                            <span class="savings-label">➖ Total Gastos Registrados:</span>
-                            <span class="savings-value" id="breakdown-confirmed-expense">$0</span>
-                        </div>
-                        <div class="savings-row">
-                            <span class="savings-label">🎯 Ahorro en Metas:</span>
-                            <span class="savings-value" style="color: var(--color-warning);" id="breakdown-total-saved">$0</span>
-                        </div>
-                        <div class="savings-row" style="margin-top: 1rem; border-top: 3px solid var(--color-primary); padding-top: 0.75rem;">
-                            <span class="savings-label"><strong>💰 Disponible Actual:</strong></span>
-                            <span class="savings-value" style="font-size: 1.25rem;" id="breakdown-remaining">$0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="monthlyAlert"></div>
+            <!-- Base de cálculo oculta para actualizarla desde JS -->
+            <span id="nonp-base-calculation" style="display:none;">$0</span>
         </div>
 
-        <div class="chart-container">
-            <h3 class="chart-title">🏦 Distribución por Cuentas</h3>
-            <div id="accountsBreakdownSection">
-                <div class="no-accounts-notice">⚠️ Aún no tienes cuentas creadas. Ve a la pestaña <strong>🏦 Cuentas</strong> para agregarlas.</div>
+        <!-- ⑤ DISTRIBUCIÓN POR CUENTAS -->
+        <div class="panel-section">
+            <div class="panel-section-header">
+                <div class="panel-section-title">🏦 Distribución por Cuentas</div>
+                <div id="panelAccountsTotalBadge" class="panel-section-badge" style="background:rgba(56,189,248,0.12); color:var(--color-primary);">$0 total</div>
+            </div>
+            <div id="panelAccountsGrid">
+                <div class="no-accounts-notice">⚠️ Aún no tienes cuentas. Ve a <strong>🏦 Cuentas</strong> para agregarlas.</div>
+            </div>
+            <!-- Totales compactos -->
+            <div id="panelAccountsSummary" style="display:none; margin-top:0.85rem; padding:0.75rem 1rem; background:var(--color-bg-base); border-radius:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                    <span style="font-size:0.78rem; color:var(--color-text-secondary);">💰 Subtotal en cuentas</span>
+                    <span style="font-weight:600; color:var(--color-text-primary);" id="panelSubtotalCuentas">$0</span>
+                </div>
+                <div id="panelMetasRow" style="display:none; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                    <span style="font-size:0.78rem; color:var(--color-text-secondary);">🎯 Comprometido en metas</span>
+                    <span style="font-weight:600; color:var(--color-warning);" id="panelMetasAmount">-$0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:2px solid var(--color-primary); padding-top:0.4rem; margin-top:0.4rem;">
+                    <span style="font-size:0.78rem; color:var(--color-text-secondary); font-weight:600;">= Disponible Actual</span>
+                    <span style="font-weight:700; font-size:1rem;" id="panelDisponibleFinal">$0</span>
+                </div>
             </div>
         </div>
 
-        <div class="chart-container">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;">
-                <h3 class="chart-title" style="margin-bottom:0;">📈 Gastos por Categoría</h3>
-                <div style="display:flex;gap:0.5rem;">
-                    <button id="catToggleGeneral"
-                        onclick="switchCategoryChart('general')"
-                        style="padding:0.4rem 1rem;font-size:0.8rem;min-height:36px;border:none;border-radius:6px;cursor:pointer;font-weight:500;background:var(--color-primary);color:#0f172a;transition:all 0.2s;">
-                        📊 General
+        <!-- ⑥ METAS DE AHORRO (resumen) -->
+        <div class="panel-section" id="panelGoalsSection">
+            <div class="panel-section-header">
+                <div class="panel-section-title">🎯 Metas de Ahorro</div>
+                <div id="panelGoalsBadge" class="panel-section-badge" style="background:rgba(245,158,11,0.12); color:var(--color-warning);">0 activas</div>
+            </div>
+            <div id="panelGoalsGrid">
+                <div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No tienes metas activas. Créalas en la pestaña 🎯 Metas.</div>
+            </div>
+        </div>
+
+        <!-- ⑦ GASTOS FIJOS — estado del mes -->
+        <div class="panel-section">
+            <div class="panel-section-header">
+                <div class="panel-section-title">📌 Gastos Fijos del Mes</div>
+                <div id="panelFixedBadge" class="panel-section-badge" style="background:rgba(245,158,11,0.12); color:var(--color-warning);">0 pendientes</div>
+            </div>
+            <div id="panelFixedList">
+                <div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No hay gastos fijos configurados.</div>
+            </div>
+        </div>
+
+        <!-- ⑧ DESGLOSE FINANCIERO colapsable -->
+        <div style="margin-bottom:1.25rem;">
+            <div class="panel-desglose-toggle" onclick="toggleDesglose()">
+                <span class="panel-desglose-title">📊 Desglose Financiero Completo</span>
+                <span id="desgloseToggleIcon" class="panel-desglose-icon">▼</span>
+            </div>
+            <div id="desgloseContent" style="display:none; background:var(--color-bg-elevated); border-radius:0 0 14px 14px; padding:1.1rem 1.25rem; border:1px solid rgba(255,255,255,0.05); border-top:none;">
+                <div class="savings-details" style="margin-top:0;">
+                    <div class="savings-row" style="background:rgba(56,189,248,0.08); padding:0.6rem 0.75rem; border-radius:6px; margin-bottom:0.5rem;">
+                        <span class="savings-label" id="breakdown-prev-label">💰 Saldos Iniciales:</span>
+                        <span class="savings-value" style="color:var(--color-primary);" id="breakdown-previous-balance">$0</span>
+                    </div>
+                    <div class="savings-row">
+                        <span class="savings-label">➕ Ingresos registrados:</span>
+                        <span class="savings-value" id="breakdown-confirmed-income">$0</span>
+                    </div>
+                    <div class="savings-row" style="border-top:2px solid var(--color-primary); padding-top:0.5rem;">
+                        <span class="savings-label"><strong>= Subtotal Bruto:</strong></span>
+                        <span class="savings-value" style="color:var(--color-success);" id="breakdown-total-income">$0</span>
+                    </div>
+                    <div class="savings-row" style="margin-top:0.5rem;">
+                        <span class="savings-label">➖ Gastos registrados:</span>
+                        <span class="savings-value" id="breakdown-confirmed-expense">$0</span>
+                    </div>
+                    <div class="savings-row">
+                        <span class="savings-label">🎯 Ahorro en Metas:</span>
+                        <span class="savings-value" style="color:var(--color-warning);" id="breakdown-total-saved">$0</span>
+                    </div>
+                    <div class="savings-row" style="margin-top:0.5rem; border-top:3px solid var(--color-primary); padding-top:0.5rem;">
+                        <span class="savings-label"><strong>💰 Disponible Actual:</strong></span>
+                        <span class="savings-value" style="font-size:1.15rem;" id="breakdown-remaining">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑨ GASTOS POR CATEGORÍA -->
+        <div class="panel-section">
+            <div class="panel-section-header" style="margin-bottom:1rem;">
+                <div class="panel-section-title">📈 Gastos por Categoría</div>
+                <div style="display:flex; gap:0.4rem;">
+                    <button id="catToggleGeneral" onclick="switchCategoryChart('general')"
+                        style="padding:0.3rem 0.75rem;font-size:0.75rem;min-height:32px;border:none;border-radius:6px;cursor:pointer;font-weight:600;background:var(--color-primary);color:#0f172a;transition:all 0.2s;">
+                        General
                     </button>
-                    <button id="catToggleMes"
-                        onclick="switchCategoryChart('mes')"
-                        style="padding:0.4rem 1rem;font-size:0.8rem;min-height:36px;border:none;border-radius:6px;cursor:pointer;font-weight:500;background:var(--color-bg-surface);color:var(--color-text-secondary);transition:all 0.2s;">
-                        📅 Este Mes
+                    <button id="catToggleMes" onclick="switchCategoryChart('mes')"
+                        style="padding:0.3rem 0.75rem;font-size:0.75rem;min-height:32px;border:none;border-radius:6px;cursor:pointer;font-weight:500;background:var(--color-bg-surface);color:var(--color-text-secondary);transition:all 0.2s;">
+                        Este Mes
                     </button>
                 </div>
             </div>
             <div id="categoryChartUnified"></div>
         </div>
-        <!-- IDs legacy ocultos: requeridos por renderCategoryCharts() para historial -->
+
+        <!-- IDs legacy ocultos requeridos por renderCategoryCharts() -->
         <div id="categoryChart" style="display:none;"></div>
         <div id="currentMonthCategoryChart" style="display:none;"></div>
+
+        <!-- accountsBreakdownSection legacy — oculto, mantenido para compatibilidad JS -->
+        <div id="accountsBreakdownSection" style="display:none;"></div>
+        <div id="monthlyAlert"></div>
+        <!-- budgetProgressBar legacy — reemplazado por panel-budget-wrap -->
+        <div id="budgetProgressBar" style="display:none;"></div>
     </div>
 
     <!-- CUENTAS -->
@@ -2417,88 +2910,236 @@
 
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             const daysRemaining = daysInMonth - currentDay;
-            const daysPassed = currentDay;
 
             document.getElementById('daysRemaining').textContent = daysRemaining;
 
             const monthIncome  = AppState.getCurrentMonthIncome();
             const monthExpense = AppState.getCurrentMonthExpense();
             const totalSaved   = AppState.getTotalSaved();
+            const available    = AppState.getCurrentAvailable();
 
-            // Fuente de verdad unificada: usa cuentas si existen, legacy si no.
-            const available = AppState.getCurrentAvailable();
-
-            // Para el desglose visual: base = saldos iniciales de cuentas O balance acumulado legacy
             const hasAccounts = AppState.accounts.length > 0;
             const baseLabel   = hasAccounts ? 'Saldos Iniciales de Cuentas' : 'Balance Acumulado';
             const baseValue   = hasAccounts
                 ? AppState.getInitialAccountsTotal()
                 : calculateAccumulatedBalance(currentMonth, currentYear);
 
-            // totalIncome del desglose = base + TODOS los ingresos (no solo del mes)
             const allIncome  = AppState.getTotalIncome();
             const allExpense = AppState.getTotalExpense();
 
-            // "Ingresos del Mes": cuando hay cuentas, incluir saldos iniciales
-            // como punto de partida del patrimonio (son el "ingreso base" del sistema).
-            // Cuando no hay cuentas, se mantiene el comportamiento original.
             const displayMonthIncome = hasAccounts
                 ? (AppState.getInitialAccountsTotal() + monthIncome)
                 : monthIncome;
 
-            document.getElementById('currentMonthIncome').textContent = formatCurrency(displayMonthIncome);
+            // ── Elementos del panel nuevo ──────────────────────────────────
+
+            // Hero
+            const availEl = document.getElementById('currentAvailable');
+            availEl.textContent = formatCurrency(available);
+            availEl.style.color = available >= 0 ? 'var(--color-text-primary)' : 'var(--color-danger)';
+
+            // Trío
+            document.getElementById('currentMonthIncome').textContent  = formatCurrency(displayMonthIncome);
             document.getElementById('currentMonthExpense').textContent = formatCurrency(monthExpense);
-            document.getElementById('currentAvailable').textContent = formatCurrency(available);
 
-            const availableElement = document.getElementById('currentAvailable');
-            availableElement.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
+            // Barra de presupuesto (panel nuevo)
+            const totalIncomeReal = baseValue + allIncome;
+            const percentUsed = totalIncomeReal > 0 ? Math.min((allExpense / totalIncomeReal) * 100, 100) : 0;
+            let budgetColor = 'var(--color-success)';
+            if (percentUsed >= 90)      budgetColor = 'var(--color-danger)';
+            else if (percentUsed >= 70) budgetColor = 'var(--color-warning)';
 
+            const pctDisplay = document.getElementById('budgetPctDisplay');
+            const barFill    = document.getElementById('budgetBarFill');
+            const legendR    = document.getElementById('budgetLegendRight');
+            if (pctDisplay) pctDisplay.textContent = percentUsed.toFixed(1) + '%';
+            if (pctDisplay) pctDisplay.style.color = budgetColor;
+            if (barFill) {
+                barFill.style.width = percentUsed + '%';
+                barFill.style.background = `linear-gradient(90deg, ${budgetColor}, ${budgetColor}cc)`;
+            }
+            if (legendR) legendR.textContent = 'de ' + formatCurrency(totalIncomeReal) + ' total';
+
+            // Barra legacy (oculta pero sigue siendo actualizada por si algo la lee)
+            const budgetBarLegacy = document.getElementById('budgetProgressBar');
+            if (budgetBarLegacy) budgetBarLegacy.innerHTML = '';
+
+            // Gasto diario
             const baseReal = Math.max(0, available * 0.30);
             const canSpendDaily = daysRemaining > 0 ? baseReal / daysRemaining : 0;
             document.getElementById('canSpendPerDay').textContent = formatCurrency(Math.max(0, canSpendDaily));
 
-            // Actualizar etiqueta dinámica del desglose
+            // Desglose financiero
             const prevBalLabel = document.getElementById('breakdown-prev-label');
             if (prevBalLabel) prevBalLabel.textContent = baseLabel + ':';
-
-            document.getElementById('breakdown-previous-balance').textContent = formatCurrency(baseValue);
-            document.getElementById('breakdown-confirmed-income').textContent = formatCurrency(allIncome);
-            document.getElementById('breakdown-total-income').textContent = formatCurrency(baseValue + allIncome);
+            document.getElementById('breakdown-previous-balance').textContent  = formatCurrency(baseValue);
+            document.getElementById('breakdown-confirmed-income').textContent  = formatCurrency(allIncome);
+            document.getElementById('breakdown-total-income').textContent      = formatCurrency(baseValue + allIncome);
             document.getElementById('breakdown-confirmed-expense').textContent = formatCurrency(allExpense);
-            document.getElementById('breakdown-total-saved').textContent = formatCurrency(totalSaved);
-            document.getElementById('breakdown-remaining').textContent = formatCurrency(available);
+            document.getElementById('breakdown-total-saved').textContent       = formatCurrency(totalSaved);
+            document.getElementById('breakdown-remaining').textContent         = formatCurrency(available);
+            const remEl = document.getElementById('breakdown-remaining');
+            if (remEl) remEl.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
 
-            const remainingElement = document.getElementById('breakdown-remaining');
-            remainingElement.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
+            // Panel: distribución de cuentas
+            renderPanelAccounts();
 
-            const budgetBar = document.getElementById('budgetProgressBar');
-            // Ingreso total real = base (cuentas o legacy) + todas las transacciones de ingreso
-            const totalIncomeReal = baseValue + allIncome;
-            const percentUsed = totalIncomeReal > 0 ? Math.min((allExpense / totalIncomeReal) * 100, 100) : 0;
+            // Panel: metas resumen
+            renderPanelGoals();
 
-            let barColor = 'var(--color-success)';
-            if (percentUsed >= 90) {
-                barColor = 'var(--color-danger)';
-            } else if (percentUsed >= 70) {
-                barColor = 'var(--color-warning)';
+            // Panel: gastos fijos del mes
+            renderPanelFixedExpenses();
+
+            document.getElementById('monthlyAlert').innerHTML = '';
+            updateNonPrioritySpending();
+        }
+
+        /* ── Distribución de cuentas en el panel ── */
+        function renderPanelAccounts() {
+            const grid    = document.getElementById('panelAccountsGrid');
+            const summary = document.getElementById('panelAccountsSummary');
+            const badge   = document.getElementById('panelAccountsTotalBadge');
+            if (!grid) return;
+
+            const accounts      = AppState.accounts;
+            const accountsTotal = AppState.getTotalAccountsBalance();
+            const totalSaved    = AppState.getTotalSaved();
+            const available     = AppState.getCurrentAvailable();
+            const unassigned    = AppState.getUnassignedBalance();
+            const displayTotal  = accountsTotal + unassigned;
+
+            if (badge) badge.textContent = formatCurrency(accountsTotal) + ' total';
+
+            if (accounts.length === 0) {
+                grid.innerHTML = '<div class="no-accounts-notice">⚠️ Aún no tienes cuentas. Ve a <strong>🏦 Cuentas</strong> para agregarlas.</div>';
+                if (summary) summary.style.display = 'none';
+                return;
             }
 
-            budgetBar.innerHTML = `
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.875rem; color: var(--color-text-secondary);">Gastado del presupuesto</span>
-                        <span style="font-size: 1rem; font-weight: bold;">${percentUsed.toFixed(1)}%</span>
-                    </div>
-                    <div class="progress-bar" style="height: 20px;">
-                        <div class="progress-fill" style="width: ${percentUsed}%; background: ${barColor};"></div>
-                    </div>
-                </div>
-            `;
+            grid.innerHTML = `<div class="panel-accounts-grid">` +
+                accounts.map(account => {
+                    const balance = AppState.getAccountBalance(account.id);
+                    const pct     = displayTotal !== 0 ? Math.max(0, (balance / displayTotal) * 100) : 0;
+                    const isNeg   = balance < 0;
+                    return `
+                        <div class="panel-account-chip">
+                            <div class="panel-account-chip-top">
+                                <div class="panel-account-icon-name">
+                                    <span>${account.icon}</span>
+                                    <span>${account.name}</span>
+                                </div>
+                            </div>
+                            <div class="panel-account-balance ${isNeg ? 'negative' : ''}">${formatCurrency(balance)}</div>
+                            <div class="panel-account-bar">
+                                <div class="panel-account-bar-fill" style="width:${Math.min(pct,100).toFixed(1)}%;"></div>
+                            </div>
+                            <div class="panel-account-pct">${pct.toFixed(1)}% del total</div>
+                        </div>`;
+                }).join('') +
+            `</div>`;
 
-            const alertElement = document.getElementById('monthlyAlert');
-            alertElement.innerHTML = '';
+            if (summary) {
+                summary.style.display = 'block';
+                const subEl = document.getElementById('panelSubtotalCuentas');
+                if (subEl) subEl.textContent = formatCurrency(displayTotal);
+                const metasRow = document.getElementById('panelMetasRow');
+                const metasAmt = document.getElementById('panelMetasAmount');
+                if (totalSaved > 0) {
+                    if (metasRow) metasRow.style.display = 'flex';
+                    if (metasAmt) metasAmt.textContent = '-' + formatCurrency(totalSaved);
+                } else {
+                    if (metasRow) metasRow.style.display = 'none';
+                }
+                const dispFinal = document.getElementById('panelDisponibleFinal');
+                if (dispFinal) {
+                    dispFinal.textContent = formatCurrency(available);
+                    dispFinal.style.color = available >= 0 ? 'var(--color-success)' : 'var(--color-danger)';
+                }
+            }
+        }
 
-            updateNonPrioritySpending();
+        /* ── Metas resumen en el panel ── */
+        function renderPanelGoals() {
+            const grid  = document.getElementById('panelGoalsGrid');
+            const badge = document.getElementById('panelGoalsBadge');
+            if (!grid) return;
+
+            const goals = AppState.savingsGoals;
+            if (badge) badge.textContent = goals.length + ' activa' + (goals.length !== 1 ? 's' : '');
+
+            if (goals.length === 0) {
+                grid.innerHTML = '<div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No tienes metas activas. Créalas en la pestaña 🎯 Metas.</div>';
+                return;
+            }
+
+            grid.innerHTML = '<div class="panel-goals-row">' +
+                goals.map(goal => {
+                    const pct       = Math.min((goal.current / goal.amount) * 100, 100);
+                    const remaining = goal.amount - goal.current;
+                    const daysLeft  = Math.ceil((new Date(goal.date) - new Date()) / (1000*60*60*24));
+                    const statusColor = pct >= 100 ? 'var(--color-success)' : daysLeft < 0 ? 'var(--color-danger)' : 'var(--color-warning)';
+                    return `
+                        <div class="panel-goal-chip">
+                            <div class="panel-goal-header">
+                                <div class="panel-goal-name">${goal.name}</div>
+                                <div class="panel-goal-pct" style="color:${statusColor};">${pct.toFixed(0)}%</div>
+                            </div>
+                            <div class="panel-goal-bar">
+                                <div class="panel-goal-bar-fill" style="width:${pct.toFixed(1)}%; background:linear-gradient(90deg,${statusColor},${statusColor}cc);"></div>
+                            </div>
+                            <div class="panel-goal-amounts">
+                                <span>Ahorrado: ${formatCurrency(goal.current)}</span>
+                                <span>Falta: ${formatCurrency(remaining)}</span>
+                            </div>
+                            <div style="font-size:0.68rem; color:var(--color-text-muted); margin-top:0.25rem;">
+                                ${daysLeft > 0 ? '📅 ' + daysLeft + ' días para la meta' : daysLeft === 0 ? '📅 Hoy vence' : '⚠️ Fecha vencida'}
+                            </div>
+                        </div>`;
+                }).join('') +
+            '</div>';
+        }
+
+        /* ── Gastos fijos del mes en el panel ── */
+        function renderPanelFixedExpenses() {
+            const list  = document.getElementById('panelFixedList');
+            const badge = document.getElementById('panelFixedBadge');
+            if (!list) return;
+
+            const items = AppState.fixedExpenses;
+            const pending = items.filter(f => f.status === 'pending').length;
+            if (badge) {
+                badge.textContent = pending > 0 ? pending + ' pendiente' + (pending !== 1 ? 's' : '') : '✅ Todo pagado';
+                badge.style.background = pending > 0 ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)';
+                badge.style.color      = pending > 0 ? 'var(--color-warning)' : 'var(--color-success)';
+            }
+
+            if (items.length === 0) {
+                list.innerHTML = '<div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No hay gastos fijos configurados.</div>';
+                return;
+            }
+
+            // Ordenar: primero pendientes, luego pagados; dentro de cada grupo por día
+            const sorted = [...items].sort((a, b) => {
+                if (a.status === b.status) return a.paymentDay - b.paymentDay;
+                return a.status === 'pending' ? -1 : 1;
+            });
+
+            list.innerHTML = '<div class="panel-fixed-list">' +
+                sorted.map(item => {
+                    const isPaid = item.status === 'paid';
+                    const acct   = item.accountId ? AppState.accounts.find(a => a.id === item.accountId) : null;
+                    return `
+                        <div class="panel-fixed-item ${isPaid ? 'done' : ''}">
+                            <div>
+                                <div class="panel-fixed-name">${isPaid ? '✅' : '⏳'} ${item.name}</div>
+                                <div class="panel-fixed-day">Día ${item.paymentDay} · ${item.category}${acct ? ' · 🏦 ' + acct.name : ''}</div>
+                            </div>
+                            <div class="panel-fixed-amount" style="color:${isPaid ? 'var(--color-text-muted)' : 'var(--color-danger)'};">
+                                ${formatCurrency(item.amount)}
+                            </div>
+                        </div>`;
+                }).join('') +
+            '</div>';
         }
 
         /* ============================================
@@ -2528,7 +3169,7 @@
             renderCategoryCharts();
             renderGoals();
             renderAllGoalsSummary();
-            updateCurrentMonthView();
+            updateCurrentMonthView();   // también llama renderPanelAccounts, renderPanelGoals, renderPanelFixedExpenses
             updateStatistics();
             updateFilterOptions();
             updateUserDisplay();
@@ -3957,7 +4598,12 @@ Actual: ${account.icon}`,
             if (!content || !icon) return;
             const isHidden = content.style.display === 'none';
             content.style.display = isHidden ? 'block' : 'none';
-            icon.textContent = isHidden ? '▲ Ocultar' : '▼ Ver';
+            icon.textContent = isHidden ? '▲' : '▼';
+            if (isHidden) {
+                icon.classList.add('open');
+            } else {
+                icon.classList.remove('open');
+            }
         }
 
         /* ============================================
