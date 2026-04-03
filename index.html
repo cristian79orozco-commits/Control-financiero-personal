@@ -1302,6 +1302,9 @@
     <!-- INGRESOS -->
     <div id="ingresos" class="tab-content">
         <div class="form-section">
+            <div id="noAccountsWarningIncome" class="no-accounts-notice" style="display:none;">
+                ⚠️ No tienes cuentas creadas. Ve a <strong>🏦 Cuentas</strong> para crear una antes de registrar ingresos.
+            </div>
             <h2>➕ Registrar Ingreso</h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
                 Registra todos tus ingresos variables (bonos, freelance, ventas, etc.).
@@ -1331,9 +1334,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="incomeAccount">🏦 Cuenta Destino</label>
+                        <label for="incomeAccount">🏦 Cuenta Destino <span style="color:var(--color-danger);">*</span></label>
                         <select id="incomeAccount">
-                            <option value="">Sin cuenta asignada</option>
+                            <option value="">— Seleccionar cuenta —</option>
                         </select>
                     </div>
                 </div>
@@ -1345,6 +1348,9 @@
     <!-- GASTOS -->
     <div id="gastos" class="tab-content">
         <div class="form-section">
+            <div id="noAccountsWarningExpense" class="no-accounts-notice" style="display:none;">
+                ⚠️ No tienes cuentas creadas. Ve a <strong>🏦 Cuentas</strong> para crear una antes de registrar gastos.
+            </div>
             <h2>➖ Registrar Gasto</h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
                 Registra todos tus gastos variables.
@@ -1379,9 +1385,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="expenseAccount">🏦 Cuenta Origen</label>
+                        <label for="expenseAccount">🏦 Cuenta Origen <span style="color:var(--color-danger);">*</span></label>
                         <select id="expenseAccount">
-                            <option value="">Sin cuenta asignada</option>
+                            <option value="">— Seleccionar cuenta —</option>
                         </select>
                     </div>
                 </div>
@@ -1393,6 +1399,9 @@
     <!-- GASTOS FIJOS -->
     <div id="gastosfijos" class="tab-content">
         <div class="form-section">
+            <div id="noAccountsWarningFixedExp" class="no-accounts-notice" style="display:none;">
+                ⚠️ No tienes cuentas creadas. Ve a <strong>🏦 Cuentas</strong> para crear una antes de configurar gastos fijos.
+            </div>
             <h2>📌 Configurar Gastos Fijos Mensuales</h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
                 Define tus gastos fijos recurrentes mensuales. <strong>Los gastos no se descuentan automáticamente</strong>. Solo impactan tu disponible cuando presionas "Marcar como Pagado".
@@ -1423,9 +1432,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="fixedExpenseAccount">🏦 Cuenta Origen</label>
+                        <label for="fixedExpenseAccount">🏦 Cuenta Origen <span style="color:var(--color-danger);">*</span></label>
                         <select id="fixedExpenseAccount">
-                            <option value="">Sin cuenta asignada</option>
+                            <option value="">— Seleccionar cuenta —</option>
                         </select>
                     </div>
                 </div>
@@ -1445,6 +1454,9 @@
     <!-- INGRESOS FIJOS -->
     <div id="ingresosfijos" class="tab-content">
         <div class="form-section">
+            <div id="noAccountsWarningFixedInc" class="no-accounts-notice" style="display:none;">
+                ⚠️ No tienes cuentas creadas. Ve a <strong>🏦 Cuentas</strong> para crear una antes de configurar ingresos fijos.
+            </div>
             <h2>💵 Configurar Ingresos Fijos Mensuales</h2>
             <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
                 Define tus ingresos fijos recurrentes mensuales (salario, pensión, arriendos, etc.). <strong>Los ingresos no se suman automáticamente</strong>. Solo impactan tu disponible cuando presionas "Marcar como Recibido".
@@ -1474,9 +1486,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="fixedIncomeAccount">🏦 Cuenta Destino</label>
+                        <label for="fixedIncomeAccount">🏦 Cuenta Destino <span style="color:var(--color-danger);">*</span></label>
                         <select id="fixedIncomeAccount">
-                            <option value="">Sin cuenta asignada</option>
+                            <option value="">— Seleccionar cuenta —</option>
                         </select>
                     </div>
                 </div>
@@ -1533,6 +1545,9 @@
 
     <!-- METAS -->
     <div id="metas" class="tab-content">
+        <div id="noAccountsWarningGoals" class="no-accounts-notice" style="display:none; margin-bottom:1rem;">
+            ⚠️ No tienes cuentas creadas. Ve a <strong>🏦 Cuentas</strong> para crear una antes de gestionar metas.
+        </div>
         <div class="summary-cards">
             <div class="card">
                 <div class="card-title">💰 Disponible Actual</div>
@@ -1562,9 +1577,9 @@
                         <input type="date" id="goalDate" required>
                     </div>
                     <div class="form-group">
-                        <label for="goalAccount">🏦 Cuenta de Ahorro</label>
+                        <label for="goalAccount">🏦 Cuenta de Ahorro <span style="color:var(--color-danger);">*</span></label>
                         <select id="goalAccount">
-                            <option value="">Sin cuenta asignada</option>
+                            <option value="">— Seleccionar cuenta —</option>
                         </select>
                     </div>
                 </div>
@@ -2520,6 +2535,23 @@
             renderAccountsTab();
             renderAccountsBreakdown();
             populateAccountSelectors();
+            updateNoAccountsWarnings();
+        }
+
+        // Muestra u oculta los banners de "sin cuentas" según el estado actual
+        function updateNoAccountsWarnings() {
+            const hasNoAccounts = AppState.accounts.length === 0;
+            const ids = [
+                'noAccountsWarningIncome',
+                'noAccountsWarningExpense',
+                'noAccountsWarningFixedExp',
+                'noAccountsWarningFixedInc',
+                'noAccountsWarningGoals'
+            ];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = hasNoAccounts ? 'block' : 'none';
+            });
         }
 
         function updateUserDisplay() {
@@ -2591,15 +2623,14 @@
 
         function markFixedExpenseAsPaid(index) {
             const expense = AppState.fixedExpenses[index];
-            const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const currentMonthYear = new Date().toISOString().slice(0, 7);
 
             if (expense.status === 'paid') {
-                alert('⚠️ Este gasto ya fue marcado como pagado este mes');
+                alert('⚠️ Este gasto ya fue marcado como pagado este mes.');
                 return;
             }
 
-            // Guardia adicional: verificar que no exista ya una transacción para este mes.
-            // Previene doble ejecución incluso ante fallos del reinicio mensual.
+            // Guardia de unicidad mensual
             const yaEjecutado = AppState.transactions.some(t =>
                 t.type === 'Gasto Fijo' &&
                 t.description === `${expense.name} (Gasto Fijo)` &&
@@ -2611,23 +2642,32 @@
                 return;
             }
 
-            if (confirm(`¿Confirmar pago de "${expense.name}" por ${formatCurrency(expense.amount)}?\n\nEsto descontará el monto de tu disponible actual y registrará la transacción en el historial.`)) {
+            // Validación obligatoria de cuenta
+            if (!expense.accountId) {
+                alert('⚠️ Este gasto fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
+                return;
+            }
+            const acct = AppState.accounts.find(a => a.id === expense.accountId);
+            if (!acct) {
+                alert('⚠️ La cuenta asignada a este gasto ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
+                return;
+            }
+
+            if (confirm(`¿Confirmar pago de "${expense.name}" por ${formatCurrency(expense.amount)}?\n\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto descontará el monto de la cuenta y quedará registrado en el historial.`)) {
                 expense.status = 'paid';
 
-                const transaction = {
-                    type: 'Gasto Fijo',
+                AppState.transactions.push({
+                    type:        'Gasto Fijo',
                     description: `${expense.name} (Gasto Fijo)`,
-                    amount: expense.amount,
-                    date: new Date().toISOString().split('T')[0],
-                    monthYear: currentMonthYear,   // identificador de mes para control de unicidad
-                    category: expense.category,
-                    accountId: expense.accountId || null
-                };
+                    amount:      expense.amount,
+                    date:        new Date().toISOString().split('T')[0],
+                    monthYear:   currentMonthYear,
+                    category:    expense.category,
+                    accountId:   expense.accountId
+                });
 
-                AppState.transactions.push(transaction);
                 AppState.notifyStateChange();
-
-                alert(`✅ Gasto marcado como pagado\n💸 Descontado: ${formatCurrency(expense.amount)}\n📝 Registrado en historial`);
+                alert(`✅ Gasto pagado\n💸 Descontado de ${acct.icon} ${acct.name}: ${formatCurrency(expense.amount)}\n📝 Registrado en historial`);
             }
         }
 
@@ -2701,14 +2741,14 @@
 
         function markFixedIncomeAsReceived(index) {
             const income = AppState.fixedIncomes[index];
-            const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const currentMonthYear = new Date().toISOString().slice(0, 7);
 
             if (income.status === 'received') {
-                alert('⚠️ Este ingreso ya fue marcado como recibido este mes');
+                alert('⚠️ Este ingreso ya fue marcado como recibido este mes.');
                 return;
             }
 
-            // Guardia adicional: verificar unicidad mensual
+            // Guardia de unicidad mensual
             const yaEjecutado = AppState.transactions.some(t =>
                 t.type === 'Ingreso Fijo' &&
                 t.description === `${income.name} (Ingreso Fijo)` &&
@@ -2720,23 +2760,32 @@
                 return;
             }
 
-            if (confirm(`¿Confirmar recepción de "${income.name}" por ${formatCurrency(income.amount)}?\n\nEsto sumará el monto a tu disponible actual y registrará la transacción en el historial.`)) {
+            // Validación obligatoria de cuenta
+            if (!income.accountId) {
+                alert('⚠️ Este ingreso fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
+                return;
+            }
+            const acct = AppState.accounts.find(a => a.id === income.accountId);
+            if (!acct) {
+                alert('⚠️ La cuenta asignada a este ingreso ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
+                return;
+            }
+
+            if (confirm(`¿Confirmar recepción de "${income.name}" por ${formatCurrency(income.amount)}?\n\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto sumará el monto a la cuenta y quedará registrado en el historial.`)) {
                 income.status = 'received';
 
-                const transaction = {
-                    type: 'Ingreso Fijo',
+                AppState.transactions.push({
+                    type:        'Ingreso Fijo',
                     description: `${income.name} (Ingreso Fijo)`,
-                    amount: income.amount,
-                    date: new Date().toISOString().split('T')[0],
-                    monthYear: currentMonthYear,   // identificador de mes para control de unicidad
-                    category: income.category,
-                    accountId: income.accountId || null
-                };
+                    amount:      income.amount,
+                    date:        new Date().toISOString().split('T')[0],
+                    monthYear:   currentMonthYear,
+                    category:    income.category,
+                    accountId:   income.accountId
+                });
 
-                AppState.transactions.push(transaction);
                 AppState.notifyStateChange();
-
-                alert(`✅ Ingreso marcado como recibido\n💰 Sumado: ${formatCurrency(income.amount)}\n📝 Registrado en historial`);
+                alert(`✅ Ingreso recibido\n💰 Sumado a ${acct.icon} ${acct.name}: ${formatCurrency(income.amount)}\n📝 Registrado en historial`);
             }
         }
 
@@ -3098,9 +3147,22 @@
 
         function addMoneyToGoal(index) {
             const goal = AppState.savingsGoals[index];
+
+            // Bloquear si la meta no tiene cuenta asignada
+            if (!goal.accountId) {
+                alert('⚠️ Esta meta no tiene una cuenta asignada.\n\nEdita la meta para asignarle una cuenta antes de registrar aportes.');
+                return;
+            }
+            // Verificar que la cuenta siga existiendo
+            const acct = AppState.accounts.find(a => a.id === goal.accountId);
+            if (!acct) {
+                alert('⚠️ La cuenta asignada a esta meta ya no existe.\n\nEdita la meta para asignarle una cuenta válida.');
+                return;
+            }
+
             const remaining = goal.amount - goal.current;
 
-            const amountToAdd = prompt(`💰 ¿Cuánto dinero deseas agregar a "${goal.name}"?\n\nAhorro actual: ${formatCurrency(goal.current)}\nFaltante: ${formatCurrency(remaining)}`);
+            const amountToAdd = prompt(`💰 ¿Cuánto dinero deseas agregar a "${goal.name}"?\n\nAhorro actual: ${formatCurrency(goal.current)}\nFaltante: ${formatCurrency(remaining)}\n🏦 Cuenta: ${acct.icon} ${acct.name}`);
             
             if (amountToAdd === null) return;
 
@@ -3119,30 +3181,21 @@
 
             goal.current += parsedAmount;
 
-            // Registrar movimiento en la cuenta asignada (si existe) como Transferencia Meta.
-            // Este tipo NO afecta gastos generales ni métricas de egresos.
-            if (goal.accountId) {
-                const acct = AppState.accounts.find(a => a.id === goal.accountId);
-                if (acct) {
-                    AppState.transactions.push({
-                        type: 'Transferencia Meta',
-                        description: 'Ahorro → ' + goal.name,
-                        amount: parsedAmount,
-                        date: new Date().toISOString().split('T')[0],
-                        category: 'Ahorro / Meta',
-                        accountId: goal.accountId
-                    });
-                }
-            }
+            // Registrar como Transferencia Meta — no impacta gastos ni ingresos
+            AppState.transactions.push({
+                type:        'Transferencia Meta',
+                description: 'Ahorro → ' + goal.name,
+                amount:      parsedAmount,
+                date:        new Date().toISOString().split('T')[0],
+                category:    'Ahorro / Meta',
+                accountId:   goal.accountId
+            });
 
             AppState.notifyStateChange();
-
-            const acctInfo = goal.accountId
-                ? (AppState.accounts.find(a => a.id === goal.accountId)
-                    ? '\n🏦 Cuenta: ' + AppState.accounts.find(a => a.id === goal.accountId).icon + ' ' + AppState.accounts.find(a => a.id === goal.accountId).name
-                    : '')
-                : '';
-            alert('✅ Se agregaron ' + formatCurrency(parsedAmount) + ' a la meta "' + goal.name + '"' + acctInfo + '\n\nNuevo ahorro acumulado: ' + formatCurrency(goal.current) + '\nFaltante: ' + formatCurrency(goal.amount - goal.current));
+            alert('✅ Se agregaron ' + formatCurrency(parsedAmount) + ' a la meta "' + goal.name + '"' +
+                  '\n🏦 Cuenta: ' + acct.icon + ' ' + acct.name +
+                  '\n\nNuevo ahorro acumulado: ' + formatCurrency(goal.current) +
+                  '\nFaltante: ' + formatCurrency(goal.amount - goal.current));
         }
 
         function editGoal(index) {
@@ -3382,13 +3435,37 @@
         }
 
         /* ============================================
+           VALIDACIÓN CENTRALIZADA DE CUENTA
+           ============================================ */
+        /**
+         * Verifica que el select indicado tenga una cuenta seleccionada.
+         * Si no hay cuentas creadas, guía al usuario a crearlas primero.
+         * Retorna true si la validación pasa, false si debe bloquearse la operación.
+         */
+        function requireAccount(selectId, operationLabel) {
+            // Si no hay cuentas registradas, no tiene sentido pedir selección
+            if (AppState.accounts.length === 0) {
+                alert(`⚠️ Debes crear al menos una cuenta financiera antes de registrar ${operationLabel}.\n\nVe a la pestaña 🏦 Cuentas para crearla.`);
+                return false;
+            }
+            const sel = document.getElementById(selectId);
+            if (!sel || !sel.value) {
+                alert(`⚠️ Debes seleccionar una cuenta para realizar esta operación.\n\nCampo requerido: 🏦 Cuenta`);
+                if (sel) sel.focus();
+                return false;
+            }
+            return true;
+        }
+
+        /* ============================================
            FORMULARIOS
            ============================================ */
         function initForms() {
             document.getElementById('incomeForm').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!requireAccount('incomeAccount', 'un ingreso')) return;
 
-                const incomeAccountId = document.getElementById('incomeAccount').value || null;
+                const incomeAccountId = document.getElementById('incomeAccount').value;
                 const transaction = {
                     type: 'Ingreso',
                     description: document.getElementById('incomeDescription').value,
@@ -3408,8 +3485,9 @@
 
             document.getElementById('expenseForm').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!requireAccount('expenseAccount', 'un gasto')) return;
 
-                const expenseAccountId = document.getElementById('expenseAccount').value || null;
+                const expenseAccountId = document.getElementById('expenseAccount').value;
                 const transaction = {
                     type: 'Gasto',
                     description: document.getElementById('expenseDescription').value,
@@ -3429,13 +3507,14 @@
 
             document.getElementById('fixedExpenseForm').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!requireAccount('fixedExpenseAccount', 'un gasto fijo')) return;
 
                 const fixedExpense = {
                     name: document.getElementById('fixedExpenseName').value,
                     amount: parseFormattedNumber(document.getElementById('fixedExpenseAmount').value),
                     paymentDay: parseInt(document.getElementById('fixedExpenseDay').value),
                     category: document.getElementById('fixedExpenseCategory').value,
-                    accountId: document.getElementById('fixedExpenseAccount').value || null,
+                    accountId: document.getElementById('fixedExpenseAccount').value,
                     status: 'pending'
                 };
 
@@ -3448,13 +3527,14 @@
 
             document.getElementById('fixedIncomeForm2').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!requireAccount('fixedIncomeAccount', 'un ingreso fijo')) return;
 
                 const fixedIncome = {
                     name: document.getElementById('fixedIncomeName').value,
                     amount: parseFormattedNumber(document.getElementById('fixedIncomeAmount').value),
                     paymentDay: parseInt(document.getElementById('fixedIncomeDay').value),
                     category: document.getElementById('fixedIncomeCategory2').value,
-                    accountId: document.getElementById('fixedIncomeAccount').value || null,
+                    accountId: document.getElementById('fixedIncomeAccount').value,
                     status: 'pending'
                 };
 
@@ -3467,14 +3547,41 @@
 
             document.getElementById('goalForm').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!requireAccount('goalAccount', 'una meta de ahorro')) return;
+
+                const goalCurrentRaw = parseFormattedNumber(document.getElementById('goalCurrent').value);
+                const goalAccountId  = document.getElementById('goalAccount').value;
+                const goalName       = document.getElementById('goalName').value;
+                const goalAmount     = parseFormattedNumber(document.getElementById('goalAmount').value);
+
+                // Si tiene monto inicial, verificar que haya saldo suficiente en la cuenta
+                if (goalCurrentRaw > 0) {
+                    const acctBalance = AppState.getAccountBalance(goalAccountId);
+                    if (goalCurrentRaw > AppState.getCurrentAvailable()) {
+                        alert(`⚠️ El monto inicial (${formatCurrency(goalCurrentRaw)}) supera tu disponible actual (${formatCurrency(AppState.getCurrentAvailable())}).`);
+                        return;
+                    }
+                }
 
                 const goal = {
-                    name: document.getElementById('goalName').value,
-                    amount: parseFormattedNumber(document.getElementById('goalAmount').value),
-                    current: parseFormattedNumber(document.getElementById('goalCurrent').value),
-                    date: document.getElementById('goalDate').value,
-                    accountId: document.getElementById('goalAccount').value || null
+                    name:      goalName,
+                    amount:    goalAmount,
+                    current:   goalCurrentRaw,
+                    date:      document.getElementById('goalDate').value,
+                    accountId: goalAccountId
                 };
+
+                // Si hay monto inicial, registrar el aporte como Transferencia Meta
+                if (goalCurrentRaw > 0) {
+                    AppState.transactions.push({
+                        type:        'Transferencia Meta',
+                        description: 'Ahorro → ' + goalName,
+                        amount:      goalCurrentRaw,
+                        date:        new Date().toISOString().split('T')[0],
+                        category:    'Ahorro / Meta',
+                        accountId:   goalAccountId
+                    });
+                }
 
                 AppState.savingsGoals.push(goal);
                 AppState.notifyStateChange();
@@ -3753,7 +3860,7 @@
                 const sel = document.getElementById(id);
                 if (!sel) return;
                 const currentVal = sel.value;
-                sel.innerHTML = '<option value="">Sin cuenta asignada</option>' +
+                sel.innerHTML = '<option value="">— Seleccionar cuenta —</option>' +
                     AppState.accounts.map(a =>
                         `<option value="${a.id}">${a.icon} ${a.name}</option>`
                     ).join('');
