@@ -1476,7 +1476,132 @@
             box-shadow: 0 0 8px var(--color-primary);
         }
     </style>
+    <!-- SUPABASE: Conexión con la base de datos en la nube -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    // ═══════════════════════════════════════════════════════════
+    //  ⚙️  REEMPLAZA LOS DOS VALORES DE ABAJO CON LOS TUYOS
+    //  Los copiaste en el Paso 4 de esta guía
+    // ═══════════════════════════════════════════════════════════
+    const SUPABASE_URL = 'https://evlyufvsrlavrcjzxwam.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bHl1ZnZzcmxhdnJjanp4d2FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDg3NzYsImV4cCI6MjA5MjM4NDc3Nn0.vNWdZ3nd4UvnPbxJhOGGToyQbIlaxJT97zo_lrFfQR8';
+    // ═══════════════════════════════════════════════════════════
+
+    const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let CURRENT_USER_ID = null;
+
+    async function sb_guardarTodo() {
+        if (!CURRENT_USER_ID) return;
+        try {
+            await Promise.all([sb_sync_cuentas(), sb_sync_transacciones(),
+                sb_sync_gastos_fijos(), sb_sync_ingresos_fijos(), sb_sync_metas()]);
+        } catch(e) { console.warn('[Supabase] Error sync:', e.message); }
+    }
+
+    async function sb_sync_transacciones() {
+        if (!CURRENT_USER_ID || !AppState.transactions.length) return;
+        AppState.transactions.forEach(t => {
+            if (!t.id) t.id = 't_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        });
+        await _sb.from('transacciones').upsert(
+            AppState.transactions.map(t => ({
+                id: t.id, user_id: CURRENT_USER_ID, type: t.type,
+                description: t.description || '', amount: t.amount,
+                date: t.date, category: t.category || '', account_id: t.accountId || null
+            })), { onConflict: 'id' }
+        );
+    }
+
+    async function sb_sync_cuentas() {
+        if (!CURRENT_USER_ID || !AppState.accounts.length) return;
+        await _sb.from('cuentas').upsert(
+            AppState.accounts.map(a => ({
+                id: a.id, user_id: CURRENT_USER_ID, name: a.name,
+                icon: a.icon || '🏦', initial_balance: a.initialBalance || 0
+            })), { onConflict: 'id' }
+        );
+    }
+
+    async function sb_sync_gastos_fijos() {
+        if (!CURRENT_USER_ID || !AppState.fixedExpenses.length) return;
+        AppState.fixedExpenses.forEach(f => {
+            if (!f.id) f.id = 'fe_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        });
+        await _sb.from('gastos_fijos').upsert(
+            AppState.fixedExpenses.map(f => ({
+                id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
+                payment_day: f.paymentDay, category: f.category || '',
+                account_id: f.accountId || null, status: f.status || 'pending'
+            })), { onConflict: 'id' }
+        );
+    }
+
+    async function sb_sync_ingresos_fijos() {
+        if (!CURRENT_USER_ID || !AppState.fixedIncomes.length) return;
+        AppState.fixedIncomes.forEach(f => {
+            if (!f.id) f.id = 'fi_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        });
+        await _sb.from('ingresos_fijos').upsert(
+            AppState.fixedIncomes.map(f => ({
+                id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
+                payment_day: f.paymentDay, category: f.category || '',
+                account_id: f.accountId || null, status: f.status || 'pending'
+            })), { onConflict: 'id' }
+        );
+    }
+
+    async function sb_sync_metas() {
+        if (!CURRENT_USER_ID || !AppState.savingsGoals.length) return;
+        AppState.savingsGoals.forEach(g => {
+            if (!g.id) g.id = 'g_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        });
+        await _sb.from('metas_ahorro').upsert(
+            AppState.savingsGoals.map(g => ({
+                id: g.id, user_id: CURRENT_USER_ID, name: g.name, amount: g.amount,
+                current: g.current || 0, date: g.date || null,
+                account_id: g.accountId || null, completed: g.completed || false
+            })), { onConflict: 'id' }
+        );
+    }
+
+    async function sb_cargarDatos(userId) {
+        try {
+            const [
+                { data: cuentas }, { data: trans }, { data: gf },
+                { data: inf }, { data: metas }, { data: usr }
+            ] = await Promise.all([
+                _sb.from('cuentas').select('*').eq('user_id', userId),
+                _sb.from('transacciones').select('*').eq('user_id', userId).order('date', { ascending: true }),
+                _sb.from('gastos_fijos').select('*').eq('user_id', userId),
+                _sb.from('ingresos_fijos').select('*').eq('user_id', userId),
+                _sb.from('metas_ahorro').select('*').eq('user_id', userId),
+                _sb.from('usuarios').select('monthly_balance').eq('id', userId).maybeSingle()
+            ]);
+            AppState.accounts      = (cuentas||[]).map(c => ({ id:c.id, name:c.name, icon:c.icon, initialBalance:parseFloat(c.initial_balance)||0 }));
+            AppState.transactions  = (trans||[]).map(t  => ({ id:t.id, type:t.type, description:t.description, amount:parseFloat(t.amount), date:t.date, category:t.category, accountId:t.account_id }));
+            AppState.fixedExpenses = (gf||[]).map(f    => ({ id:f.id, name:f.name, amount:parseFloat(f.amount), paymentDay:f.payment_day, category:f.category, accountId:f.account_id, status:f.status }));
+            AppState.fixedIncomes  = (inf||[]).map(f   => ({ id:f.id, name:f.name, amount:parseFloat(f.amount), paymentDay:f.payment_day, category:f.category, accountId:f.account_id, status:f.status }));
+            AppState.savingsGoals  = (metas||[]).map(g => ({ id:g.id, name:g.name, amount:parseFloat(g.amount), current:parseFloat(g.current)||0, date:g.date, accountId:g.account_id, completed:g.completed }));
+            AppState.monthlyBalance = usr ? parseFloat(usr.monthly_balance)||0 : 0;
+            return true;
+        } catch(e) { console.warn('[Supabase] Error carga:', e.message); return false; }
+    }
+
+    async function sb_crearUsuario(username, pin) {
+        const { data: ex } = await _sb.from('usuarios').select('id').eq('username', username).maybeSingle();
+        if (ex) return { error: 'Ese nombre de usuario ya existe.' };
+        const { data, error } = await _sb.from('usuarios')
+            .insert({ username, pin, monthly_balance: 0 }).select('id').single();
+        if (error) return { error: error.message };
+        return { id: data.id };
+    }
+
+    async function sb_eliminarUsuario(userId) {
+        await _sb.from('usuarios').delete().eq('id', userId);
+    }
+    </script>
 </head>
+
 <body>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <h1 style="margin: 0;">💰 Control Financiero Personal</h1>
@@ -2336,58 +2461,61 @@
            PERSISTENCIA
            ============================================ */
         
-        function renderUserName() {
-            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+                function renderUserName() {
+            const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
+            const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
             const el = document.getElementById('currentUserDisplay');
-
             if (!el) return;
-
-            if (user && (user.name || user.username)) {
-                el.textContent = user.name || user.username;
-            } else {
-                el.textContent = 'Usuario';
-            }
+            el.textContent = (user && (user.name || user.username)) ? (user.name || user.username) : 'Usuario';
         }
+
         
-        function saveToLocalStorage() {
-
-            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+                function saveToLocalStorage() {
+            const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
+            const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
             if (!user) return;
-
             user.data = {
-                transactions: AppState.transactions,
-                fixedExpenses: AppState.fixedExpenses,
-                fixedIncomes: AppState.fixedIncomes,
-                savingsGoals: AppState.savingsGoals,
-                accounts: AppState.accounts,
+                transactions:   AppState.transactions,
+                fixedExpenses:  AppState.fixedExpenses,
+                fixedIncomes:   AppState.fixedIncomes,
+                savingsGoals:   AppState.savingsGoals,
+                accounts:       AppState.accounts,
                 monthlyBalance: AppState.monthlyBalance
             };
-
-            localStorage.setItem('finanzas_user', JSON.stringify(user));
+            localStorage.setItem(activeKey, JSON.stringify(user));
+            sb_guardarTodo();
         }
 
-        function loadFromLocalStorage() {
 
-            const user = JSON.parse(localStorage.getItem('finanzas_user'));
-
-            if (!user) {
-                initUserSystem(); //solo muestra login si no hay usuario
-                return;
-            }
-
-                if (!user.data) {
-                user.data = {};
-            }
-
-            AppState.transactions = user.data.transactions || [];
-            AppState.fixedExpenses = user.data.fixedExpenses || [];
-            AppState.fixedIncomes = user.data.fixedIncomes || [];
-            AppState.savingsGoals = user.data.savingsGoals || [];
-            AppState.accounts = user.data.accounts || [];
+                function loadFromLocalStorage() {
+            const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
+            const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
+            if (!user) { initUserSystem(); return; }
+            if (!user.data) user.data = {};
+            AppState.transactions   = user.data.transactions   || [];
+            AppState.fixedExpenses  = user.data.fixedExpenses  || [];
+            AppState.fixedIncomes   = user.data.fixedIncomes   || [];
+            AppState.savingsGoals   = user.data.savingsGoals   || [];
+            AppState.accounts       = user.data.accounts       || [];
             AppState.monthlyBalance = user.data.monthlyBalance || 0;
-
             renderUserName();
+            if (CURRENT_USER_ID) {
+                sb_cargarDatos(CURRENT_USER_ID).then(ok => {
+                    if (!ok) return;
+                    const u = JSON.parse(localStorage.getItem(activeKey) || 'null');
+                    if (u) {
+                        u.data = {
+                            transactions: AppState.transactions, fixedExpenses: AppState.fixedExpenses,
+                            fixedIncomes: AppState.fixedIncomes, savingsGoals: AppState.savingsGoals,
+                            accounts: AppState.accounts, monthlyBalance: AppState.monthlyBalance
+                        };
+                        localStorage.setItem(activeKey, JSON.stringify(u));
+                    }
+                    updateAllViews();
+                });
+            }
         }
+
 
         /* ============================================
            3️⃣ SISTEMA DE ALERTAS TIPO NUBE
@@ -2492,7 +2620,17 @@
                             url('fondo.jpg') center / cover no-repeat; /* rgba(15, 23, 42, 0.95); */backdrop-filter: blur(10px); z-index: 9999; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-out;">
                     <div class="login-container" style="background: var(--color-bg-elevated); padding: 1.5rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); border: 1px solid rgba(56, 189, 248, 0.2); animation: scaleIn 0.4s ease-out;">
                         <h1 style="text-align: center; margin-bottom: 0.5rem; color: var(--color-primary); font-size: 2rem;">💰 Control Financiero personal</h1>
-                        <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 2rem; font-size: 0.875rem;">Ingresa tu contraseña</p>
+                                                <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 1rem; font-size: 0.875rem;">Ingresa tu usuario y PIN</p>
+                        <div style="margin-bottom: 1.2rem;">
+                            <input id="loginUsernameInput" type="text" maxlength="15"
+                                placeholder="Tu nombre de usuario"
+                                style="width:100%; padding:0.65rem 1rem; border-radius:10px;
+                                       border:1.5px solid rgba(56,189,248,0.3);
+                                       background:var(--color-bg-surface);
+                                       color:var(--color-text-primary); font-size:0.95rem;
+                                       outline:none; text-align:center; box-sizing:border-box;" />
+                        </div>
+
                         
                         <div style="text-align: center; margin-bottom: 1.5rem;">
                             <button id="createUserBtn" class="btn btn-primary" onclick="showCreateUserModal()" style="width: 100%; margin-bottom: 0.5rem;">
@@ -2713,66 +2851,99 @@
                 return;
             }
 
-            const existingUser = JSON.parse(localStorage.getItem('finanzas_user'));
-
-            if (existingUser) {
-                showLoginMessage('⚠️ Ya existe un usuario registrado. Elimínalo si deseas crear otro.', 'orage');
-                return;
-            }
+                        const storageKey = 'finanzas_user_' + name.trim().toLowerCase();
+            const existingLocal = JSON.parse(localStorage.getItem(storageKey) || 'null');
+            if (existingLocal) { showLoginMessage('⚠️ Ese nombre ya está registrado en este dispositivo.', 'orange'); return; }
 
             const newUser = {
-                name: name.trim(),
-                pin: pin,
-                data: {
-                    transactions: [],
-                    fixedExpenses: [],
-                    fixedIncomes: [],
-                    savingsGoals: [],
-                    accounts: [],
-                    monthlyBalance: 0
-                }
+                name: name.trim(), pin: pin,
+                data: { transactions:[], fixedExpenses:[], fixedIncomes:[], savingsGoals:[], accounts:[], monthlyBalance:0 }
             };
 
-            localStorage.setItem('finanzas_user', JSON.stringify(newUser));
+            showLoginMessage('⏳ Creando usuario en la nube...', '#38bdf8');
 
-            showLoginMessage(`✅ Usuario "${name}" creado correctamente`, 'green');
-            updateUserStatusMessage();
+            sb_crearUsuario(name.trim(), pin).then(result => {
+                if (result.error) { showLoginMessage('❌ ' + result.error, 'red'); return; }
+                CURRENT_USER_ID = result.id;
+                newUser.supabaseId = result.id;
+                localStorage.setItem(storageKey, JSON.stringify(newUser));
+                localStorage.setItem('finanzas_active_user', storageKey);
+                showLoginMessage('✅ Usuario "' + name.trim() + '" creado correctamente', 'green');
+                updateUserStatusMessage();
+            }).catch(() => {
+                localStorage.setItem(storageKey, JSON.stringify(newUser));
+                localStorage.setItem('finanzas_active_user', storageKey);
+                showLoginMessage('✅ Usuario "' + name.trim() + '" creado (sin conexión)', 'green');
+                updateUserStatusMessage();
+            });
         }
 
-        function loginUser() {
 
-            if (currentPin.length !== 4) {
-                showLoginMessage('Ingresa los 4 dígitos del PIN', 'orange');
-                return;
-            }
+                function loginUser() {
+            if (currentPin.length !== 4) { showLoginMessage('Ingresa los 4 dígitos del PIN', 'orange'); return; }
+            const inputEl = document.getElementById('loginUsernameInput');
+            const username = inputEl ? inputEl.value.trim() : '';
+            if (!username) { showLoginMessage('Ingresa tu nombre de usuario', 'orange'); return; }
 
-            const user = JSON.parse(localStorage.getItem('finanzas_user'));
+            const storageKey = 'finanzas_user_' + username.toLowerCase();
+            const user = JSON.parse(localStorage.getItem(storageKey) || 'null');
 
             if (!user) {
-                showLoginMessage('No hay usuario registrado', 'red');
-                return;
-            }
- 
-            if (user.pin !== currentPin) {
-                showLoginMessage('PIN incorrecto', 'red');
-                setTimeout(() => clearPin(), 1000);
+                showLoginMessage('⏳ Buscando en la nube...', '#38bdf8');
+                _sb.from('usuarios').select('id, username, pin')
+                    .eq('username', username).eq('pin', currentPin).maybeSingle()
+                    .then(({ data }) => {
+                        if (!data) { showLoginMessage('Usuario o PIN incorrecto', 'red'); setTimeout(() => clearPin(), 1000); return; }
+                        CURRENT_USER_ID = data.id;
+                        const nuevoLocal = {
+                            name: data.username, pin: currentPin, supabaseId: data.id,
+                            data: { transactions:[], fixedExpenses:[], fixedIncomes:[], savingsGoals:[], accounts:[], monthlyBalance:0 }
+                        };
+                        localStorage.setItem(storageKey, JSON.stringify(nuevoLocal));
+                        localStorage.setItem('finanzas_active_user', storageKey);
+                        AppState.currentUser = true;
+                        _completarLogin(nuevoLocal);
+                    }).catch(() => { showLoginMessage('Usuario o PIN incorrecto', 'red'); setTimeout(() => clearPin(), 1000); });
                 return;
             }
 
+            if (user.pin !== currentPin) { showLoginMessage('PIN incorrecto', 'red'); setTimeout(() => clearPin(), 1000); return; }
             AppState.currentUser = true;
-            loadFromLocalStorage();
+            if (user.supabaseId) CURRENT_USER_ID = user.supabaseId;
+            localStorage.setItem('finanzas_active_user', storageKey);
+            _completarLogin(user);
+        }
 
+        function _completarLogin(user) {
+            if (!user.data) user.data = {};
+            AppState.transactions   = user.data.transactions   || [];
+            AppState.fixedExpenses  = user.data.fixedExpenses  || [];
+            AppState.fixedIncomes   = user.data.fixedIncomes   || [];
+            AppState.savingsGoals   = user.data.savingsGoals   || [];
+            AppState.accounts       = user.data.accounts       || [];
+            AppState.monthlyBalance = user.data.monthlyBalance || 0;
+            renderUserName();
+            if (CURRENT_USER_ID) {
+                const activeKey = localStorage.getItem('finanzas_active_user');
+                sb_cargarDatos(CURRENT_USER_ID).then(ok => {
+                    if (!ok) return;
+                    const u = JSON.parse(localStorage.getItem(activeKey) || 'null');
+                    if (u) {
+                        u.data = { transactions: AppState.transactions, fixedExpenses: AppState.fixedExpenses,
+                            fixedIncomes: AppState.fixedIncomes, savingsGoals: AppState.savingsGoals,
+                            accounts: AppState.accounts, monthlyBalance: AppState.monthlyBalance };
+                        localStorage.setItem(activeKey, JSON.stringify(u));
+                    }
+                    updateAllViews();
+                });
+            }
             const loginScreen = document.querySelector('[style*="z-index: 9999"]');
             if (loginScreen) {
                 loginScreen.style.animation = 'slideOut 0.5s ease-out';
-                setTimeout(() => {
-                    loginScreen.remove();
-                    initApp();
-                    checkMonthlyReset();
-                    checkUpcomingPayments();
-                }, 500);
+                setTimeout(() => { loginScreen.remove(); initApp(); checkMonthlyReset(); checkUpcomingPayments(); }, 500);
             }
         }
+
 
         function logoutUser() {
             if (confirm('¿Cerrar sesión?')) {
@@ -2780,20 +2951,26 @@
             }
         }
 
-        function deleteCurrentUser() {
-
-            const user = JSON.parse(localStorage.getItem('finanzas_user'));
-
-            if (!user) {
-                showLoginMessage('No hay usuario para eliminar', 'orange');
-                return;
-            }
-
-            if (confirm(`¿Estás seguro de eliminar el usuario "${user.name}"?`)) {
-                localStorage.removeItem('finanzas_user');
-                location.reload();
+                function deleteCurrentUser() {
+            const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
+            const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
+            if (!user) { alert('No hay usuario para eliminar'); return; }
+            if (confirm('¿Estás seguro de eliminar el usuario "' + user.name + '"?\n\nSe borrarán TODOS tus datos locales y en la nube. Esta acción es irreversible.')) {
+                if (CURRENT_USER_ID) {
+                    sb_eliminarUsuario(CURRENT_USER_ID).finally(() => {
+                        CURRENT_USER_ID = null;
+                        localStorage.removeItem(activeKey);
+                        localStorage.removeItem('finanzas_active_user');
+                        location.reload();
+                    });
+                } else {
+                    localStorage.removeItem(activeKey);
+                    localStorage.removeItem('finanzas_active_user');
+                    location.reload();
+                }
             }
         }
+
 
         /* ============================================
            CÁLCULO DE BALANCE ACUMULADO
