@@ -9,8 +9,8 @@
     
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
-    
+    <link rel="manifest" href="/Control-financiero-personal/manifest.json">
+
     <meta name="theme-color" content="#0d6efd">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1687,7 +1687,10 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./service-worker.js');
+          navigator.serviceWorker.register('/Control-financiero-personal/service-worker.js')
+            .then(reg => console.log('SW registrado correctamente'))
+            .catch(err => console.error('Error SW', err));
+
      });
     }
     </script>
