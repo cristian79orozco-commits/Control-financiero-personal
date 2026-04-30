@@ -1,21 +1,28 @@
 {
   "name": "Control Financiero Personal",
-  "short_name": "MiApp",
+  "short_name": "CtrlFinanciero",
+  "description": "Gestiona tus finanzas personales, metas de ahorro y gastos fijos.",
   "start_url": "/Control-financiero-personal/",
   "scope": "/Control-financiero-personal/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0d6efd",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["finance", "productivity"],
   "icons": [
     {
       "src": "/Control-financiero-personal/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Control-financiero-personal/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "permissions": ["notifications"]
 }
