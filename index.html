@@ -1559,6 +1559,275 @@
             .card{border-radius:var(--cf-r-lg)!important}
             .btn{border-radius:var(--cf-r-md)!important}
         }
+        /* ══════════════════════════════════════════
+   BANK UI — Layout y navegación bancaria
+══════════════════════════════════════════ */
+
+body {
+    padding: 0 !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+.bk-header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    background: var(--color-bg-base);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 12px rgba(0,0,0,.18);
+}
+.bk-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1.1rem;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+}
+.bk-brand { display: flex; align-items: center; gap: .55rem; }
+.bk-brand-name {
+    font-size: .97rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -.01em;
+}
+.bk-header-right { display: flex; align-items: center; gap: .6rem; }
+.bk-user-chip {
+    font-size: .78rem;
+    color: var(--color-primary);
+    font-weight: 700;
+    background: rgba(56,189,248,.1);
+    padding: .3rem .85rem;
+    border-radius: 20px;
+    border: 1px solid rgba(56,189,248,.2);
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bk-logout-btn {
+    background: rgba(239,68,68,.12);
+    border: 1px solid rgba(239,68,68,.25);
+    color: var(--color-danger);
+    border-radius: 10px;
+    padding: .38rem .55rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background .15s;
+    min-height: 36px;
+    min-width: 36px;
+    justify-content: center;
+}
+.bk-logout-btn:hover { background: rgba(239,68,68,.22); }
+.bk-main {
+    flex: 1;
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem 1rem .5rem;
+    box-sizing: border-box;
+}
+
+.tabs { display: none !important; }
+
+.bk-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 400;
+    background: var(--color-bg-base);
+    border-top: 1px solid rgba(255,255,255,.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: .4rem .5rem;
+    padding-bottom: max(.4rem, env(safe-area-inset-bottom));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -4px 24px rgba(0,0,0,.22);
+}
+.bk-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .18rem;
+    padding: .4rem .65rem;
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: .64rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all .2s ease;
+    min-width: 54px;
+    -webkit-tap-highlight-color: transparent;
+}
+.bk-nav-item.active {
+    color: var(--color-primary);
+    background: rgba(56,189,248,.1);
+}
+.bk-nav-item:active { transform: scale(.93); }
+.bk-nav-fab {
+    background: var(--color-primary) !important;
+    color: #0f172a !important;
+    width: 54px; height: 54px;
+    border-radius: 50% !important;
+    border: none;
+    box-shadow: 0 4px 22px rgba(56,189,248,.45);
+    margin-top: -10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+}
+.bk-nav-fab.open { transform: rotate(45deg) scale(1.05); }
+.bk-nav-fab:active { transform: scale(.9); }
+.bk-fab-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 450;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.bk-fab-overlay.show { display: block; }
+.bk-fab-menu {
+    display: none;
+    position: fixed;
+    bottom: calc(82px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    z-index: 460;
+    background: var(--color-bg-elevated);
+    border-radius: 22px;
+    padding: 1rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+    width: min(360px, calc(100vw - 2rem));
+    flex-direction: column;
+    gap: .45rem;
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+}
+.bk-fab-menu.show {
+    display: flex;
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+.bk-fab-menu-title {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .25rem .5rem .6rem;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    margin-bottom: .25rem;
+}
+.bk-fab-opt {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: .8rem 1rem;
+    border: none;
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--color-text-primary);
+    transition: background .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+}
+.bk-fab-opt:active { transform: scale(.97); background: rgba(255,255,255,.08); }
+.bk-fab-opt strong { display: block; font-size: .9rem; font-weight: 700; margin-bottom: .1rem; }
+.bk-fab-opt small { display: block; font-size: .72rem; color: var(--color-text-muted); font-weight: 400; }
+.bk-fab-opt-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem; font-weight: 800;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    body {
+        display: grid !important;
+        grid-template-columns: 220px 1fr;
+        grid-template-rows: auto 1fr;
+        padding-bottom: 0 !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+    .bk-header { grid-column: 1 / -1; }
+    .bk-nav {
+        position: sticky;
+        top: 56px;
+        grid-row: 2; grid-column: 1;
+        height: calc(100vh - 56px);
+        width: 220px;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 1.25rem .75rem;
+        border-top: none;
+        border-right: 1px solid rgba(255,255,255,.06);
+        box-shadow: none;
+        gap: .2rem;
+        overflow-y: auto;
+        align-self: start;
+        backdrop-filter: none;
+    }
+    .bk-nav-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: .7rem;
+        width: 100%;
+        padding: .65rem .95rem;
+        font-size: .84rem;
+        border-radius: 12px;
+        min-width: unset;
+    }
+    .bk-nav-item span { display: block !important; }
+    .bk-nav-fab {
+        width: 100% !important; height: auto !important;
+        border-radius: 12px !important;
+        margin-top: .5rem !important;
+        padding: .65rem .95rem !important;
+        justify-content: flex-start !important;
+        gap: .7rem; font-size: .84rem; font-weight: 700;
+    }
+    .bk-nav-fab::after { content: 'Registrar...'; }
+    .bk-main { grid-row: 2; grid-column: 2; padding: 1.5rem 2rem; max-width: 100%; }
+    .bk-fab-menu { left: 240px; bottom: auto; top: 120px; transform: translateX(0) translateY(16px); }
+    .bk-fab-menu.show { transform: translateX(0) translateY(0); }
+    .bk-fab-overlay { display: none !important; }
+}
+
+.card { border-radius: 20px !important; }
+.form-section { border-radius: 18px !important; border: 1px solid rgba(255,255,255,.04) !important; }
+.transaction-list { border-radius: 18px !important; overflow: hidden; }
+.transaction-item:active { background: rgba(56,189,248,.05) !important; }
+.btn { border-radius: 12px !important; }
+input, select, textarea { border-radius: 12px !important; }
+.account-card { border-radius: 18px !important; }
+.fixed-item { border-radius: 14px !important; }
+.goal-item { border-radius: 14px !important; }
+.panel-hero { border-radius: 22px !important; }
+.cloud-alerts-container { top: 68px !important; }
+
     </style>
     <!-- SUPABASE: Conexión con la base de datos en la nube -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1697,29 +1966,30 @@
 </head>
 
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <h1 style="margin: 0;">💰 Control Financiero Personal</h1>
-        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-            <div style="background: var(--color-bg-elevated); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem;">
-                👤 <span style="color: var(--color-primary); font-weight: bold;" id="currentUserDisplay">Usuario</span>
-            </div>
-            <button class="btn btn-danger" onclick="logoutUser()" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                🚪 cerrar sesión
-            </button>
-        </div>
+    <!-- ═══ BANK HEADER ═══ -->
+<header class="bk-header">
+  <div class="bk-header-inner">
+    <div class="bk-brand">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="CF">
+        <rect width="32" height="32" rx="10" fill="#38bdf8" opacity=".12"/>
+        <path d="M8 10h8M8 16h5M8 22h8" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="21" cy="19" r="5" stroke="#38bdf8" stroke-width="2" fill="none"/>
+        <path d="M21 17v2l1.5 1.5" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="bk-brand-name">Control Financiero</span>
     </div>
+    <div class="bk-header-right">
+      <div class="bk-user-chip">👤 <span id="currentUserDisplay">Usuario</span></div>
+      <button class="bk-logout-btn" onclick="logoutUser()" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
-    <div class="tabs">
-        <button class="tab-btn active" data-tab="mesactual">📈 Panel</button>
-        <button class="tab-btn" data-tab="cuentas">🏦 Cuentas</button>
-        <button class="tab-btn" data-tab="ingresos">➕ Ingresos</button>
-        <button class="tab-btn" data-tab="gastos">➖ Gastos</button>
-        <button class="tab-btn" data-tab="gastosfijos">📌 Gastos Fijos</button>
-        <button class="tab-btn" data-tab="ingresosfijos">💵 Ingresos Fijos</button>
-        <button class="tab-btn" data-tab="historial">📜 Historial</button>
-        <button class="tab-btn" data-tab="metas">🎯 Metas</button>
-        <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
-    </div>
+<!-- ═══ MAIN WRAPPER (envuelve todo el contenido) ═══ -->
+<main class="bk-main">
+
 
     <!-- PANEL -->
     <div id="mesactual" class="tab-content active">
@@ -4234,21 +4504,39 @@
            SISTEMA DE PESTAÑAS
            ============================================ */
         function initTabs() {
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
+           // Mantener compatibilidad con botones .tab-btn existentes
+           document.querySelectorAll('.tab-btn').forEach(btn => {
+               btn.addEventListener('click', () => {
+                  const t = btn.getAttribute('data-tab');
+                  if (t) switchBankTab(t, null);
+               });
+           });
+}
 
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTab = button.getAttribute('data-tab');
+        function switchBankTab(tabId, clickedNavItem) {
+            // 1. Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
+            // 2. Mostrar el seleccionado
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
 
-                    button.classList.add('active');
-                    document.getElementById(targetTab).classList.add('active');
-                });
+            // 3. Sincronizar botones tab-btn legacy
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
             });
-        }
+
+            // 4. Sincronizar bottom nav / sidebar
+            document.querySelectorAll('.bk-nav-item[data-tab]').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
+            });
+
+            // 5. Scroll al inicio
+            const main = document.querySelector('.bk-main');
+            if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 
         /* ============================================
            VALIDACIÓN CENTRALIZADA DE CUENTA
@@ -5018,6 +5306,87 @@ window._completarLogin = function(user) {
         if (Notifs.permiso) Notifs.programar(); // SW — solo si permiso activo
     };
 })();
+// ═══════════════════════════════════════
+// FAB MENU — Botón "+" de acción rápida
+// ═══════════════════════════════════════
+function bkToggleFab() {
+    const fab = document.getElementById('bkFab');
+    const menu = document.getElementById('bkFabMenu');
+    const overlay = document.getElementById('bkFabOverlay');
+    const isOpen = menu.classList.contains('show');
+    if (isOpen) {
+        bkCloseFab();
+    } else {
+        menu.classList.add('show');
+        overlay.classList.add('show');
+        fab.classList.add('open');
+    }
+}
+
+function bkCloseFab() {
+    document.getElementById('bkFabMenu')?.classList.remove('show');
+    document.getElementById('bkFabOverlay')?.classList.remove('show');
+    document.getElementById('bkFab')?.classList.remove('open');
+}
+
+// Cerrar el menú "+" al presionar Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') bkCloseFab();
+});
+
 </script>
+</main><!-- /bk-main -->
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<nav class="bk-nav" id="bkNav">
+  <button class="bk-nav-item active" data-tab="mesactual" onclick="switchBankTab('mesactual',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span>Inicio</span>
+  </button>
+  <button class="bk-nav-item" data-tab="cuentas" onclick="switchBankTab('cuentas',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+    <span>Cuentas</span>
+  </button>
+  <button class="bk-nav-fab" id="bkFab" onclick="bkToggleFab()">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+  <button class="bk-nav-item" data-tab="historial" onclick="switchBankTab('historial',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+    <span>Historial</span>
+  </button>
+  <button class="bk-nav-item" data-tab="metas" onclick="switchBankTab('metas',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    <span>Metas</span>
+  </button>
+</nav>
+
+<!-- FAB OVERLAY (fondo oscuro al abrir el menú +) -->
+<div class="bk-fab-overlay" id="bkFabOverlay" onclick="bkCloseFab()"></div>
+
+<!-- FAB MENU (menú que aparece al tocar el botón +) -->
+<div class="bk-fab-menu" id="bkFabMenu">
+  <div class="bk-fab-menu-title">¿Qué deseas registrar?</div>
+  <button class="bk-fab-opt" onclick="switchBankTab('ingresos',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(34,197,94,.15);color:var(--color-success);">+</span>
+    <div><strong>Registrar Ingreso</strong><small>Variable · bono · freelance</small></div>
+  </button>
+  <button class="bk-fab-opt" onclick="switchBankTab('gastos',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(239,68,68,.15);color:var(--color-danger);">−</span>
+    <div><strong>Registrar Gasto</strong><small>Variable · compras · servicios</small></div>
+  </button>
+  <button class="bk-fab-opt" onclick="switchBankTab('gastosfijos',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(245,158,11,.15);color:var(--color-warning);">📌</span>
+    <div><strong>Gastos Fijos</strong><small>Recurrentes mensuales</small></div>
+  </button>
+  <button class="bk-fab-opt" onclick="switchBankTab('ingresosfijos',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(56,189,248,.15);color:var(--color-primary);">💵</span>
+    <div><strong>Ingresos Fijos</strong><small>Salario · pensión · arriendos</small></div>
+  </button>
+  <button class="bk-fab-opt" onclick="switchBankTab('configuracion',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(148,163,184,.12);color:var(--color-text-muted);">⚙️</span>
+    <div><strong>Configuración</strong><small>Ajustes de tu cuenta</small></div>
+  </button>
+</div>
+
 </body>
 </html>
