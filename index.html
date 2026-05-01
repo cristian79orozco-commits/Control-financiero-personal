@@ -1826,8 +1826,68 @@ input, select, textarea { border-radius: 12px !important; }
 .fixed-item { border-radius: 14px !important; }
 .goal-item { border-radius: 14px !important; }
 .panel-hero { border-radius: 22px !important; }
-.cloud-alerts-container { top: 68px !important; }
+.cloud-alerts-container { top: 95px !important; }
 
+    /* ══════════════════════════════════════════
+   ONBOARDING — Guía interactiva primer uso
+══════════════════════════════════════════ */
+.ob-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none;transition:background .4s ease}
+.ob-overlay.active{background:rgba(0,0,10,.82);pointer-events:all;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.ob-highlight{
+  position:fixed;z-index:9100;border-radius:16px;pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(0,0,10,.82),0 0 0 3px rgba(246,201,14,.8),0 0 32px 8px rgba(246,201,14,.25);
+  transition:top .45s cubic-bezier(.16,1,.3,1),left .45s cubic-bezier(.16,1,.3,1),
+             width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1)
+}
+.ob-card{
+  position:fixed;z-index:9200;
+  background:linear-gradient(145deg,#1a2540 0%,#0f172a 100%);
+  border:1.5px solid rgba(246,201,14,.3);border-radius:22px;
+  padding:1.4rem 1.5rem 1.2rem;width:min(340px,calc(100vw - 1.5rem));
+  box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);
+  transition:opacity .35s ease,transform .35s cubic-bezier(.16,1,.3,1);
+  opacity:0;transform:translateY(14px) scale(.97)
+}
+.ob-card.visible{opacity:1;transform:translateY(0) scale(1)}
+.ob-card-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.65rem}
+.ob-step-badge{font-size:.66rem;font-weight:800;color:#f6c90e;background:rgba(246,201,14,.12);border:1px solid rgba(246,201,14,.25);padding:.18rem .6rem;border-radius:20px;letter-spacing:.05em;white-space:nowrap;flex-shrink:0}
+.ob-title{font-size:.97rem;font-weight:800;color:#dce8f8;line-height:1.25;flex:1}
+.ob-text{font-size:.83rem;color:rgba(185,198,214,.88);line-height:1.65;margin-bottom:1rem}
+.ob-text strong{color:#7dd3fc;font-weight:700}
+.ob-progress{display:flex;gap:.28rem;margin-bottom:.9rem}
+.ob-dot{height:3px;flex:1;border-radius:3px;background:rgba(255,255,255,.1);transition:background .3s}
+.ob-dot.done{background:rgba(246,201,14,.45)}
+.ob-dot.active{background:#f6c90e}
+.ob-actions{display:flex;gap:.55rem;align-items:center}
+.ob-btn-next{flex:1;padding:.62rem 1rem;background:linear-gradient(135deg,#f6c90e 0%,#d4a800 100%);color:#0a1020;font-weight:800;font-size:.87rem;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:0 4px 16px rgba(246,201,14,.3);transition:filter .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.ob-btn-next:active{transform:scale(.96)}
+.ob-btn-skip{padding:.62rem .85rem;background:transparent;color:rgba(148,163,184,.65);font-size:.78rem;font-weight:600;border:1px solid rgba(255,255,255,.07);border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;flex-shrink:0}
+.ob-btn-skip:active{background:rgba(255,255,255,.05)}
+.ob-welcome{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .4s ease}
+.ob-welcome.active{opacity:1;pointer-events:all}
+.ob-welcome-card{background:linear-gradient(145deg,#1a2540 0%,#0f172a 100%);border:1.5px solid rgba(246,201,14,.25);border-radius:28px;padding:2.5rem 2rem 2rem;width:min(400px,100%);text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);animation:obPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes obPop{from{transform:scale(.86) translateY(28px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.ob-welcome-icon{font-size:3.4rem;margin-bottom:1rem;display:block;animation:obBounce 2s ease infinite}
+@keyframes obBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.ob-welcome-title{font-size:1.5rem;font-weight:900;color:#dce8f8;margin-bottom:.65rem;line-height:1.2}
+.ob-welcome-sub{font-size:.87rem;color:rgba(185,198,214,.82);line-height:1.7;margin-bottom:1.75rem}
+.ob-welcome-sub strong{color:#7dd3fc;font-weight:700}
+.ob-welcome-features{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem;text-align:left}
+.ob-welcome-feat{display:flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.04);border-radius:12px;padding:.6rem .9rem;font-size:.82rem;color:rgba(185,198,214,.85)}
+.ob-welcome-feat-icon{font-size:1.1rem;flex-shrink:0}
+.ob-btn-start{width:100%;padding:.88rem;background:linear-gradient(135deg,#f6c90e 0%,#d4a800 100%);color:#0a1020;font-weight:900;font-size:1rem;border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(246,201,14,.35);transition:filter .15s,transform .15s;margin-bottom:.75rem;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.ob-btn-start:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.ob-btn-start:active{transform:scale(.97)}
+.ob-btn-omitir{background:transparent;border:none;color:rgba(148,163,184,.55);font-size:.78rem;cursor:pointer;padding:.35rem;-webkit-tap-highlight-color:transparent}
+.ob-final{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .4s ease}
+.ob-final.active{opacity:1;pointer-events:all}
+.ob-config-btn{display:flex;align-items:center;gap:.75rem;width:100%;padding:.9rem 1.1rem;background:rgba(246,201,14,.07);border:1.5px solid rgba(246,201,14,.2);border-radius:14px;cursor:pointer;text-align:left;color:var(--color-text-primary);transition:background .15s,border-color .15s;-webkit-tap-highlight-color:transparent;margin-top:1rem}
+.ob-config-btn:hover{background:rgba(246,201,14,.12);border-color:rgba(246,201,14,.35)}
+.ob-config-btn:active{transform:scale(.98)}
+.ob-config-btn-icon{width:40px;height:40px;border-radius:50%;background:rgba(246,201,14,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.ob-config-btn strong{display:block;font-size:.9rem;font-weight:700;margin-bottom:.1rem;color:#dce8f8}
+.ob-config-btn small{display:block;font-size:.75rem;color:rgba(148,163,184,.7);font-weight:400}
+@media(max-width:480px){.ob-card{padding:1.15rem 1.1rem .95rem}.ob-welcome-card{padding:2rem 1.4rem 1.5rem}}
     </style>
     <!-- SUPABASE: Conexión con la base de datos en la nube -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2048,7 +2108,7 @@ input, select, textarea { border-radius: 12px !important; }
                 <div class="panel-budget-fill" id="budgetBarFill" style="width:0%;"></div>
             </div>
             <div class="panel-budget-legend">
-                <span>$0 gastado</span>
+                <span>Estado</span>
                 <span id="budgetLegendRight">de $0 disponible</span>
             </div>
         </div>
@@ -2064,12 +2124,12 @@ input, select, textarea { border-radius: 12px !important; }
             </p>
             <div class="panel-reserve-block">
                 <div class="panel-reserve-item">
-                    <div class="panel-reserve-label">🛡️ Reserva Obligatoria (70%)</div>
+                    <div class="panel-reserve-label">🛡️ Reserva Obligatoria</div>
                     <div class="panel-reserve-value" style="color:var(--color-warning);" id="nonp-minimum-balance">$0</div>
                     <div class="panel-reserve-desc">No toques este dinero — cubre imprevistos, deudas y obligaciones futuras</div>
                 </div>
                 <div class="panel-reserve-item" style="border:1.5px solid var(--color-primary); background:linear-gradient(135deg,rgba(56,189,248,0.1) 0%,rgba(14,165,233,0.04) 100%);">
-                    <div class="panel-reserve-label">✅ Libre para gastar (30%)</div>
+                    <div class="panel-reserve-label">✅ Libre para gastar</div>
                     <div class="panel-reserve-value" style="color:var(--color-primary);" id="nonp-safe-spending">$0</div>
                     <div class="panel-reserve-desc">Puedes usar esto sin comprometer tu estabilidad financiera</div>
                 </div>
@@ -2614,8 +2674,17 @@ input, select, textarea { border-radius: 12px !important; }
             </div>
         </div>
         <div class="form-section">
+          <h2>Ayuda y Guía</h2>
+          <button class="ob-config-btn" onclick="OB.reset()">
+           <div class="ob-config-btn-icon">🎓</div>
+           <div>
+             <strong>Ver guía de la app</strong>
+             <small>Vuelve a ver el recorrido interactivo de todas las funciones</small>
+           </div>
+         </button>
+        </div>
+        <div class="form-section"> 
             <h2>👤 Usuario</h2>
-
             <button class="btn btn-danger" onclick="deleteCurrentUser()" style="margin-top:1rem;">
                 🗑️ Eliminar Usuario
             </button>
@@ -5333,6 +5402,150 @@ function bkCloseFab() {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') bkCloseFab();
 });
+
+/* ══════════════════════════════════════════════════════════════
+   ONBOARDING — Guía interactiva primer uso
+══════════════════════════════════════════════════════════════ */
+const OB = {
+  KEY: 'cf_onboarding_v1', current: 0, active: false,
+  _overlay: null, _highlight: null, _card: null,
+
+  steps: [
+    { target: '.panel-hero', title: 'Tu dinero disponible', text: 'Aquí ves tu <strong>Disponible Actual</strong>: el dinero real que puedes usar, ya descontando gastos, compromisos y metas de ahorro.', pos: 'bottom' },
+    { target: '.panel-trio', title: 'Resumen del mes', text: 'De un vistazo: <strong>Ingresos</strong>, <strong>Gastos</strong> del mes actual y los <strong>días restantes</strong> para planificar tu gasto diario.', pos: 'bottom' },
+    { target: '.panel-budget-wrap', title: 'Barra de presupuesto', text: 'Muestra qué porcentaje de tu ingreso ya usaste. <strong>Se vuelve roja al superar el 90%</strong> como alerta de gasto excesivo.', pos: 'bottom' },
+    { target: '#bkNav', title: 'Navegación principal', text: 'Accede a <strong>Inicio, Cuentas, Historial y Metas</strong> desde aquí. En pantallas grandes aparece como menú lateral.', pos: 'top' },
+    { target: '#bkFab', title: 'Botón de acción rápida ＋', text: 'Presiona <strong>＋</strong> para registrar ingresos o gastos rápidamente desde cualquier sección de la app.', pos: 'top' },
+    { target: '#cuentas', title: 'Tus cuentas', text: 'Gestiona <strong>Bancolombia, Nequi, Efectivo</strong> y más. Cada transacción actualiza el saldo de la cuenta automáticamente.', pos: 'auto' },
+    { target: '#gastos', title: 'Registro de gastos', text: 'Registra aquí tus <strong>gastos variables</strong> del día a día. Asígnalos a una cuenta y categoría para ver tus patrones de consumo.', pos: 'auto' },
+    { target: '#ingresos', title: 'Registro de ingresos', text: 'Agrega <strong>ingresos variables</strong> como bonos, freelance o ventas. Estos sí se suman de inmediato a tu disponible.', pos: 'auto' },
+    { target: '#gastosfijos', title: 'Gastos fijos mensuales', text: 'Configura gastos recurrentes como <strong>arriendo, internet, servicios</strong>. Solo impactan tu disponible cuando presionas <strong>Marcar como Pagado</strong>.', pos: 'auto' },
+    { target: '#historial', title: 'Historial completo', text: 'Revisa y filtra <strong>todas tus transacciones</strong>. Busca por descripción, categoría o fecha para analizar tus finanzas.', pos: 'auto' },
+    { target: '#metas', title: 'Metas de ahorro', text: 'Crea objetivos con monto y fecha límite. La app <strong>descuenta ese dinero de tu disponible</strong> automáticamente para que no lo gastes.', pos: 'auto' },
+    { target: '#configuracion', title: 'Configuración', text: 'Exporta tus datos, importa transacciones CSV y gestiona tu usuario. Aquí también puedes <strong>volver a ver esta guía</strong> cuando quieras.', pos: 'auto' }
+  ],
+
+  init() {
+    if (localStorage.getItem(this.KEY) === 'done') return;
+    setTimeout(() => this._mostrarBienvenida(), 1200);
+  },
+
+  _mostrarBienvenida() {
+    const w = document.createElement('div');
+    w.className = 'ob-welcome';
+    w.innerHTML = `<div class="ob-welcome-card">
+      <span class="ob-welcome-icon">💰</span>
+      <div class="ob-welcome-title">¡Bienvenido a<br>Control Financiero!</div>
+      <p class="ob-welcome-sub">Hagamos un <strong>recorrido rápido</strong> para que conozcas todas las funciones de tu app.<br>Solo toma <strong>1 minuto</strong>.</p>
+      <div class="ob-welcome-features">
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">📊</span>Panel financiero inteligente</div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">💳</span>Gestión de múltiples cuentas</div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🎯</span>Metas y presupuesto automático</div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🔔</span>Alertas de pagos y vencimientos</div>
+      </div>
+      <button class="ob-btn-start" onclick="OB._iniciarRecorrido()">🚀 Comenzar recorrido</button>
+      <button class="ob-btn-omitir" onclick="OB.terminar(true)">Omitir, ya conozco la app</button>
+    </div>`;
+    document.body.appendChild(w);
+    this._welcome = w;
+    requestAnimationFrame(() => w.classList.add('active'));
+  },
+
+  _iniciarRecorrido() {
+    this._welcome?.classList.remove('active');
+    setTimeout(() => this._welcome?.remove(), 400);
+    this._overlay = document.createElement('div');
+    this._overlay.className = 'ob-overlay';
+    document.body.appendChild(this._overlay);
+    requestAnimationFrame(() => this._overlay.classList.add('active'));
+    this._highlight = document.createElement('div');
+    this._highlight.className = 'ob-highlight';
+    document.body.appendChild(this._highlight);
+    this._card = document.createElement('div');
+    this._card.className = 'ob-card';
+    document.body.appendChild(this._card);
+    this.active = true;
+    this.current = 0;
+    this._mostrarPaso(0);
+    window.addEventListener('resize', this._onResize = () => { if (this.active) this._posicionar(this.current); });
+  },
+
+  _mostrarPaso(idx) {
+    const step = this.steps[idx];
+    if (!step) { this.terminar(false); return; }
+    const el = document.querySelector(step.target);
+    if (!el) { this.current++; this._mostrarPaso(this.current); return; }
+    const tabContent = el.closest('.tab-content');
+    if (tabContent && !tabContent.classList.contains('active')) {
+      if (typeof switchBankTab === 'function') switchBankTab(tabContent.id);
+    }
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    this._card.classList.remove('visible');
+    setTimeout(() => { this._posicionar(idx); setTimeout(() => this._card.classList.add('visible'), 80); }, 320);
+  },
+
+  _posicionar(idx) {
+    const step = this.steps[idx];
+    const el = document.querySelector(step.target);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const pad = 8, vw = window.innerWidth, vh = window.innerHeight, total = this.steps.length;
+    this._highlight.style.cssText = `top:${rect.top-pad}px;left:${rect.left-pad}px;width:${rect.width+pad*2}px;height:${rect.height+pad*2}px;`;
+    const dots = Array.from({length:total},(_,i)=>`<div class="ob-dot ${i<idx?'done':i===idx?'active':''}"></div>`).join('');
+    const isLast = idx === total - 1;
+    this._card.innerHTML = `
+      <div class="ob-card-header"><span class="ob-step-badge">PASO ${idx+1} / ${total}</span><div class="ob-title">${step.title}</div></div>
+      <p class="ob-text">${step.text}</p>
+      <div class="ob-progress">${dots}</div>
+      <div class="ob-actions">
+        <button class="ob-btn-skip" onclick="OB.terminar(true)">✕ Omitir</button>
+        <button class="ob-btn-next" onclick="OB.siguiente()">${isLast ? '✓ Finalizar' : 'Siguiente →'}</button>
+      </div>`;
+    const cardW = Math.min(340, vw - 24), cardH = 210;
+    const spaceBelow = vh - rect.bottom - pad, spaceAbove = rect.top - pad;
+    const preferBottom = step.pos === 'bottom' || spaceBelow >= cardH + 20 || spaceBelow > spaceAbove;
+    let top = (preferBottom && spaceBelow >= cardH + 16) ? rect.bottom + pad + 12 : (spaceAbove >= cardH + 16) ? rect.top - pad - cardH - 12 : Math.max(70, Math.min(rect.top, vh - cardH - 70));
+    let left = Math.max(12, Math.min(rect.left + rect.width/2 - cardW/2, vw - cardW - 12));
+    this._card.style.cssText = `top:${top}px;left:${left}px;width:${cardW}px;`;
+  },
+
+  siguiente() {
+    this._card.classList.remove('visible');
+    this.current++;
+    setTimeout(() => this._mostrarPaso(this.current), 260);
+  },
+
+  terminar(omitido) {
+    [this._overlay, this._highlight, this._card, this._welcome].forEach(el => {
+      if (!el) return;
+      el.classList.remove('active','visible');
+      setTimeout(() => el?.remove(), 400);
+    });
+    this.active = false;
+    window.removeEventListener('resize', this._onResize);
+    localStorage.setItem(this.KEY, 'done');
+    if (!omitido) {
+      setTimeout(() => {
+        const fin = document.createElement('div');
+        fin.className = 'ob-final';
+        fin.innerHTML = `<div class="ob-welcome-card"><span class="ob-welcome-icon" style="animation:none">🎉</span><div class="ob-welcome-title">¡Ya conoces tu app!</div><p class="ob-welcome-sub">Puedes volver a ver este recorrido en cualquier momento desde la sección de <strong>Configuración</strong>.</p><button class="ob-btn-start" onclick="this.closest('.ob-final').classList.remove('active');setTimeout(()=>this.closest('.ob-final')?.remove(),400)">✓ ¡Empezar a usar la app!</button></div>`;
+        document.body.appendChild(fin);
+        requestAnimationFrame(() => fin.classList.add('active'));
+      }, 450);
+    }
+  },
+
+  reset() {
+    localStorage.removeItem(this.KEY);
+    this._mostrarBienvenida();
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => OB.init());
+} else {
+  OB.init();
+}
 
 </script>
 </main><!-- /bk-main -->
