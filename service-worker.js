@@ -4,15 +4,18 @@
 //  Estrategia: Notification Triggers API + fallback periódico
 // ============================================================
 
-const CACHE_NAME = 'finanzas-v5';
+const CACHE_NAME = 'finanzas-v6';
 const BASE = '/Control-financiero-personal/';
 
 const ARCHIVOS = [
-    BASE,
-    BASE + 'index.html',
-    BASE + 'manifest.json',
     BASE + 'icon-192.png',
     BASE + 'icon-512.png'
+];
+
+const NETWORK_FIRST = [
+    BASE,
+    BASE + 'index.html',
+    BASE + 'manifest.json'
 ];
 
 // ── INSTALAR ─────────────────────────────────────────────────
@@ -33,8 +36,28 @@ self.addEventListener('activate', e => {
     );
 });
 
-// ── FETCH ────────────────────────────────────────────────────
+// ── FETCH — Network-First para HTML/manifest, Cache-First para el resto ──
 self.addEventListener('fetch', e => {
+    const url = new URL(e.request.url);
+    const pathname = url.pathname;
+
+    const esNetworkFirst = NETWORK_FIRST.some(p =>
+        pathname === p || pathname === p.replace(/\/$/, '')
+    );
+
+    if (esNetworkFirst) {
+        e.respondWith(
+            fetch(e.request)
+                .then(res => {
+                    const copia = res.clone();
+                    caches.open(CACHE_NAME).then(c => c.put(e.request, copia));
+                    return res;
+                })
+                .catch(() => caches.match(e.request))
+        );
+        return;
+    }
+
     e.respondWith(
         caches.match(e.request).then(res =>
             res || fetch(e.request).catch(() => caches.match(BASE + 'index.html'))
