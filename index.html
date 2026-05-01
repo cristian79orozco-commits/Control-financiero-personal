@@ -4806,39 +4806,39 @@ Actual: ${account.icon}`,
         });
     </script>
     <!-- ============================================================
-     SISTEMA DE NOTIFICACIONES PUSH LOCALES — versión segura
-     Pega este bloque justo ANTES de la etiqueta </body>
-
-     ✅ No interfiere con las alertas cloud existentes
-     ✅ No envuelve initApp ni notifyStateChange de forma frágil
-     ✅ Se engancha directamente en _completarLogin
+     NOTIFICACIONES PUSH — versión final
+     Pega justo antes de </body>
+     No toca initApp. No toca las nubes de alerta.
      ============================================================ -->
 <script>
-// ────────────────────────────────────────────────────────────
-//  MÓDULO DE NOTIFICACIONES
-// ────────────────────────────────────────────────────────────
 const Notifs = {
-    swReg: null,
+    swReg:   null,
     permiso: false,
 
     async init() {
         if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
-        try {
-            this.swReg = await navigator.serviceWorker.ready;
-        } catch { return; }
+        try { this.swReg = await navigator.serviceWorker.ready; } catch { return; }
 
-        // Registrar periodic background sync si el navegador lo soporta
+        // Registrar Periodic Background Sync (Chrome Android — requiere que
+        // la PWA esté instalada en pantalla de inicio)
         if (this.swReg.periodicSync) {
             try {
-                await this.swReg.periodicSync.register('check-finances', {
-                    minInterval: 24 * 60 * 60 * 1000
-                });
-            } catch { /* no disponible en todos los navegadores */ }
+                const tags = await this.swReg.periodicSync.getTags();
+                if (!tags.includes('check-finances')) {
+                    await this.swReg.periodicSync.register('check-finances', {
+                        minInterval: 60 * 60 * 1000 // intentar cada hora
+                    });
+                }
+            } catch { /* no disponible en todos los contextos */ }
+        }
+
+        // Registrar Background Sync one-off como respaldo adicional
+        if (this.swReg.sync) {
+            try { await this.swReg.sync.register('check-finances-sync'); } catch {}
         }
 
         if (Notification.permission === 'granted') {
             this.permiso = true;
-            // Pequeño delay para que AppState ya tenga los datos cargados
             setTimeout(() => this.programar(), 2000);
         }
     },
@@ -4846,11 +4846,10 @@ const Notifs = {
     async solicitarPermiso() {
         if (!('Notification' in window)) return false;
         if (Notification.permission === 'granted') { this.permiso = true; return true; }
-        if (Notification.permission === 'denied')  { return false; }
+        if (Notification.permission === 'denied')  return false;
 
-        const res = await Notification.requestPermission();
+        const res    = await Notification.requestPermission();
         this.permiso = res === 'granted';
-
         if (this.permiso) {
             this._post({ type: 'TEST_NOTIFICATION' });
             setTimeout(() => this.programar(), 1000);
@@ -4861,14 +4860,23 @@ const Notifs = {
     programar() {
         if (!this.permiso || !this.swReg?.active) return;
 
+        const hoy             = new Date();
+        const diaHoy          = hoy.getDate();
+        const diasEnMes       = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+        const diasRestantes   = diasEnMes - diaHoy;
+        const disponible      = AppState.getCurrentAvailable();
+        const libreParaGastar = Math.max(0, disponible * 0.30);
+
         const activeKey = localStorage.getItem('finanzas_active_user') || '';
-        const usr = activeKey ? JSON.parse(localStorage.getItem(activeKey) || '{}') : {};
+        const usr       = activeKey ? JSON.parse(localStorage.getItem(activeKey) || '{}') : {};
 
         this._post({
             type: 'SCHEDULE_NOTIFICATIONS',
             payload: {
                 username:        usr.name || usr.username || 'Usuario',
-                disponible:      AppState.getCurrentAvailable(),
+                disponible,
+                libreParaGastar,
+                diasRestantes,
                 gastosMes:       AppState.getCurrentMonthExpense(),
                 ingresosMes:     AppState.getCurrentMonthIncome(),
                 presupuesto:     AppState.getInitialAccountsTotal() + AppState.getTotalIncome(),
@@ -4895,32 +4903,29 @@ const Notifs = {
     }
 };
 
-// ────────────────────────────────────────────────────────────
-//  BOTÓN FLOTANTE 🔔
-// ────────────────────────────────────────────────────────────
+// ── Botón flotante 🔔 ─────────────────────────────────────────
 function notifs_inyectarBoton() {
     if (!('Notification' in window)) return;
-    if (document.getElementById('btnNotifToggle')) return; // evitar duplicados
+    if (document.getElementById('btnNotifToggle')) return;
 
     const btn = document.createElement('button');
     btn.id = 'btnNotifToggle';
     btn.style.cssText = `
-        position:fixed; bottom:calc(24px + env(safe-area-inset-bottom)); right:20px;
-        width:52px; height:52px; border-radius:50%; border:none;
-        font-size:1.4rem; cursor:pointer; z-index:8000;
-        display:flex; align-items:center; justify-content:center;
+        position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:20px;
+        width:52px;height:52px;border-radius:50%;border:none;
+        font-size:1.4rem;cursor:pointer;z-index:8000;
+        display:flex;align-items:center;justify-content:center;
         box-shadow:0 4px 20px rgba(246,201,14,0.4);
-        transition:transform 0.2s, box-shadow 0.2s;
+        transition:transform 0.2s,box-shadow 0.2s;
     `;
 
     btn.addEventListener('click', async () => {
         if (Notification.permission === 'granted') {
-            Notifs.programar(); // actualiza datos frescos
+            Notifs.programar();
+            const disp  = AppState.getCurrentAvailable();
+            const pend  = AppState.fixedExpenses.filter(f => f.status === 'pending').length;
             notifs_toast(
-                `🔔 Notificaciones activas\n` +
-                `💰 Disponible: $${Math.round(AppState.getCurrentAvailable()).toLocaleString('es-CO')} | ` +
-                `📌 Fijos pendientes: ${AppState.fixedExpenses.filter(f=>f.status==='pending').length} | ` +
-                `🎯 Metas: ${AppState.savingsGoals.length}`,
+                `🔔 Notificaciones activas\n💰 Disponible: $${Math.round(disp).toLocaleString('es-CO')} | 📌 Pendientes: ${pend} | 🎯 Metas: ${AppState.savingsGoals.length}`,
                 'success'
             );
         } else {
@@ -4929,7 +4934,7 @@ function notifs_inyectarBoton() {
             notifs_actualizarBoton();
             notifs_toast(
                 ok
-                    ? '✅ Notificaciones activadas correctamente'
+                    ? '✅ Notificaciones activadas. Recibirás alertas aunque la app esté cerrada.'
                     : '🔕 Permiso denegado. Actívalas desde los ajustes del navegador.',
                 ok ? 'success' : 'warning'
             );
@@ -4937,12 +4942,12 @@ function notifs_inyectarBoton() {
     });
 
     btn.addEventListener('mouseenter', () => {
-        btn.style.transform = 'scale(1.1)';
-        btn.style.boxShadow = '0 6px 28px rgba(246,201,14,0.55)';
+        btn.style.transform  = 'scale(1.1)';
+        btn.style.boxShadow  = '0 6px 28px rgba(246,201,14,0.55)';
     });
     btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'scale(1)';
-        btn.style.boxShadow = '0 4px 20px rgba(246,201,14,0.4)';
+        btn.style.transform  = 'scale(1)';
+        btn.style.boxShadow  = '0 4px 20px rgba(246,201,14,0.4)';
     });
 
     document.body.appendChild(btn);
@@ -4952,85 +4957,65 @@ function notifs_inyectarBoton() {
 function notifs_actualizarBoton() {
     const btn = document.getElementById('btnNotifToggle');
     if (!btn) return;
-    const p = Notification.permission;
+    const p = ('Notification' in window) ? Notification.permission : 'denied';
     if (p === 'granted') {
-        btn.innerHTML    = '🔔';
-        btn.title        = 'Notificaciones activas — toca para ver estado';
+        btn.innerHTML = '🔔'; btn.title = 'Notificaciones activas';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
     } else if (p === 'denied') {
-        btn.innerHTML    = '🔕';
-        btn.title        = 'Notificaciones bloqueadas en el navegador';
+        btn.innerHTML = '🔕'; btn.title = 'Notificaciones bloqueadas';
         btn.style.background = 'linear-gradient(135deg,#64748b,#475569)';
     } else {
-        btn.innerHTML    = '🔔';
-        btn.title        = 'Toca para activar notificaciones';
+        btn.innerHTML = '🔔'; btn.title = 'Activar notificaciones';
         btn.style.background = 'linear-gradient(135deg,#f6c90e,#d4a800)';
     }
 }
 
 function notifs_toast(msg, tipo = 'success') {
-    if (!document.getElementById('notifs_toastStyle')) {
+    if (!document.getElementById('_nToastStyle')) {
         const s = document.createElement('style');
-        s.id = 'notifs_toastStyle';
-        s.textContent = `
-            @keyframes notifs_slideIn {
-                from { transform:translateX(120%); opacity:0; }
-                to   { transform:translateX(0);    opacity:1; }
-            }`;
+        s.id = '_nToastStyle';
+        s.textContent = `@keyframes _nSlideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}`;
         document.head.appendChild(s);
     }
     const color = tipo === 'success' ? '#22c55e' : tipo === 'warning' ? '#f59e0b' : '#ef4444';
     const el = document.createElement('div');
     el.style.cssText = `
-        position:fixed; bottom:calc(90px + env(safe-area-inset-bottom)); right:16px;
-        background:rgba(13,22,40,0.95); border-left:4px solid ${color};
-        border-radius:12px; padding:.85rem 1.1rem; font-size:.82rem;
-        color:#dce8f8; max-width:300px; z-index:9500;
-        box-shadow:0 8px 32px rgba(0,0,0,.4); backdrop-filter:blur(12px);
-        white-space:pre-line; line-height:1.5;
-        animation:notifs_slideIn 0.3s ease-out;
+        position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));right:16px;
+        background:rgba(13,22,40,0.96);border-left:4px solid ${color};
+        border-radius:12px;padding:.85rem 1.1rem;font-size:.82rem;
+        color:#dce8f8;max-width:300px;z-index:9500;
+        box-shadow:0 8px 32px rgba(0,0,0,.4);backdrop-filter:blur(12px);
+        white-space:pre-line;line-height:1.5;
+        animation:_nSlideIn 0.3s ease-out;
     `;
     el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(() => {
-        el.style.transition = 'opacity .4s, transform .4s';
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(120%)';
+        el.style.transition = 'opacity .4s,transform .4s';
+        el.style.opacity = '0'; el.style.transform = 'translateX(120%)';
         setTimeout(() => el.remove(), 400);
-    }, 4000);
+    }, 4500);
 }
 
-// ────────────────────────────────────────────────────────────
-//  ENGANCHE SEGURO EN _completarLogin
-//  Se ejecuta DESPUÉS de que AppState ya tiene todos los datos
-//  y DESPUÉS de que checkUpcomingPayments() (nubes) ya corrió.
-//  No toca initApp, no toca notifyStateChange.
-// ────────────────────────────────────────────────────────────
-const _notifs_originalCompletarLogin = window._completarLogin;
+// ── Enganche seguro post-login ────────────────────────────────
+// Se engancha en _completarLogin que ya existe en tu código.
+// Las nubes de alerta (checkUpcomingPayments) corren primero,
+// las notificaciones SW se inicializan después.
+const _nOrigLogin = window._completarLogin;
 window._completarLogin = function(user) {
-    // 1️⃣ Ejecutar el login original completo (carga datos, nubes de alerta, etc.)
-    _notifs_originalCompletarLogin(user);
-
-    // 2️⃣ Solo DESPUÉS inicializar notificaciones y botón
-    //    requestAnimationFrame garantiza que el DOM del login ya desapareció
+    _nOrigLogin(user); // ← login original completo, nubes incluidas
     requestAnimationFrame(() => {
-        Notifs.init().then(() => {
-            notifs_inyectarBoton();
-        });
+        Notifs.init().then(() => notifs_inyectarBoton());
     });
 };
 
-// ────────────────────────────────────────────────────────────
-//  REPROGRAMAR cuando los datos cambian
-//  Se extiende notifyStateChange de forma segura:
-//  guarda la referencia original ANTES de modificarla,
-//  y solo llama a Notifs.programar() si el permiso ya fue dado.
-// ────────────────────────────────────────────────────────────
+// ── Reprogramar cuando los datos cambian ─────────────────────
+// IIFE para capturar la referencia original de forma segura
 (function() {
     const _orig = AppState.notifyStateChange.bind(AppState);
     AppState.notifyStateChange = function() {
-        _orig();                              // nubes de alerta, render, etc. — intactos
-        if (Notifs.permiso) Notifs.programar(); // notificaciones SW — solo si activo
+        _orig();                               // render + nubes — intactos
+        if (Notifs.permiso) Notifs.programar(); // SW — solo si permiso activo
     };
 })();
 </script>
