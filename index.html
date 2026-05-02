@@ -1911,70 +1911,105 @@ input, select, textarea { border-radius: 12px !important; }
         } catch(e) { console.warn('[Supabase] Error sync:', e.message); }
     }
 
+    // ── Sincronización REAL: elimina registros borrados + hace upsert de los actuales ──
+    async function sb_sync_tabla(tabla, localRows, upsertFn) {
+        if (!CURRENT_USER_ID) return;
+        try {
+            // 1. Obtener IDs actuales en la BD para este usuario
+            const { data: remoto, error: errSelect } = await _sb.from(tabla)
+                .select('id').eq('user_id', CURRENT_USER_ID);
+            if (errSelect) { console.warn('[Supabase] select error:', tabla, errSelect.message); return; }
+
+            const idsRemoto = new Set((remoto || []).map(r => r.id));
+            const idsLocal  = new Set(localRows.map(r => r.id).filter(Boolean));
+
+            // 2. Eliminar de la BD los IDs que ya no están localmente
+            const idsAEliminar = [...idsRemoto].filter(id => !idsLocal.has(id));
+            if (idsAEliminar.length > 0) {
+                const { error: errDel } = await _sb.from(tabla).delete()
+                    .in('id', idsAEliminar).eq('user_id', CURRENT_USER_ID);
+                if (errDel) console.warn('[Supabase] delete error:', tabla, errDel.message);
+            }
+
+            // 3. Upsert de los registros actuales (si los hay)
+            if (localRows.length > 0) {
+                const { error: errUp } = await _sb.from(tabla)
+                    .upsert(localRows.map(upsertFn), { onConflict: 'id' });
+                if (errUp) console.warn('[Supabase] upsert error:', tabla, errUp.message);
+            }
+        } catch(e) { console.warn('[Supabase] sync error:', tabla, e.message); }
+    }
+
     async function sb_sync_transacciones() {
-        if (!CURRENT_USER_ID || !AppState.transactions.length) return;
+        if (!CURRENT_USER_ID) return;
         AppState.transactions.forEach(t => {
             if (!t.id) t.id = 't_' + Date.now() + '_' + Math.random().toString(36).slice(2);
         });
-        await _sb.from('transacciones').upsert(
-            AppState.transactions.map(t => ({
-                id: t.id, user_id: CURRENT_USER_ID, type: t.type,
-                description: t.description || '', amount: t.amount,
-                date: t.date, category: t.category || '', account_id: t.accountId || null
-            })), { onConflict: 'id' }
-        );
+        await sb_sync_tabla('transacciones', AppState.transactions, t => ({
+            id: t.id, user_id: CURRENT_USER_ID, type: t.type,
+            description: t.description || '', amount: t.amount,
+            date: t.date, category: t.category || '', account_id: t.accountId || null
+        }));
     }
 
     async function sb_sync_cuentas() {
-        if (!CURRENT_USER_ID || !AppState.accounts.length) return;
-        await _sb.from('cuentas').upsert(
-            AppState.accounts.map(a => ({
-                id: a.id, user_id: CURRENT_USER_ID, name: a.name,
-                icon: a.icon || '🏦', initial_balance: a.initialBalance || 0
-            })), { onConflict: 'id' }
-        );
+        if (!CURRENT_USER_ID) return;
+        AppState.accounts.forEach(a => {
+            if (!a.id) a.id = 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        });
+        await sb_sync_tabla('cuentas', AppState.accounts, a => ({
+            id: a.id, user_id: CURRENT_USER_ID, name: a.name,
+            icon: a.icon || '🏦', initial_balance: a.initialBalance || 0
+        }));
     }
 
     async function sb_sync_gastos_fijos() {
-        if (!CURRENT_USER_ID || !AppState.fixedExpenses.length) return;
+        if (!CURRENT_USER_ID) return;
         AppState.fixedExpenses.forEach(f => {
             if (!f.id) f.id = 'fe_' + Date.now() + '_' + Math.random().toString(36).slice(2);
         });
-        await _sb.from('gastos_fijos').upsert(
-            AppState.fixedExpenses.map(f => ({
-                id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
-                payment_day: f.paymentDay, category: f.category || '',
-                account_id: f.accountId || null, status: f.status || 'pending'
-            })), { onConflict: 'id' }
-        );
+        await sb_sync_tabla('gastos_fijos', AppState.fixedExpenses, f => ({
+            id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
+            payment_day: f.paymentDay, category: f.category || '',
+            account_id: f.accountId || null, status: f.status || 'pending'
+        }));
     }
 
     async function sb_sync_ingresos_fijos() {
-        if (!CURRENT_USER_ID || !AppState.fixedIncomes.length) return;
+        if (!CURRENT_USER_ID) return;
         AppState.fixedIncomes.forEach(f => {
             if (!f.id) f.id = 'fi_' + Date.now() + '_' + Math.random().toString(36).slice(2);
         });
-        await _sb.from('ingresos_fijos').upsert(
-            AppState.fixedIncomes.map(f => ({
-                id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
-                payment_day: f.paymentDay, category: f.category || '',
-                account_id: f.accountId || null, status: f.status || 'pending'
-            })), { onConflict: 'id' }
-        );
+        await sb_sync_tabla('ingresos_fijos', AppState.fixedIncomes, f => ({
+            id: f.id, user_id: CURRENT_USER_ID, name: f.name, amount: f.amount,
+            payment_day: f.paymentDay, category: f.category || '',
+            account_id: f.accountId || null, status: f.status || 'pending'
+        }));
     }
 
     async function sb_sync_metas() {
-        if (!CURRENT_USER_ID || !AppState.savingsGoals.length) return;
+        if (!CURRENT_USER_ID) return;
         AppState.savingsGoals.forEach(g => {
             if (!g.id) g.id = 'g_' + Date.now() + '_' + Math.random().toString(36).slice(2);
         });
-        await _sb.from('metas_ahorro').upsert(
-            AppState.savingsGoals.map(g => ({
-                id: g.id, user_id: CURRENT_USER_ID, name: g.name, amount: g.amount,
-                current: g.current || 0, date: g.date || null,
-                account_id: g.accountId || null, completed: g.completed || false
-            })), { onConflict: 'id' }
+        await sb_sync_tabla('metas_ahorro', AppState.savingsGoals, g => ({
+            id: g.id, user_id: CURRENT_USER_ID, name: g.name, amount: g.amount,
+            current: g.current || 0, date: g.date || null,
+            account_id: g.accountId || null, completed: g.completed || false
+        }));
+    }
+
+    // ── Eliminar todos los datos financieros del usuario en Supabase (sin borrar el usuario) ──
+    async function sb_borrarTodosDatos(userId) {
+        const tablas = ['transacciones', 'cuentas', 'gastos_fijos', 'ingresos_fijos', 'metas_ahorro'];
+        const promesas = tablas.map(tabla =>
+            _sb.from(tabla).delete().eq('user_id', userId)
         );
+        // Resetear monthly_balance del usuario también
+        promesas.push(_sb.from('usuarios').update({ monthly_balance: 0 }).eq('id', userId));
+        const resultados = await Promise.all(promesas);
+        const errores = resultados.filter(r => r.error).map(r => r.error.message);
+        if (errores.length > 0) throw new Error(errores.join('; '));
     }
 
     async function sb_cargarDatos(userId) {
@@ -2683,11 +2718,118 @@ input, select, textarea { border-radius: 12px !important; }
            </div>
          </button>
         </div>
-        <div class="form-section"> 
-            <h2>👤 Usuario</h2>
-            <button class="btn btn-danger" onclick="deleteCurrentUser()" style="margin-top:1rem;">
-                🗑️ Eliminar Usuario
-            </button>
+        <!-- ZONA DE PELIGRO: Borrar todos los datos -->
+        <div class="form-section" style="border: 2px solid rgba(239,68,68,0.35); background: rgba(239,68,68,0.04);">
+            <h2 style="color: var(--color-danger);">⚠️ Zona de Peligro</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: 1.25rem; font-size: 0.9rem;">
+                Estas acciones son <strong>irreversibles</strong>. Úsalas con precaución.
+            </p>
+
+            <!-- Botón: Borrar todos los datos -->
+            <div style="background: var(--color-bg-surface); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--color-danger);">
+                <div style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.3rem;">🗂️ Borrar todos los datos financieros</div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.5;">
+                            Elimina permanentemente: movimientos, cuentas, presupuestos, metas, gastos fijos e ingresos fijos.<br>
+                            <strong style="color: var(--color-success);">Tu cuenta y acceso se conservan.</strong>
+                        </div>
+                    </div>
+                    <button onclick="mostrarModalBorrarDatos()" style="
+                        background: var(--color-danger); color: white; border: none;
+                        border-radius: 10px; padding: 0.75rem 1.25rem; font-size: 0.9rem;
+                        font-weight: 700; cursor: pointer; white-space: nowrap;
+                        min-height: 48px; transition: all 0.2s; flex-shrink: 0;
+                        box-shadow: 0 4px 12px rgba(239,68,68,0.3);"
+                        onmouseover="this.style.background='#dc2626';this.style.transform='translateY(-1px)'"
+                        onmouseout="this.style.background='var(--color-danger)';this.style.transform='translateY(0)'">
+                        🗑️ Borrar todos los datos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón: Eliminar usuario -->
+            <div style="background: var(--color-bg-surface); border-radius: 12px; padding: 1.25rem; border-left: 4px solid #7f1d1d;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.3rem;">👤 Eliminar cuenta de usuario</div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.5;">
+                            Elimina tu cuenta, datos y acceso de forma permanente. No podrás recuperarla.
+                        </div>
+                    </div>
+                    <button onclick="deleteCurrentUser()" style="
+                        background: #7f1d1d; color: white; border: none;
+                        border-radius: 10px; padding: 0.75rem 1.25rem; font-size: 0.9rem;
+                        font-weight: 700; cursor: pointer; white-space: nowrap;
+                        min-height: 48px; transition: all 0.2s; flex-shrink: 0;"
+                        onmouseover="this.style.background='#991b1b'"
+                        onmouseout="this.style.background='#7f1d1d'">
+                        ☠️ Eliminar usuario
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: Confirmación de borrar todos los datos -->
+        <div id="modalBorrarDatos" style="
+            display: none; position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+            align-items: center; justify-content: center; padding: 1rem;">
+            <div style="
+                background: var(--color-bg-elevated); border-radius: 20px;
+                padding: 2rem; max-width: 420px; width: 100%;
+                border: 2px solid rgba(239,68,68,0.4);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+                animation: lcSlideUp 0.3s cubic-bezier(.16,1,.3,1);">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; margin-bottom: 0.75rem;">🗑️</div>
+                    <h3 style="color: var(--color-danger); font-size: 1.25rem; margin-bottom: 0.75rem;">
+                        ¿Borrar todos los datos?
+                    </h3>
+                    <p style="color: var(--color-text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                        Esta acción eliminará <strong>permanentemente</strong> todos tus datos financieros:
+                    </p>
+                    <div style="
+                        background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+                        border-radius: 10px; padding: 1rem; margin: 1rem 0;
+                        text-align: left; font-size: 0.85rem; color: var(--color-text-secondary);">
+                        <div>💸 Todos los movimientos (ingresos y gastos)</div>
+                        <div style="margin-top:0.4rem;">🏦 Todas las cuentas financieras</div>
+                        <div style="margin-top:0.4rem;">📌 Gastos fijos e ingresos fijos</div>
+                        <div style="margin-top:0.4rem;">🎯 Metas de ahorro</div>
+                        <div style="margin-top:0.4rem;">📊 Todo el historial</div>
+                    </div>
+                    <div style="
+                        background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3);
+                        border-radius: 10px; padding: 0.75rem; font-size: 0.85rem;
+                        color: var(--color-success); margin-bottom: 0.5rem;">
+                        ✅ Tu cuenta y acceso con PIN se conservarán
+                    </div>
+                    <p style="color: var(--color-danger); font-size: 0.8rem; font-weight: 600;">
+                        ⚠️ Esta acción <u>no puede deshacerse</u>.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button onclick="cerrarModalBorrarDatos()" style="
+                        flex: 1; padding: 0.85rem; border: 2px solid var(--color-bg-surface);
+                        border-radius: 10px; background: transparent; color: var(--color-text-secondary);
+                        font-size: 0.95rem; font-weight: 600; cursor: pointer; min-height: 48px;
+                        transition: all 0.2s;"
+                        onmouseover="this.style.background='var(--color-bg-surface)'"
+                        onmouseout="this.style.background='transparent'">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmarBorrarTodosDatos()" id="btnConfirmarBorrar" style="
+                        flex: 1; padding: 0.85rem; border: none;
+                        border-radius: 10px; background: var(--color-danger); color: white;
+                        font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: 48px;
+                        transition: all 0.2s; box-shadow: 0 4px 12px rgba(239,68,68,0.4);"
+                        onmouseover="this.style.background='#dc2626'"
+                        onmouseout="this.style.background='var(--color-danger)'">
+                        🗑️ Sí, borrar todo
+                    </button>
+                </div>
+            </div>
         </div>    
     </div>
 
@@ -3275,6 +3417,72 @@ input, select, textarea { border-radius: 12px !important; }
             }
         }
 
+        /* ============================================
+           BORRAR TODOS LOS DATOS (sin eliminar cuenta)
+           ============================================ */
+        function mostrarModalBorrarDatos() {
+            const modal = document.getElementById('modalBorrarDatos');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function cerrarModalBorrarDatos() {
+            const modal = document.getElementById('modalBorrarDatos');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        async function confirmarBorrarTodosDatos() {
+            const btn = document.getElementById('btnConfirmarBorrar');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Borrando...';
+                btn.style.opacity = '0.7';
+            }
+            try {
+                if (CURRENT_USER_ID) {
+                    await sb_borrarTodosDatos(CURRENT_USER_ID);
+                }
+                AppState.transactions   = [];
+                AppState.fixedExpenses  = [];
+                AppState.fixedIncomes   = [];
+                AppState.savingsGoals   = [];
+                AppState.accounts       = [];
+                AppState.monthlyBalance = 0;
+                AppState.shownAlerts    = new Set();
+
+                const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
+                const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
+                if (user) {
+                    user.data = {
+                        transactions: [], fixedExpenses: [], fixedIncomes: [],
+                        savingsGoals: [], accounts: [], monthlyBalance: 0
+                    };
+                    localStorage.setItem(activeKey, JSON.stringify(user));
+                }
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('lastReset_')) localStorage.removeItem(k);
+                });
+                cerrarModalBorrarDatos();
+                updateAllViews();
+                setTimeout(() => {
+                    alert('✅ Todos los datos financieros han sido eliminados permanentemente.\n\nTu cuenta y acceso se conservaron.\nLa app está lista para comenzar de nuevo.');
+                }, 100);
+            } catch (err) {
+                console.error('[BorrarDatos] Error:', err);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '🗑️ Sí, borrar todo';
+                    btn.style.opacity = '1';
+                }
+                alert('❌ Error al borrar los datos: ' + err.message + '\n\nIntenta nuevamente.');
+            }
+        }
+
                 function deleteCurrentUser() {
             const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
             const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
@@ -3835,8 +4043,15 @@ input, select, textarea { border-radius: 12px !important; }
             }
         }
 
-        function deleteFixedExpense(index) {
+        async function deleteFixedExpense(index) {
             if (confirm('¿Estás seguro de eliminar este gasto fijo?')) {
+                const fe = AppState.fixedExpenses[index];
+                if (CURRENT_USER_ID && fe.id) {
+                    try {
+                        await _sb.from('gastos_fijos').delete()
+                            .eq('id', fe.id).eq('user_id', CURRENT_USER_ID);
+                    } catch(e) { console.warn('[Delete fe]', e.message); }
+                }
                 AppState.fixedExpenses.splice(index, 1);
                 AppState.notifyStateChange();
             }
@@ -3953,8 +4168,15 @@ input, select, textarea { border-radius: 12px !important; }
             }
         }
 
-        function deleteFixedIncome(index) {
+        async function deleteFixedIncome(index) {
             if (confirm('¿Estás seguro de eliminar este ingreso fijo?')) {
+                const fi = AppState.fixedIncomes[index];
+                if (CURRENT_USER_ID && fi.id) {
+                    try {
+                        await _sb.from('ingresos_fijos').delete()
+                            .eq('id', fi.id).eq('user_id', CURRENT_USER_ID);
+                    } catch(e) { console.warn('[Delete fi]', e.message); }
+                }
                 AppState.fixedIncomes.splice(index, 1);
                 AppState.notifyStateChange();
             }
@@ -4029,7 +4251,7 @@ input, select, textarea { border-radius: 12px !important; }
             }).join('');
         }
 
-        function deleteTransaction(index) {
+        async function deleteTransaction(index) {
             const transaction = AppState.transactions[index];
 
             if (transaction.type === 'Gasto Fijo' || transaction.type === 'Ingreso Fijo') {
@@ -4038,6 +4260,13 @@ input, select, textarea { border-radius: 12px !important; }
             }
 
             if (confirm('¿Estás seguro de eliminar esta transacción?')) {
+                // Eliminar directamente en Supabase si tiene ID
+                if (CURRENT_USER_ID && transaction.id) {
+                    try {
+                        await _sb.from('transacciones').delete()
+                            .eq('id', transaction.id).eq('user_id', CURRENT_USER_ID);
+                    } catch(e) { console.warn('[Delete tx]', e.message); }
+                }
                 AppState.transactions.splice(index, 1);
                 AppState.notifyStateChange();
             }
@@ -4377,7 +4606,7 @@ input, select, textarea { border-radius: 12px !important; }
             alert('✅ Meta actualizada correctamente');
         }
 
-        function deleteGoal(index) {
+        async function deleteGoal(index) {
             const goal = AppState.savingsGoals[index];
             const acctMeta = goal.accountId ? AppState.accounts.find(a => a.id === goal.accountId) : null;
             const moneyNote = acctMeta && goal.current > 0
@@ -4407,6 +4636,13 @@ input, select, textarea { border-radius: 12px !important; }
                         amount: goal.current, date: today,
                         category: 'Ahorro / Meta', accountId: null
                     });
+                }
+                // Eliminar directamente en Supabase
+                if (CURRENT_USER_ID && goal.id) {
+                    try {
+                        await _sb.from('metas_ahorro').delete()
+                            .eq('id', goal.id).eq('user_id', CURRENT_USER_ID);
+                    } catch(e) { console.warn('[Delete meta]', e.message); }
                 }
                 AppState.savingsGoals.splice(index, 1);
                 AppState.notifyStateChange();
@@ -5095,14 +5331,14 @@ Actual: ${account.icon}`,
             alert('✅ Cuenta actualizada correctamente');
         }
 
-        function deleteAccount(index) {
+        async function deleteAccount(index) {
             const account = AppState.accounts[index];
             const txCount = AppState.transactions.filter(t => t.accountId === account.id).length;
             const warning = txCount > 0
                 ? `\n\n⚠️ Esta cuenta tiene ${txCount} transacción(es) asociada(s). Las transacciones quedarán sin cuenta asignada.`
                 : '';
             if (confirm(`¿Eliminar la cuenta "${account.name}"?${warning}`)) {
-                // Disassociate transactions
+                // Disassociate transactions locally
                 AppState.transactions.forEach(t => {
                     if (t.accountId === account.id) t.accountId = null;
                 });
@@ -5115,6 +5351,15 @@ Actual: ${account.icon}`,
                 AppState.savingsGoals.forEach(g => {
                     if (g.accountId === account.id) g.accountId = null;
                 });
+
+                // Eliminar directamente en Supabase
+                if (CURRENT_USER_ID && account.id) {
+                    try {
+                        await _sb.from('cuentas').delete()
+                            .eq('id', account.id).eq('user_id', CURRENT_USER_ID);
+                    } catch(e) { console.warn('[Delete cuenta]', e.message); }
+                }
+
                 AppState.accounts.splice(index, 1);
                 AppState.notifyStateChange();
                 alert('✅ Cuenta eliminada correctamente');
