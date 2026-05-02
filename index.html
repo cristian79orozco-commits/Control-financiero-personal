@@ -5513,7 +5513,7 @@ function notifs_inyectarBoton() {
     const btn = document.createElement('button');
     btn.id = 'btnNotifToggle';
     btn.style.cssText = `
-        position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:20px;
+        position:fixed;bottom:calc(60px + env(safe-area-inset-bottom));right:20px;
         width:52px;height:52px;border-radius:50%;border:none;
         font-size:1.4rem;cursor:pointer;z-index:8000;
         display:flex;align-items:center;justify-content:center;
@@ -5582,7 +5582,7 @@ function notifs_toast(msg, tipo = 'success') {
     const color = tipo === 'success' ? '#22c55e' : tipo === 'warning' ? '#f59e0b' : '#ef4444';
     const el = document.createElement('div');
     el.style.cssText = `
-        position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));right:16px;
+        position:fixed;bottom:calc(130px + env(safe-area-inset-bottom));right:16px;
         background:rgba(13,22,40,0.96);border-left:4px solid ${color};
         border-radius:12px;padding:.85rem 1.1rem;font-size:.82rem;
         color:#dce8f8;max-width:300px;z-index:9500;
