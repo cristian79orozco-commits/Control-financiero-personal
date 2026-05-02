@@ -3195,14 +3195,9 @@ input, select, textarea { border-radius: 12px !important; }
                     <div class="lc-bg"></div>
                     <div class="lc-card">
                         <div class="lc-logo-wrap">
-                            <svg class="lc-logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="CF">
-                                <rect width="64" height="64" rx="16" fill="#0d1f3c"/>
-                                <rect width="64" height="64" rx="16" fill="none" stroke="#f6c90e" stroke-width="1.5" stroke-opacity="0.6"/>
-                                <path d="M27 19 Q16 19 16 32 Q16 45 27 45" stroke="#f6c90e" stroke-width="3.2" stroke-linecap="round" fill="none"/>
-                                <line x1="35" y1="19" x2="49" y2="19" stroke="#f6c90e" stroke-width="3.2" stroke-linecap="round"/>
-                                <line x1="35" y1="19" x2="35" y2="45" stroke="#f6c90e" stroke-width="3.2" stroke-linecap="round"/>
-                                <line x1="35" y1="32" x2="46" y2="32" stroke="#f6c90e" stroke-width="3.2" stroke-linecap="round"/>
-                            </svg>
+                            <div class="lc-logo-img-wrap">
+                                <img src="icon-192.png" alt="CF" class="lc-logo-img"/>
+                            </div>
                             <div class="lc-logo-accent"></div>
                         </div>
                         <h1 class="lc-title">Control Financiero</h1>
@@ -3248,8 +3243,9 @@ input, select, textarea { border-radius: 12px !important; }
                     .lc-bg::after{content:'';position:absolute;bottom:10%;left:6%;width:160px;height:160px;border:1px solid rgba(56,189,248,.06);border-radius:50%;pointer-events:none}
                     .lc-card{position:relative;z-index:1;width:100%;max-width:400px;background:rgba(13,22,40,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(246,201,14,.12);border-radius:22px;padding:2.25rem 2rem;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 8px 32px rgba(0,0,0,.5),0 32px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);animation:lcSlideUp .42s cubic-bezier(.16,1,.3,1);box-sizing:border-box}
                     .lc-logo-wrap{display:flex;justify-content:center;margin-bottom:1.5rem;position:relative}
-                    .lc-logo-svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(246,201,14,.25));flex-shrink:0}
-                    .lc-logo-accent{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:40px;height:3px;background:linear-gradient(90deg,transparent,#f6c90e,transparent);border-radius:2px;opacity:.7}
+                    .lc-logo-img-wrap{position:relative;width:72px;height:72px;border-radius:20px;padding:3px;background:linear-gradient(135deg,#f6c90e,#38bdf8,#f6c90e);background-size:300% 300%;animation:lcBorderSpin 3s linear infinite;box-shadow:0 0 24px rgba(246,201,14,.35),0 0 48px rgba(56,189,248,.15);}
+                    .lc-logo-img{display:block;width:100%;height:100%;border-radius:17px;object-fit:cover;background:#0d1f3c;}
+                    .lc-logo-accent{display:none}@keyframes lcBorderSpin{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
                     .lc-title{text-align:center;font-size:clamp(1.35rem,4vw,1.7rem);font-weight:800;color:#f0f4ff;margin:0 0 .3rem;letter-spacing:-.3px;line-height:1.2}
                     .lc-subtitle{text-align:center;color:rgba(160,180,210,.7);font-size:.85rem;margin:0 0 1.75rem}
                     .lc-field{margin-bottom:1rem}
