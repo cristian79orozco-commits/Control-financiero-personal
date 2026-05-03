@@ -5400,43 +5400,58 @@ Actual: ${account.icon}`,
         });
     </script>
     <!-- ============================================================
-     NOTIFICACIONES PUSH — versión final
-     Pega justo antes de </body>
-     No toca initApp. No toca las nubes de alerta.
+     NOTIFICACIONES PUSH — v3.0 (background real + IndexedDB)
+     ✅ Funciona aunque la app esté cerrada (via service worker)
+     ✅ Horarios persistidos en IndexedDB — no en memoria
+     ✅ Compatible: Android, PC. iOS: limitado por política Apple.
      ============================================================ -->
 <script>
+/* ──────────────────────────────────────────────────────────────
+   Notifs v3 — objeto principal
+   ────────────────────────────────────────────────────────────── */
 const Notifs = {
     swReg:   null,
     permiso: false,
 
+    // ── init: registra SW, Periodic Sync y Background Sync ──────
     async init() {
         if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
-        try { this.swReg = await navigator.serviceWorker.ready; } catch { return; }
+        try {
+            this.swReg = await navigator.serviceWorker.ready;
+        } catch { return; }
 
-        // Registrar Periodic Background Sync (Chrome Android — requiere que
-        // la PWA esté instalada en pantalla de inicio)
+        // Periodic Background Sync — Chrome Android (PWA instalada)
         if (this.swReg.periodicSync) {
             try {
                 const tags = await this.swReg.periodicSync.getTags();
                 if (!tags.includes('check-finances')) {
                     await this.swReg.periodicSync.register('check-finances', {
-                        minInterval: 60 * 60 * 1000 // intentar cada hora
+                        minInterval: 60 * 60 * 1000   // mínimo 1 hora
                     });
                 }
             } catch { /* no disponible en todos los contextos */ }
         }
 
-        // Registrar Background Sync one-off como respaldo adicional
+        // Background Sync one-shot como respaldo
         if (this.swReg.sync) {
             try { await this.swReg.sync.register('check-finances-sync'); } catch {}
         }
 
+        // Escuchar confirmación del SW
+        navigator.serviceWorker.addEventListener('message', e => {
+            if (e.data?.type === 'SCHEDULE_CONFIRMED') {
+                console.log(`[Notifs] ${e.data.count} notificaciones programadas en SW.`);
+            }
+        });
+
         if (Notification.permission === 'granted') {
             this.permiso = true;
-            setTimeout(() => this.programar(), 2000);
+            // Reprogramar el día actual al abrir la app
+            setTimeout(() => this.programar(), 1500);
         }
     },
 
+    // ── solicitarPermiso ─────────────────────────────────────────
     async solicitarPermiso() {
         if (!('Notification' in window)) return false;
         if (Notification.permission === 'granted') { this.permiso = true; return true; }
@@ -5445,31 +5460,35 @@ const Notifs = {
         const res    = await Notification.requestPermission();
         this.permiso = res === 'granted';
         if (this.permiso) {
+            // Notificación de bienvenida inmediata
             this._post({ type: 'TEST_NOTIFICATION' });
+            // Programar el día completo
             setTimeout(() => this.programar(), 1000);
         }
         return this.permiso;
     },
 
+    // ── programar: envía payload al SW para persistir en IndexedDB ─
     programar() {
         if (!this.permiso || !this.swReg?.active) return;
 
-        const hoy             = new Date();
-        const diaHoy          = hoy.getDate();
-        const diasEnMes       = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-        const diasRestantes   = diasEnMes - diaHoy;
-        const disponible      = AppState.getCurrentAvailable();
-        const libreParaGastar = Math.max(0, disponible * 0.30);
+        const hoy           = new Date();
+        const diaHoy        = hoy.getDate();
+        const diasEnMes     = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+        const diasRestantes = diasEnMes - diaHoy;
+        const disponible    = AppState.getCurrentAvailable();
+        const libre         = Math.max(0, disponible * 0.30);
 
         const activeKey = localStorage.getItem('finanzas_active_user') || '';
-        const usr       = activeKey ? JSON.parse(localStorage.getItem(activeKey) || '{}') : {};
+        let usr = {};
+        try { usr = activeKey ? JSON.parse(localStorage.getItem(activeKey) || '{}') : {}; } catch {}
 
         this._post({
             type: 'SCHEDULE_NOTIFICATIONS',
             payload: {
                 username:        usr.name || usr.username || 'Usuario',
                 disponible,
-                libreParaGastar,
+                libreParaGastar: libre,
                 diasRestantes,
                 gastosMes:       AppState.getCurrentMonthExpense(),
                 ingresosMes:     AppState.getCurrentMonthIncome(),
@@ -5492,6 +5511,7 @@ const Notifs = {
         });
     },
 
+    // ── _post: envía mensaje al service worker activo ────────────
     _post(msg) {
         this.swReg?.active?.postMessage(msg);
     }
@@ -5516,8 +5536,8 @@ function notifs_inyectarBoton() {
     btn.addEventListener('click', async () => {
         if (Notification.permission === 'granted') {
             Notifs.programar();
-            const disp  = AppState.getCurrentAvailable();
-            const pend  = AppState.fixedExpenses.filter(f => f.status === 'pending').length;
+            const disp = AppState.getCurrentAvailable();
+            const pend = AppState.fixedExpenses.filter(f => f.status === 'pending').length;
             notifs_toast(
                 `🔔 Notificaciones activas\n💰 Disponible: $${Math.round(disp).toLocaleString('es-CO')} | 📌 Pendientes: ${pend} | 🎯 Metas: ${AppState.savingsGoals.length}`,
                 'success'
@@ -5528,7 +5548,7 @@ function notifs_inyectarBoton() {
             notifs_actualizarBoton();
             notifs_toast(
                 ok
-                    ? '✅ Notificaciones activadas. Recibirás alertas aunque la app esté cerrada.'
+                    ? '✅ Notificaciones activadas. Recibirás alertas automáticas aunque la app esté cerrada.'
                     : '🔕 Permiso denegado. Actívalas desde los ajustes del navegador.',
                 ok ? 'success' : 'warning'
             );
@@ -5536,12 +5556,12 @@ function notifs_inyectarBoton() {
     });
 
     btn.addEventListener('mouseenter', () => {
-        btn.style.transform  = 'scale(1.1)';
-        btn.style.boxShadow  = '0 6px 28px rgba(246,201,14,0.55)';
+        btn.style.transform = 'scale(1.1)';
+        btn.style.boxShadow = '0 6px 28px rgba(246,201,14,0.55)';
     });
     btn.addEventListener('mouseleave', () => {
-        btn.style.transform  = 'scale(1)';
-        btn.style.boxShadow  = '0 4px 20px rgba(246,201,14,0.4)';
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = '0 4px 20px rgba(246,201,14,0.4)';
     });
 
     document.body.appendChild(btn);
@@ -5553,13 +5573,13 @@ function notifs_actualizarBoton() {
     if (!btn) return;
     const p = ('Notification' in window) ? Notification.permission : 'denied';
     if (p === 'granted') {
-        btn.innerHTML = '🔔'; btn.title = 'Notificaciones activas';
+        btn.innerHTML = '🔔'; btn.title = 'Notificaciones activas — click para reprogramar';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
     } else if (p === 'denied') {
-        btn.innerHTML = '🔕'; btn.title = 'Notificaciones bloqueadas';
+        btn.innerHTML = '🔕'; btn.title = 'Notificaciones bloqueadas por el navegador';
         btn.style.background = 'linear-gradient(135deg,#64748b,#475569)';
     } else {
-        btn.innerHTML = '🔔'; btn.title = 'Activar notificaciones';
+        btn.innerHTML = '🔔'; btn.title = 'Activar notificaciones automáticas';
         btn.style.background = 'linear-gradient(135deg,#f6c90e,#d4a800)';
     }
 }
@@ -5588,28 +5608,24 @@ function notifs_toast(msg, tipo = 'success') {
         el.style.transition = 'opacity .4s,transform .4s';
         el.style.opacity = '0'; el.style.transform = 'translateX(120%)';
         setTimeout(() => el.remove(), 400);
-    }, 4500);
+    }, 5000);
 }
 
 // ── Enganche seguro post-login ────────────────────────────────
-// Se engancha en _completarLogin que ya existe en tu código.
-// Las nubes de alerta (checkUpcomingPayments) corren primero,
-// las notificaciones SW se inicializan después.
 const _nOrigLogin = window._completarLogin;
 window._completarLogin = function(user) {
-    _nOrigLogin(user); // ← login original completo, nubes incluidas
+    _nOrigLogin(user);  // ← login original completo, nubes incluidas
     requestAnimationFrame(() => {
         Notifs.init().then(() => notifs_inyectarBoton());
     });
 };
 
 // ── Reprogramar cuando los datos cambian ─────────────────────
-// IIFE para capturar la referencia original de forma segura
 (function() {
     const _orig = AppState.notifyStateChange.bind(AppState);
     AppState.notifyStateChange = function() {
-        _orig();                               // render + nubes — intactos
-        if (Notifs.permiso) Notifs.programar(); // SW — solo si permiso activo
+        _orig();                                // render + nubes — intactos
+        if (Notifs.permiso) Notifs.programar(); // repersistir en IndexedDB del SW
     };
 })();
 // ═══════════════════════════════════════
