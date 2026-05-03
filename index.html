@@ -1888,6 +1888,216 @@ input, select, textarea { border-radius: 12px !important; }
 .ob-config-btn strong{display:block;font-size:.9rem;font-weight:700;margin-bottom:.1rem;color:#dce8f8}
 .ob-config-btn small{display:block;font-size:.75rem;color:rgba(148,163,184,.7);font-weight:400}
 @media(max-width:480px){.ob-card{padding:1.15rem 1.1rem .95rem}.ob-welcome-card{padding:2rem 1.4rem 1.5rem}}
+
+/* ══════════════════════════════════════════════════════
+   SISTEMA DE MODALES Y TOASTS PERSONALIZADOS
+   Reemplaza alert(), confirm() y prompt() del navegador
+══════════════════════════════════════════════════════ */
+
+/* ── OVERLAY BASE ── */
+.cf-modal-overlay {
+  position: fixed; inset: 0; z-index: 99990;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.25rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s ease;
+}
+.cf-modal-overlay.cf-open {
+  opacity: 1; pointer-events: all;
+}
+
+/* ── MODAL CARD ── */
+.cf-modal-card {
+  background: linear-gradient(160deg, #1a2744 0%, #0f172a 100%);
+  border: 1px solid rgba(56,189,248,.18);
+  border-radius: 24px;
+  padding: 2rem 1.75rem 1.5rem;
+  width: min(400px, 100%);
+  box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  transform: translateY(22px) scale(.96);
+  transition: transform .28s cubic-bezier(.16,1,.3,1), opacity .22s ease;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+.cf-modal-overlay.cf-open .cf-modal-card {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+/* Accent line top */
+.cf-modal-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--cf-accent, #38bdf8), var(--cf-accent2, #0ea5e9));
+}
+
+/* ── MODAL ICON ── */
+.cf-modal-icon {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  margin: 0 auto 1.1rem;
+}
+.cf-modal-icon.info  { background: rgba(56,189,248,.13); }
+.cf-modal-icon.warn  { background: rgba(245,158,11,.13); }
+.cf-modal-icon.danger{ background: rgba(239,68,68,.13); }
+.cf-modal-icon.success{background: rgba(34,197,94,.13); }
+
+/* ── MODAL TITLE ── */
+.cf-modal-title {
+  font-size: 1.1rem; font-weight: 800;
+  color: #dce8f8; text-align: center;
+  margin-bottom: .45rem; line-height: 1.3;
+}
+
+/* ── MODAL MESSAGE ── */
+.cf-modal-msg {
+  font-size: .875rem; color: rgba(185,198,214,.85);
+  text-align: center; line-height: 1.65;
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+}
+
+/* ── MODAL DETAIL BOX (para confirm con detalles) ── */
+.cf-modal-detail {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  font-size: .82rem; color: rgba(185,198,214,.75);
+  margin-bottom: 1.4rem; line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* ── MODAL INPUT (para prompt) ── */
+.cf-modal-input {
+  width: 100%; padding: .75rem 1rem;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(56,189,248,.25);
+  border-radius: 12px;
+  color: #dce8f8; font-size: 1rem;
+  margin-bottom: 1.25rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+.cf-modal-input:focus {
+  border-color: rgba(56,189,248,.55);
+  box-shadow: 0 0 0 3px rgba(56,189,248,.1);
+}
+
+/* ── MODAL ACTIONS ── */
+.cf-modal-actions {
+  display: flex; gap: .65rem;
+}
+.cf-modal-actions.single { justify-content: center; }
+
+.cf-btn {
+  flex: 1; padding: .72rem 1rem;
+  font-size: .92rem; font-weight: 700;
+  border: none; border-radius: 12px;
+  cursor: pointer;
+  transition: filter .15s, transform .15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+}
+.cf-btn:active { transform: scale(.96); }
+
+.cf-btn-cancel {
+  background: rgba(255,255,255,.07);
+  color: rgba(185,198,214,.8);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.cf-btn-cancel:hover { background: rgba(255,255,255,.11); }
+
+.cf-btn-confirm {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  color: #0f172a;
+  box-shadow: 0 4px 16px rgba(56,189,248,.3);
+}
+.cf-btn-confirm:hover { filter: brightness(1.08); }
+
+.cf-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(239,68,68,.3);
+}
+.cf-btn-danger:hover { filter: brightness(1.08); }
+
+.cf-btn-success {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(34,197,94,.3);
+}
+
+/* ── TOASTS ── */
+.cf-toasts {
+  position: fixed; top: 1rem; right: 1rem; left: auto;
+  z-index: 99980;
+  display: flex; flex-direction: column; gap: .5rem;
+  pointer-events: none;
+  max-width: min(360px, calc(100vw - 2rem));
+}
+@media(max-width:480px){
+  .cf-toasts { top: auto; bottom: calc(90px + env(safe-area-inset-bottom)); right: .75rem; left: .75rem; }
+}
+.cf-toast {
+  display: flex; align-items: flex-start; gap: .75rem;
+  background: linear-gradient(145deg, #1a2744 0%, #0f172a 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  border-left: 4px solid #38bdf8;
+  border-radius: 14px;
+  padding: .85rem 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,.45);
+  pointer-events: all;
+  animation: cfToastIn .35s cubic-bezier(.16,1,.3,1) forwards;
+  transform: translateX(120%);
+}
+.cf-toast.cf-toast-out {
+  animation: cfToastOut .3s ease forwards;
+}
+.cf-toast.success { border-left-color: #22c55e; }
+.cf-toast.danger  { border-left-color: #ef4444; }
+.cf-toast.warning { border-left-color: #f59e0b; }
+.cf-toast.info    { border-left-color: #38bdf8; }
+
+.cf-toast-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: .05rem; }
+.cf-toast-body { flex: 1; min-width: 0; }
+.cf-toast-title { font-size: .82rem; font-weight: 700; color: #dce8f8; margin-bottom: .15rem; }
+.cf-toast-msg   { font-size: .78rem; color: rgba(185,198,214,.75); line-height: 1.4; }
+.cf-toast-close {
+  flex-shrink: 0; background: none; border: none; color: rgba(185,198,214,.4);
+  font-size: 1rem; cursor: pointer; padding: 0; line-height: 1;
+  align-self: flex-start;
+  -webkit-tap-highlight-color: transparent;
+}
+.cf-toast-close:hover { color: rgba(185,198,214,.8); }
+
+@keyframes cfToastIn  { to   { transform: translateX(0); } }
+@keyframes cfToastOut { from { transform: translateX(0); opacity:1; } to { transform: translateX(120%); opacity:0; } }
+@media(max-width:480px){
+  @keyframes cfToastIn  { from { transform: translateY(60px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  @keyframes cfToastOut { from { transform: translateY(0); opacity:1; } to { transform: translateY(60px); opacity:0; } }
+}
+
+/* light-mode adjustments */
+@media(prefers-color-scheme:light){
+  .cf-modal-card {
+    background: linear-gradient(160deg, #f8fafc 0%, #fff 100%);
+    border-color: rgba(2,132,199,.18);
+  }
+  .cf-modal-title { color: #0f172a; }
+  .cf-modal-msg   { color: #475569; }
+  .cf-modal-detail{ background: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
+  .cf-modal-input { background: #f1f5f9; border-color: rgba(2,132,199,.3); color: #0f172a; }
+  .cf-btn-cancel  { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+  .cf-toast       { background: linear-gradient(145deg,#f8fafc 0%,#fff 100%); border-color: #e2e8f0; }
+  .cf-toast-title { color: #0f172a; }
+  .cf-toast-msg   { color: #64748b; }
+}
     </style>
     <!-- SUPABASE: Conexión con la base de datos en la nube -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -3291,47 +3501,43 @@ input, select, textarea { border-radius: 12px !important; }
 
 
         function showCreateUserModal() {
-            const name = prompt('Ingresa tu nombre (máx 15 caracteres):');
-            if (!name || name.trim() === '') {
-                showLoginMessage('Debes ingresar un nombre', 'red');
-                return;
-            }
-
-            if (name.length > 15) {
-                showLoginMessage('El nombre no puede tener más de 15 caracteres', 'red');
-                return;
-            }
-
-            const pin = prompt('Crea tu PIN de 4 dígitos:');
-            if (!pin || !/^\d{4}$/.test(pin)) {
-                showLoginMessage('El PIN debe tener exactamente 4 dígitos', 'red');
-                return;
-            }
-
-                        const storageKey = 'finanzas_user_' + name.trim().toLowerCase();
-            const existingLocal = JSON.parse(localStorage.getItem(storageKey) || 'null');
-            if (existingLocal) { showLoginMessage('⚠️ Ese nombre ya está registrado en este dispositivo.', 'orange'); return; }
-
-            const newUser = {
-                name: name.trim(), pin: pin,
-                data: { transactions:[], fixedExpenses:[], fixedIncomes:[], savingsGoals:[], accounts:[], monthlyBalance:0 }
-            };
-
-            showLoginMessage('⏳ Creando usuario en la nube...', '#38bdf8');
-
-            sb_crearUsuario(name.trim(), pin).then(result => {
-                if (result.error) { showLoginMessage('❌ ' + result.error, 'red'); return; }
-                CURRENT_USER_ID = result.id;
-                newUser.supabaseId = result.id;
-                localStorage.setItem(storageKey, JSON.stringify(newUser));
-                localStorage.setItem('finanzas_active_user', storageKey);
-                showLoginMessage('✅ Usuario "' + name.trim() + '" creado correctamente', 'green');
-                updateUserStatusMessage();
-            }).catch(() => {
-                localStorage.setItem(storageKey, JSON.stringify(newUser));
-                localStorage.setItem('finanzas_active_user', storageKey);
-                showLoginMessage('✅ Usuario "' + name.trim() + '" creado (sin conexión)', 'green');
-                updateUserStatusMessage();
+            cfPrompt('Ingresa tu nombre de usuario\n(máximo 15 caracteres)', '', { title: 'Crear usuario', placeholder: 'Tu nombre...' }).then(function(name) {
+                if (!name || name.trim() === '') {
+                    showLoginMessage('Debes ingresar un nombre', 'red');
+                    return;
+                }
+                if (name.length > 15) {
+                    showLoginMessage('El nombre no puede tener más de 15 caracteres', 'red');
+                    return;
+                }
+                cfPrompt('Crea tu PIN de acceso\n(exactamente 4 dígitos numéricos)', '', { title: 'PIN de seguridad', placeholder: '••••', inputType: 'password' }).then(function(pin) {
+                    if (!pin || !/^\d{4}$/.test(pin)) {
+                        showLoginMessage('El PIN debe tener exactamente 4 dígitos', 'red');
+                        return;
+                    }
+                    const storageKey = 'finanzas_user_' + name.trim().toLowerCase();
+                    const existingLocal = JSON.parse(localStorage.getItem(storageKey) || 'null');
+                    if (existingLocal) { showLoginMessage('⚠️ Ese nombre ya está registrado en este dispositivo.', 'orange'); return; }
+                    const newUser = {
+                        name: name.trim(), pin: pin,
+                        data: { transactions:[], fixedExpenses:[], fixedIncomes:[], savingsGoals:[], accounts:[], monthlyBalance:0 }
+                    };
+                    showLoginMessage('⏳ Creando usuario en la nube...', '#38bdf8');
+                    sb_crearUsuario(name.trim(), pin).then(result => {
+                        if (result.error) { showLoginMessage('❌ ' + result.error, 'red'); return; }
+                        CURRENT_USER_ID = result.id;
+                        newUser.supabaseId = result.id;
+                        localStorage.setItem(storageKey, JSON.stringify(newUser));
+                        localStorage.setItem('finanzas_active_user', storageKey);
+                        showLoginMessage('✅ Usuario "' + name.trim() + '" creado correctamente', 'green');
+                        updateUserStatusMessage();
+                    }).catch(() => {
+                        localStorage.setItem(storageKey, JSON.stringify(newUser));
+                        localStorage.setItem('finanzas_active_user', storageKey);
+                        showLoginMessage('✅ Usuario "' + name.trim() + '" creado (sin conexión)', 'green');
+                        updateUserStatusMessage();
+                    });
+                });
             });
         }
 
@@ -3404,9 +3610,9 @@ input, select, textarea { border-radius: 12px !important; }
 
 
         function logoutUser() {
-            if (confirm('¿Cerrar sesión?')) {
-                location.reload();
-            }
+            cfConfirm('¿Cerrar sesión?', { type: 'logout' }).then(function(ok) {
+                if (ok) location.reload();
+            });
         }
 
         /* ============================================
@@ -3462,7 +3668,7 @@ input, select, textarea { border-radius: 12px !important; }
                 cerrarModalBorrarDatos();
                 updateAllViews();
                 setTimeout(() => {
-                    alert('✅ Todos los datos financieros han sido eliminados permanentemente.\n\nTu cuenta y acceso se conservaron.\nLa app está lista para comenzar de nuevo.');
+                    cfAlert('✅ Todos los datos financieros han sido eliminados permanentemente.\n\nTu cuenta y acceso se conservaron.\nLa app está lista para comenzar de nuevo.', { useToast: false });
                 }, 100);
             } catch (err) {
                 console.error('[BorrarDatos] Error:', err);
@@ -3471,15 +3677,20 @@ input, select, textarea { border-radius: 12px !important; }
                     btn.textContent = '🗑️ Sí, borrar todo';
                     btn.style.opacity = '1';
                 }
-                alert('❌ Error al borrar los datos: ' + err.message + '\n\nIntenta nuevamente.');
+                cfAlert('❌ Error al borrar los datos: ' + err.message + '\n\nIntenta nuevamente.');
             }
         }
 
                 function deleteCurrentUser() {
             const activeKey = localStorage.getItem('finanzas_active_user') || 'finanzas_user';
             const user = JSON.parse(localStorage.getItem(activeKey) || 'null');
-            if (!user) { alert('No hay usuario para eliminar'); return; }
-            if (confirm('¿Estás seguro de eliminar el usuario "' + user.name + '"?\n\nSe borrarán TODOS tus datos locales y en la nube. Esta acción es irreversible.')) {
+            if (!user) { cfAlert('No hay usuario para eliminar'); return; }
+            cfConfirm('¿Estás seguro de eliminar el usuario "' + user.name + '"?', {
+                type: 'delete',
+                detail: 'Se borrarán TODOS tus datos locales y en la nube.\nEsta acción es irreversible.',
+                okLabel: '🗑️ Sí, eliminar usuario'
+            }).then(function(ok) {
+                if (!ok) return;
                 if (CURRENT_USER_ID) {
                     sb_eliminarUsuario(CURRENT_USER_ID).finally(() => {
                         CURRENT_USER_ID = null;
@@ -3492,7 +3703,7 @@ input, select, textarea { border-radius: 12px !important; }
                     localStorage.removeItem('finanzas_active_user');
                     location.reload();
                 }
-            }
+            });
         }
 
 
@@ -3969,7 +4180,7 @@ input, select, textarea { border-radius: 12px !important; }
             const currentMonthYear = new Date().toISOString().slice(0, 7);
 
             if (expense.status === 'paid') {
-                alert('⚠️ Este gasto ya fue marcado como pagado este mes.');
+                cfAlert('⚠️ Este gasto ya fue marcado como pagado este mes.');
                 return;
             }
 
@@ -3981,24 +4192,27 @@ input, select, textarea { border-radius: 12px !important; }
                 t.monthYear === currentMonthYear
             );
             if (yaEjecutado) {
-                alert('⚠️ Este gasto ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
+                cfAlert('⚠️ Este gasto ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
                 return;
             }
 
             // Validación obligatoria de cuenta
             if (!expense.accountId) {
-                alert('⚠️ Este gasto fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
+                cfAlert('⚠️ Este gasto fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
                 return;
             }
             const acct = AppState.accounts.find(a => a.id === expense.accountId);
             if (!acct) {
-                alert('⚠️ La cuenta asignada a este gasto ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
+                cfAlert('⚠️ La cuenta asignada a este gasto ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
                 return;
             }
 
-            if (confirm(`¿Confirmar pago de "${expense.name}" por ${formatCurrency(expense.amount)}?\n\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto descontará el monto de la cuenta y quedará registrado en el historial.`)) {
+            cfConfirm(`¿Confirmar pago de "${expense.name}"?`, {
+                detail: `Monto: ${formatCurrency(expense.amount)}\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto descontará el monto de la cuenta y quedará registrado en el historial.`,
+                okLabel: '✅ Confirmar pago', type: 'confirm'
+            }).then(function(ok) {
+                if (!ok) return;
                 expense.status = 'paid';
-
                 AppState.transactions.push({
                     type:        'Gasto Fijo',
                     description: `${expense.name} (Gasto Fijo)`,
@@ -4008,35 +4222,35 @@ input, select, textarea { border-radius: 12px !important; }
                     category:    expense.category,
                     accountId:   expense.accountId
                 });
-
                 AppState.notifyStateChange();
-                alert(`✅ Gasto pagado\n💸 Descontado de ${acct.icon} ${acct.name}: ${formatCurrency(expense.amount)}\n📝 Registrado en historial`);
-            }
+                cfToast('Descontado de ' + acct.icon + ' ' + acct.name + ': ' + formatCurrency(expense.amount), 'success', '✅ Gasto pagado');
+            });
         }
 
         function unmarkFixedExpenseAsPaid(index) {
             const expense = AppState.fixedExpenses[index];
-
-            if (confirm(`¿Desmarcar pago de "${expense.name}"?\n\nEsto revertirá el descuento y eliminará el registro del historial.`)) {
+            cfConfirm(`¿Desmarcar pago de "${expense.name}"?`, {
+                detail: 'Esto revertirá el descuento y eliminará el registro del historial.',
+                type: 'warning', okLabel: '↩️ Desmarcar pago'
+            }).then(function(ok) {
+                if (!ok) return;
                 expense.status = 'pending';
-
                 const transactionIndex = AppState.transactions.findIndex(t => 
                     t.type === 'Gasto Fijo' && 
                     t.description === `${expense.name} (Gasto Fijo)` && 
                     t.amount === expense.amount
                 );
-
                 if (transactionIndex !== -1) {
                     AppState.transactions.splice(transactionIndex, 1);
                 }
-
                 AppState.notifyStateChange();
-                alert('✅ Pago desmarcado correctamente');
-            }
+                cfToast('Pago desmarcado correctamente', 'info', '↩️ Desmarcado');
+            });
         }
 
         async function deleteFixedExpense(index) {
-            if (confirm('¿Estás seguro de eliminar este gasto fijo?')) {
+            cfConfirm('¿Eliminar este gasto fijo?', { type: 'delete', okLabel: '🗑️ Sí, eliminar' }).then(async function(ok) {
+                if (!ok) return;
                 const fe = AppState.fixedExpenses[index];
                 if (CURRENT_USER_ID && fe.id) {
                     try {
@@ -4046,7 +4260,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.fixedExpenses.splice(index, 1);
                 AppState.notifyStateChange();
-            }
+            });
         }
 
         /* ============================================
@@ -4094,11 +4308,10 @@ input, select, textarea { border-radius: 12px !important; }
             const currentMonthYear = new Date().toISOString().slice(0, 7);
 
             if (income.status === 'received') {
-                alert('⚠️ Este ingreso ya fue marcado como recibido este mes.');
+                cfAlert('⚠️ Este ingreso ya fue marcado como recibido este mes.');
                 return;
             }
 
-            // Guardia de unicidad mensual
             const yaEjecutado = AppState.transactions.some(t =>
                 t.type === 'Ingreso Fijo' &&
                 t.description === `${income.name} (Ingreso Fijo)` &&
@@ -4106,24 +4319,26 @@ input, select, textarea { border-radius: 12px !important; }
                 t.monthYear === currentMonthYear
             );
             if (yaEjecutado) {
-                alert('⚠️ Este ingreso ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
+                cfAlert('⚠️ Este ingreso ya fue registrado en ' + currentMonthYear + '. No se puede ejecutar dos veces en el mismo mes.');
                 return;
             }
 
-            // Validación obligatoria de cuenta
             if (!income.accountId) {
-                alert('⚠️ Este ingreso fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
+                cfAlert('⚠️ Este ingreso fijo no tiene una cuenta asignada.\n\nElimínalo y vuelve a crearlo seleccionando una cuenta.');
                 return;
             }
             const acct = AppState.accounts.find(a => a.id === income.accountId);
             if (!acct) {
-                alert('⚠️ La cuenta asignada a este ingreso ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
+                cfAlert('⚠️ La cuenta asignada a este ingreso ya no existe.\n\nElimínalo y vuelve a crearlo con una cuenta válida.');
                 return;
             }
 
-            if (confirm(`¿Confirmar recepción de "${income.name}" por ${formatCurrency(income.amount)}?\n\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto sumará el monto a la cuenta y quedará registrado en el historial.`)) {
+            cfConfirm(`¿Confirmar recepción de "${income.name}"?`, {
+                detail: `Monto: ${formatCurrency(income.amount)}\n🏦 Cuenta: ${acct.icon} ${acct.name}\n\nEsto sumará el monto a la cuenta y quedará registrado en el historial.`,
+                okLabel: '💰 Confirmar recepción', type: 'confirm'
+            }).then(function(ok) {
+                if (!ok) return;
                 income.status = 'received';
-
                 AppState.transactions.push({
                     type:        'Ingreso Fijo',
                     description: `${income.name} (Ingreso Fijo)`,
@@ -4133,35 +4348,35 @@ input, select, textarea { border-radius: 12px !important; }
                     category:    income.category,
                     accountId:   income.accountId
                 });
-
                 AppState.notifyStateChange();
-                alert(`✅ Ingreso recibido\n💰 Sumado a ${acct.icon} ${acct.name}: ${formatCurrency(income.amount)}\n📝 Registrado en historial`);
-            }
+                cfToast('Sumado a ' + acct.icon + ' ' + acct.name + ': ' + formatCurrency(income.amount), 'success', '✅ Ingreso recibido');
+            });
         }
 
         function unmarkFixedIncomeAsReceived(index) {
             const income = AppState.fixedIncomes[index];
-
-            if (confirm(`¿Desmarcar recepción de "${income.name}"?\n\nEsto revertirá la suma y eliminará el registro del historial.`)) {
+            cfConfirm(`¿Desmarcar recepción de "${income.name}"?`, {
+                detail: 'Esto revertirá la suma y eliminará el registro del historial.',
+                type: 'warning', okLabel: '↩️ Desmarcar'
+            }).then(function(ok) {
+                if (!ok) return;
                 income.status = 'pending';
-
                 const transactionIndex = AppState.transactions.findIndex(t => 
                     t.type === 'Ingreso Fijo' && 
                     t.description === `${income.name} (Ingreso Fijo)` && 
                     t.amount === income.amount
                 );
-
                 if (transactionIndex !== -1) {
                     AppState.transactions.splice(transactionIndex, 1);
                 }
-
                 AppState.notifyStateChange();
-                alert('✅ Recepción desmarcada correctamente');
-            }
+                cfToast('Recepción desmarcada correctamente', 'info', '↩️ Desmarcado');
+            });
         }
 
         async function deleteFixedIncome(index) {
-            if (confirm('¿Estás seguro de eliminar este ingreso fijo?')) {
+            cfConfirm('¿Eliminar este ingreso fijo?', { type: 'delete', okLabel: '🗑️ Sí, eliminar' }).then(async function(ok) {
+                if (!ok) return;
                 const fi = AppState.fixedIncomes[index];
                 if (CURRENT_USER_ID && fi.id) {
                     try {
@@ -4171,7 +4386,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.fixedIncomes.splice(index, 1);
                 AppState.notifyStateChange();
-            }
+            });
         }
 
         /* ============================================
@@ -4247,12 +4462,15 @@ input, select, textarea { border-radius: 12px !important; }
             const transaction = AppState.transactions[index];
 
             if (transaction.type === 'Gasto Fijo' || transaction.type === 'Ingreso Fijo') {
-                alert('⚠️ Los gastos/ingresos fijos se gestionan desde su pestaña correspondiente');
+                cfAlert('⚠️ Los gastos/ingresos fijos se gestionan desde su pestaña correspondiente');
                 return;
             }
 
-            if (confirm('¿Estás seguro de eliminar esta transacción?')) {
-                // Eliminar directamente en Supabase si tiene ID
+            cfConfirm('¿Eliminar esta transacción?', {
+                detail: transaction.description + '\n' + formatCurrency(transaction.amount),
+                type: 'delete', okLabel: '🗑️ Sí, eliminar'
+            }).then(async function(ok) {
+                if (!ok) return;
                 if (CURRENT_USER_ID && transaction.id) {
                     try {
                         await _sb.from('transacciones').delete()
@@ -4261,7 +4479,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.transactions.splice(index, 1);
                 AppState.notifyStateChange();
-            }
+            });
         }
 
         /* ============================================
@@ -4512,101 +4730,88 @@ input, select, textarea { border-radius: 12px !important; }
         function addMoneyToGoal(index) {
             const goal = AppState.savingsGoals[index];
 
-            // Bloquear si la meta no tiene cuenta asignada
             if (!goal.accountId) {
-                alert('⚠️ Esta meta no tiene una cuenta asignada.\n\nEdita la meta para asignarle una cuenta antes de registrar aportes.');
+                cfAlert('⚠️ Esta meta no tiene una cuenta asignada.\n\nEdita la meta para asignarle una cuenta antes de registrar aportes.');
                 return;
             }
-            // Verificar que la cuenta siga existiendo
             const acct = AppState.accounts.find(a => a.id === goal.accountId);
             if (!acct) {
-                alert('⚠️ La cuenta asignada a esta meta ya no existe.\n\nEdita la meta para asignarle una cuenta válida.');
+                cfAlert('⚠️ La cuenta asignada a esta meta ya no existe.\n\nEdita la meta para asignarle una cuenta válida.');
                 return;
             }
 
             const remaining = goal.amount - goal.current;
 
-            const amountToAdd = prompt(`💰 ¿Cuánto dinero deseas agregar a "${goal.name}"?\n\nAhorro actual: ${formatCurrency(goal.current)}\nFaltante: ${formatCurrency(remaining)}\n🏦 Cuenta: ${acct.icon} ${acct.name}`);
-            
-            if (amountToAdd === null) return;
-
-            const parsedAmount = parseFormattedNumber(amountToAdd);
-
-            if (isNaN(parsedAmount) || parsedAmount <= 0) {
-                alert('⚠️ Ingresa un monto válido');
-                return;
-            }
-
-            const available = AppState.getCurrentAvailable();
-            if (parsedAmount > available) {
-                alert(`⚠️ No tienes suficiente disponible.\n\nDisponible: ${formatCurrency(available)}\nIntentaste agregar: ${formatCurrency(parsedAmount)}`);
-                return;
-            }
-
-            goal.current += parsedAmount;
-
-            // Registrar como Transferencia Meta — no impacta gastos ni ingresos
-            AppState.transactions.push({
-                type:        'Transferencia Meta',
-                description: 'Ahorro → ' + goal.name,
-                amount:      parsedAmount,
-                date:        new Date().toISOString().split('T')[0],
-                category:    'Ahorro / Meta',
-                accountId:   goal.accountId
+            cfPrompt('Agregar dinero a la meta', '', {
+                title: '💰 Agregar a "' + goal.name + '"',
+                placeholder: 'Ej: 50000',
+                detail: 'Ahorro actual: ' + formatCurrency(goal.current) + '\nFaltante: ' + formatCurrency(remaining) + '\n🏦 Cuenta: ' + acct.icon + ' ' + acct.name
+            }).then(function(amountToAdd) {
+                if (amountToAdd === null) return;
+                const parsedAmount = parseFormattedNumber(amountToAdd);
+                if (isNaN(parsedAmount) || parsedAmount <= 0) {
+                    cfAlert('⚠️ Ingresa un monto válido');
+                    return;
+                }
+                const available = AppState.getCurrentAvailable();
+                if (parsedAmount > available) {
+                    cfAlert(`⚠️ No tienes suficiente disponible.\n\nDisponible: ${formatCurrency(available)}\nIntentaste agregar: ${formatCurrency(parsedAmount)}`);
+                    return;
+                }
+                goal.current += parsedAmount;
+                AppState.transactions.push({
+                    type:        'Transferencia Meta',
+                    description: 'Ahorro → ' + goal.name,
+                    amount:      parsedAmount,
+                    date:        new Date().toISOString().split('T')[0],
+                    category:    'Ahorro / Meta',
+                    accountId:   goal.accountId
+                });
+                AppState.notifyStateChange();
+                cfToast('Nuevo total: ' + formatCurrency(goal.current) + ' · Faltante: ' + formatCurrency(goal.amount - goal.current), 'success', '✅ Aporte registrado en "' + goal.name + '"');
             });
-
-            AppState.notifyStateChange();
-            alert('✅ Se agregaron ' + formatCurrency(parsedAmount) + ' a la meta "' + goal.name + '"' +
-                  '\n🏦 Cuenta: ' + acct.icon + ' ' + acct.name +
-                  '\n\nNuevo ahorro acumulado: ' + formatCurrency(goal.current) +
-                  '\nFaltante: ' + formatCurrency(goal.amount - goal.current));
         }
 
         function editGoal(index) {
             const goal = AppState.savingsGoals[index];
 
-            const newName = prompt('📝 Editar nombre de la meta:', goal.name);
-            if (newName === null) return;
+            cfPrompt('Editar nombre de la meta', goal.name, { title: '✏️ Nombre de la meta', placeholder: 'Nombre...' }).then(function(newName) {
+                if (newName === null) return;
+                if (newName.trim() === '') { cfAlert('⚠️ El nombre no puede estar vacío'); return; }
 
-            if (newName.trim() === '') {
-                alert('⚠️ El nombre no puede estar vacío');
-                return;
-            }
+                cfPrompt('Editar monto objetivo', goal.amount, { title: '💰 Monto objetivo', placeholder: 'Ej: 1000000', detail: 'Actual: ' + formatCurrency(goal.amount) }).then(function(newAmountStr) {
+                    if (newAmountStr === null) return;
+                    const newAmount = parseFormattedNumber(newAmountStr);
+                    if (isNaN(newAmount) || newAmount <= 0) { cfAlert('⚠️ Ingresa un monto válido'); return; }
 
-            const newAmountStr = prompt(`💰 Editar monto objetivo (actual: ${formatCurrency(goal.amount)}):`, goal.amount);
-            if (newAmountStr === null) return;
+                    cfPrompt('Editar fecha objetivo', goal.date, { title: '📅 Fecha objetivo', placeholder: 'YYYY-MM-DD', detail: 'Formato: YYYY-MM-DD (ej: 2025-12-31)' }).then(function(newDate) {
+                        if (newDate === null) return;
+                        if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) { cfAlert('⚠️ Formato de fecha inválido. Use YYYY-MM-DD'); return; }
 
-            const newAmount = parseFormattedNumber(newAmountStr);
-            if (isNaN(newAmount) || newAmount <= 0) {
-                alert('⚠️ Ingresa un monto válido');
-                return;
-            }
-
-            const newDate = prompt('📅 Editar fecha objetivo (YYYY-MM-DD):', goal.date);
-            if (newDate === null) return;
-
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
-                alert('⚠️ Formato de fecha inválido. Use YYYY-MM-DD');
-                return;
-            }
-
-            goal.name = newName.trim();
-            goal.amount = newAmount;
-            goal.date = newDate;
-
-            AppState.notifyStateChange();
-            alert('✅ Meta actualizada correctamente');
+                        goal.name   = newName.trim();
+                        goal.amount = newAmount;
+                        goal.date   = newDate;
+                        AppState.notifyStateChange();
+                        cfToast('Meta actualizada correctamente', 'success', '✅ Meta guardada');
+                    });
+                });
+            });
         }
 
         async function deleteGoal(index) {
             const goal = AppState.savingsGoals[index];
             const acctMeta = goal.accountId ? AppState.accounts.find(a => a.id === goal.accountId) : null;
             const moneyNote = acctMeta && goal.current > 0
-                ? '\n\n🏦 Los movimientos de ahorro en "' + acctMeta.icon + ' ' + acctMeta.name + '" serán revertidos y el saldo se restaurará.'
+                ? '🏦 Los movimientos de ahorro en "' + acctMeta.icon + ' ' + acctMeta.name + '" serán revertidos y el saldo se restaurará.'
                 : goal.current > 0
-                    ? '\n\n🗑️ El dinero ahorrado (' + formatCurrency(goal.current) + ') será descontado del sistema y registrado en el historial.'
+                    ? '🗑️ El dinero ahorrado (' + formatCurrency(goal.current) + ') será descontado del sistema y registrado en el historial.'
                     : '';
-            if (confirm('¿Estás seguro de eliminar la meta "' + goal.name + '"?' + moneyNote)) {
+            cfConfirm('¿Eliminar la meta "' + goal.name + '"?', {
+                type: 'delete',
+                detail: moneyNote || undefined,
+                okLabel: '🗑️ Sí, eliminar meta'
+            }).then(async function(ok) {
+                if (!ok) return;
                 const today = new Date().toISOString().split('T')[0];
                 if (acctMeta && goal.current > 0) {
                     AppState.transactions = AppState.transactions.filter(t =>
@@ -4629,7 +4834,6 @@ input, select, textarea { border-radius: 12px !important; }
                         category: 'Ahorro / Meta', accountId: null
                     });
                 }
-                // Eliminar directamente en Supabase
                 if (CURRENT_USER_ID && goal.id) {
                     try {
                         await _sb.from('metas_ahorro').delete()
@@ -4638,8 +4842,8 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.savingsGoals.splice(index, 1);
                 AppState.notifyStateChange();
-                alert('✅ Meta eliminada. El movimiento quedó registrado en el historial.');
-            }
+                cfToast('El movimiento quedó registrado en el historial.', 'info', '🗑️ Meta eliminada');
+            });
         }
 
         function checkCompletedGoals() {
@@ -4657,10 +4861,16 @@ input, select, textarea { border-radius: 12px !important; }
                     );
 
                     setTimeout(() => {
-                        if (confirm(`🎉 ¡Felicitaciones!\n\nHas completado la meta "${goal.name}".\n\n¿Deseas eliminarla del listado?\n\nRecuerda: El dinero ahorrado permanece en tu cuenta.`)) {
-                            AppState.savingsGoals.splice(index, 1);
-                            AppState.notifyStateChange();
-                        }
+                        cfConfirm(`¡Felicitaciones! Has completado la meta "${goal.name}".`, {
+                            title: '🎉 ¡Meta completada!',
+                            detail: 'El dinero ahorrado permanece en tu cuenta.\n¿Deseas eliminarla del listado?',
+                            type: 'confirm', okLabel: '🗑️ Sí, eliminar', cancelLabel: 'Mantener'
+                        }).then(function(ok) {
+                            if (ok) {
+                                AppState.savingsGoals.splice(index, 1);
+                                AppState.notifyStateChange();
+                            }
+                        });
                     }, 2000);
                 }
             });
@@ -4700,7 +4910,7 @@ input, select, textarea { border-radius: 12px !important; }
            ============================================ */
         function exportToCSV() {
             if (AppState.transactions.length === 0) {
-                alert('⚠️ No hay transacciones para exportar');
+                cfAlert('⚠️ No hay transacciones para exportar');
                 return;
             }
 
@@ -4785,7 +4995,7 @@ input, select, textarea { border-radius: 12px !important; }
         }
 
         function importFromCSV() {
-            alert('⚠️ Función de importación en desarrollo');
+            cfAlert('⚠️ Función de importación en desarrollo');
         }
 
         /* ============================================
@@ -4844,14 +5054,13 @@ input, select, textarea { border-radius: 12px !important; }
          * Retorna true si la validación pasa, false si debe bloquearse la operación.
          */
         function requireAccount(selectId, operationLabel) {
-            // Si no hay cuentas registradas, no tiene sentido pedir selección
             if (AppState.accounts.length === 0) {
-                alert(`⚠️ Debes crear al menos una cuenta financiera antes de registrar ${operationLabel}.\n\nVe a la pestaña 🏦 Cuentas para crearla.`);
+                cfAlert(`⚠️ Debes crear al menos una cuenta financiera antes de registrar ${operationLabel}.\n\nVe a la pestaña 🏦 Cuentas para crearla.`);
                 return false;
             }
             const sel = document.getElementById(selectId);
             if (!sel || !sel.value) {
-                alert(`⚠️ Debes seleccionar una cuenta para realizar esta operación.\n\nCampo requerido: 🏦 Cuenta`);
+                cfAlert(`⚠️ Debes seleccionar una cuenta para realizar esta operación.\n\nCampo requerido: 🏦 Cuenta`);
                 if (sel) sel.focus();
                 return false;
             }
@@ -4881,7 +5090,7 @@ input, select, textarea { border-radius: 12px !important; }
 
                 e.target.reset();
                 setDefaultDate();
-                alert('✅ Ingreso registrado correctamente');
+                cfToast('Ingreso registrado correctamente', 'success', '✅ ¡Listo!');
             });
 
             document.getElementById('expenseForm').addEventListener('submit', (e) => {
@@ -4903,7 +5112,7 @@ input, select, textarea { border-radius: 12px !important; }
 
                 e.target.reset();
                 setDefaultDate();
-                alert('✅ Gasto registrado correctamente');
+                cfToast('Gasto registrado correctamente', 'success', '✅ ¡Listo!');
             });
 
             document.getElementById('fixedExpenseForm').addEventListener('submit', (e) => {
@@ -4923,7 +5132,7 @@ input, select, textarea { border-radius: 12px !important; }
                 AppState.notifyStateChange();
 
                 e.target.reset();
-                alert('✅ Gasto fijo agregado correctamente');
+                cfToast('Gasto fijo agregado correctamente', 'success', '✅ ¡Listo!');
             });
 
             document.getElementById('fixedIncomeForm2').addEventListener('submit', (e) => {
@@ -4943,7 +5152,7 @@ input, select, textarea { border-radius: 12px !important; }
                 AppState.notifyStateChange();
 
                 e.target.reset();
-                alert('✅ Ingreso fijo agregado correctamente');
+                cfToast('Ingreso fijo agregado correctamente', 'success', '✅ ¡Listo!');
             });
 
             document.getElementById('goalForm').addEventListener('submit', (e) => {
@@ -4959,7 +5168,7 @@ input, select, textarea { border-radius: 12px !important; }
                 if (goalCurrentRaw > 0) {
                     const acctBalance = AppState.getAccountBalance(goalAccountId);
                     if (goalCurrentRaw > AppState.getCurrentAvailable()) {
-                        alert(`⚠️ El monto inicial (${formatCurrency(goalCurrentRaw)}) supera tu disponible actual (${formatCurrency(AppState.getCurrentAvailable())}).`);
+                        cfAlert(`⚠️ El monto inicial (${formatCurrency(goalCurrentRaw)}) supera tu disponible actual (${formatCurrency(AppState.getCurrentAvailable())}).`);
                         return;
                     }
                 }
@@ -4988,7 +5197,7 @@ input, select, textarea { border-radius: 12px !important; }
                 AppState.notifyStateChange();
 
                 e.target.reset();
-                alert('✅ Meta de ahorro creada correctamente');
+                cfToast('Meta de ahorro creada correctamente', 'success', '🎯 ¡Meta creada!');
             });
 
             const accountFormEl = document.getElementById('accountForm');
@@ -5008,23 +5217,23 @@ input, select, textarea { border-radius: 12px !important; }
 
                     // Validaciones
                     if (!name) {
-                        alert('⚠️ Debes ingresar un nombre para la cuenta.');
+                        cfAlert('⚠️ Debes ingresar un nombre para la cuenta.');
                         if (nameInput) nameInput.focus();
                         return;
                     }
                     if (name.length > 30) {
-                        alert('⚠️ El nombre no puede tener más de 30 caracteres.');
+                        cfAlert('⚠️ El nombre no puede tener más de 30 caracteres.');
                         return;
                     }
                     if (isNaN(initialBalance) || initialBalance < 0) {
-                        alert('⚠️ El saldo inicial debe ser 0 o mayor.');
+                        cfAlert('⚠️ El saldo inicial debe ser 0 o mayor.');
                         if (balanceInput) balanceInput.focus();
                         return;
                     }
                     // Verificar nombre duplicado
                     const duplicate = AppState.accounts.find(a => a.name.toLowerCase() === name.toLowerCase());
                     if (duplicate) {
-                        alert(`⚠️ Ya existe una cuenta con el nombre "${name}". Usa un nombre diferente.`);
+                        cfAlert(`⚠️ Ya existe una cuenta con el nombre "${name}". Usa un nombre diferente.`);
                         return;
                     }
 
@@ -5036,17 +5245,10 @@ input, select, textarea { border-radius: 12px !important; }
                         initialBalance: initialBalance
                     };
 
-                    // Agregar al estado global
                     AppState.accounts.push(account);
-
-                    // Persistir y actualizar TODAS las vistas (incluye renderAccountsTab)
                     AppState.notifyStateChange();
-
-                    // Limpiar formulario
                     e.target.reset();
-
-                    // Confirmación visual
-                    alert(`✅ Cuenta "${name}" creada correctamente.\n💰 Saldo inicial: ${formatCurrency(initialBalance)}`);
+                    cfToast('Saldo inicial: ' + formatCurrency(initialBalance), 'success', '✅ Cuenta "' + name + '" creada');
                 });
             }
 
@@ -5075,17 +5277,17 @@ input, select, textarea { border-radius: 12px !important; }
                     const amount  = parseFormattedNumber(rawAmt);
 
                     // Validaciones
-                    if (!fromId) { alert('⚠️ Selecciona la cuenta origen.'); return; }
-                    if (!toId)   { alert('⚠️ Selecciona la cuenta destino.'); return; }
-                    if (fromId === toId) { alert('⚠️ La cuenta origen y destino no pueden ser la misma.'); return; }
-                    if (isNaN(amount) || amount <= 0) { alert('⚠️ Ingresa un monto válido mayor a 0.'); return; }
+                    if (!fromId) { cfAlert('⚠️ Selecciona la cuenta origen.'); return; }
+                    if (!toId)   { cfAlert('⚠️ Selecciona la cuenta destino.'); return; }
+                    if (fromId === toId) { cfAlert('⚠️ La cuenta origen y destino no pueden ser la misma.'); return; }
+                    if (isNaN(amount) || amount <= 0) { cfAlert('⚠️ Ingresa un monto válido mayor a 0.'); return; }
 
                     const fromAcct = AppState.accounts.find(a => a.id === fromId);
                     const toAcct   = AppState.accounts.find(a => a.id === toId);
                     const fromBalance = AppState.getAccountBalance(fromId);
 
                     if (amount > fromBalance) {
-                        alert(`⚠️ Saldo insuficiente en "${fromAcct.icon} ${fromAcct.name}".\n\nDisponible: ${formatCurrency(fromBalance)}\nIntentaste transferir: ${formatCurrency(amount)}`);
+                        cfAlert(`⚠️ Saldo insuficiente en "${fromAcct.icon} ${fromAcct.name}".\n\nDisponible: ${formatCurrency(fromBalance)}\nIntentaste transferir: ${formatCurrency(amount)}`);
                         return;
                     }
 
@@ -5114,7 +5316,7 @@ input, select, textarea { border-radius: 12px !important; }
 
                     AppState.notifyStateChange();
                     e.target.reset();
-                    alert(`✅ Transferencia realizada correctamente\n\n↗️ Salida de ${fromAcct.icon} ${fromAcct.name}: ${formatCurrency(amount)}\n↙️ Entrada a ${toAcct.icon} ${toAcct.name}: ${formatCurrency(amount)}`);
+                    cfToast('↗️ ' + fromAcct.icon + ' ' + fromAcct.name + '  →  ↙️ ' + toAcct.icon + ' ' + toAcct.name + ': ' + formatCurrency(amount), 'success', '✅ Transferencia realizada');
                 });
             }
         }
@@ -5294,68 +5496,55 @@ input, select, textarea { border-radius: 12px !important; }
         function editAccount(index) {
             const account = AppState.accounts[index];
 
-            const newName = prompt('✏️ Nombre de la cuenta:', account.name);
-            if (newName === null) return;
-            if (!newName.trim()) { alert('⚠️ El nombre no puede estar vacío'); return; }
+            cfPrompt('Nombre de la cuenta', account.name, { title: '✏️ Editar cuenta', placeholder: 'Nombre...' }).then(function(newName) {
+                if (newName === null) return;
+                if (!newName.trim()) { cfAlert('⚠️ El nombre no puede estar vacío'); return; }
 
-            const iconOptions = ['🏦','📱','💵','💳','🏧','💰'];
-            const iconStr = prompt(
-                `Ícono (escribe uno de los siguientes o déjalo igual):
-${iconOptions.join('  ')}
+                const iconOptions = ['🏦','📱','💵','💳','🏧','💰'];
+                cfPrompt('Ícono de la cuenta', account.icon, { title: '🎨 Ícono', detail: 'Opciones: ' + iconOptions.join('  ') + '\n(O escribe cualquier emoji)', placeholder: account.icon }).then(function(iconStr) {
+                    if (iconStr === null) return;
 
-Actual: ${account.icon}`,
-                account.icon
-            );
-            if (iconStr === null) return;
+                    cfPrompt('Saldo inicial de la cuenta', account.initialBalance, { title: '💰 Saldo inicial', detail: 'Actual: ' + formatCurrency(account.initialBalance), placeholder: 'Ej: 500000' }).then(function(newBalStr) {
+                        if (newBalStr === null) return;
+                        const newBal = parseFormattedNumber(String(newBalStr));
+                        if (isNaN(newBal) || newBal < 0) { cfAlert('⚠️ Monto inválido. Debe ser 0 o mayor.'); return; }
 
-            const newBalStr = prompt(`💰 Nuevo saldo inicial (actual: ${formatCurrency(account.initialBalance)}):`, account.initialBalance);
-            if (newBalStr === null) return;
-            const newBal = parseFormattedNumber(String(newBalStr));
-            if (isNaN(newBal) || newBal < 0) { alert('⚠️ Monto inválido. Debe ser 0 o mayor.'); return; }
-
-            account.name          = newName.trim();
-            account.icon          = (iconStr || '').trim() || account.icon;
-            account.initialBalance = newBal;
-
-            // Forzar actualización global para reflejar el nuevo saldo inicial
-            // en todas las vistas (balance general, disponible actual, cuentas)
-            AppState.notifyStateChange();
-            alert('✅ Cuenta actualizada correctamente');
+                        account.name          = newName.trim();
+                        account.icon          = (iconStr || '').trim() || account.icon;
+                        account.initialBalance = newBal;
+                        AppState.notifyStateChange();
+                        cfToast('Cuenta actualizada correctamente', 'success', '✅ Cambios guardados');
+                    });
+                });
+            });
         }
 
         async function deleteAccount(index) {
             const account = AppState.accounts[index];
             const txCount = AppState.transactions.filter(t => t.accountId === account.id).length;
             const warning = txCount > 0
-                ? `\n\n⚠️ Esta cuenta tiene ${txCount} transacción(es) asociada(s). Las transacciones quedarán sin cuenta asignada.`
-                : '';
-            if (confirm(`¿Eliminar la cuenta "${account.name}"?${warning}`)) {
-                // Disassociate transactions locally
-                AppState.transactions.forEach(t => {
-                    if (t.accountId === account.id) t.accountId = null;
-                });
-                AppState.fixedExpenses.forEach(f => {
-                    if (f.accountId === account.id) f.accountId = null;
-                });
-                AppState.fixedIncomes.forEach(f => {
-                    if (f.accountId === account.id) f.accountId = null;
-                });
-                AppState.savingsGoals.forEach(g => {
-                    if (g.accountId === account.id) g.accountId = null;
-                });
-
-                // Eliminar directamente en Supabase
+                ? `⚠️ Esta cuenta tiene ${txCount} transacción(es) asociada(s).\nLas transacciones quedarán sin cuenta asignada.`
+                : undefined;
+            cfConfirm(`¿Eliminar la cuenta "${account.name}"?`, {
+                type: 'delete',
+                detail: warning,
+                okLabel: '🗑️ Sí, eliminar cuenta'
+            }).then(async function(ok) {
+                if (!ok) return;
+                AppState.transactions.forEach(t => { if (t.accountId === account.id) t.accountId = null; });
+                AppState.fixedExpenses.forEach(f => { if (f.accountId === account.id) f.accountId = null; });
+                AppState.fixedIncomes.forEach(f => { if (f.accountId === account.id) f.accountId = null; });
+                AppState.savingsGoals.forEach(g => { if (g.accountId === account.id) g.accountId = null; });
                 if (CURRENT_USER_ID && account.id) {
                     try {
                         await _sb.from('cuentas').delete()
                             .eq('id', account.id).eq('user_id', CURRENT_USER_ID);
                     } catch(e) { console.warn('[Delete cuenta]', e.message); }
                 }
-
                 AppState.accounts.splice(index, 1);
                 AppState.notifyStateChange();
-                alert('✅ Cuenta eliminada correctamente');
-            }
+                cfToast('Cuenta eliminada correctamente', 'info', '🗑️ Eliminada');
+            });
         }
 
         /* ============================================
@@ -5825,6 +6014,312 @@ if (document.readyState === 'loading') {
     <span>Metas</span>
   </button>
 </nav>
+
+<!-- ══════════════════════════════════════════════════
+     SISTEMA DE MODALES PERSONALIZADOS (CF Modal System)
+     Reemplaza alert() confirm() prompt() del navegador
+════════════════════════════════════════════════════ -->
+<div class="cf-modal-overlay" id="cfModalOverlay" role="dialog" aria-modal="true">
+  <div class="cf-modal-card" id="cfModalCard">
+    <div class="cf-modal-icon info" id="cfModalIcon">ℹ️</div>
+    <div class="cf-modal-title" id="cfModalTitle"></div>
+    <div class="cf-modal-msg" id="cfModalMsg"></div>
+    <div class="cf-modal-detail" id="cfModalDetail" style="display:none"></div>
+    <input class="cf-modal-input" id="cfModalInput" style="display:none" autocomplete="off" />
+    <div class="cf-modal-actions" id="cfModalActions">
+      <button class="cf-btn cf-btn-cancel" id="cfModalCancel">Cancelar</button>
+      <button class="cf-btn cf-btn-confirm" id="cfModalOk">Aceptar</button>
+    </div>
+  </div>
+</div>
+<div class="cf-toasts" id="cfToastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CF MODAL SYSTEM — Reemplaza alert/confirm/prompt nativos
+   Sin afectar ninguna lógica de la app
+═══════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  /* ── utilidades internas ── */
+  function _icon(type) {
+    return { success:'✅', danger:'🚨', warning:'⚠️', info:'ℹ️', logout:'🔒', delete:'🗑️', confirm:'❓' }[type] || 'ℹ️';
+  }
+  function _accentVars(type) {
+    const map = { success:'#22c55e,#16a34a', danger:'#ef4444,#dc2626', warning:'#f59e0b,#d97706', logout:'#ef4444,#dc2626', delete:'#ef4444,#dc2626' };
+    return map[type] || '#38bdf8,#0ea5e9';
+  }
+
+  const overlay = document.getElementById('cfModalOverlay');
+  const card    = document.getElementById('cfModalCard');
+  const iconEl  = document.getElementById('cfModalIcon');
+  const titleEl = document.getElementById('cfModalTitle');
+  const msgEl   = document.getElementById('cfModalMsg');
+  const detailEl= document.getElementById('cfModalDetail');
+  const inputEl = document.getElementById('cfModalInput');
+  const actionsEl= document.getElementById('cfModalActions');
+  const cancelBtn= document.getElementById('cfModalCancel');
+  const okBtn   = document.getElementById('cfModalOk');
+
+  let _resolveFn = null;
+
+  function _open(opts) {
+    /* opts: { type, title, msg, detail, placeholder, inputVal, showCancel, okLabel, cancelLabel, okClass } */
+    const type = opts.type || 'info';
+    const [a1, a2] = _accentVars(type).split(',');
+    card.style.setProperty('--cf-accent', a1);
+    card.style.setProperty('--cf-accent2', a2);
+
+    iconEl.textContent = opts.icon || _icon(type);
+    iconEl.className = 'cf-modal-icon ' + ((['danger','logout','delete'].includes(type)) ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warn' : 'info');
+
+    titleEl.textContent = opts.title || '';
+    msgEl.textContent   = opts.msg   || '';
+
+    if (opts.detail) {
+      detailEl.textContent = opts.detail;
+      detailEl.style.display = '';
+    } else {
+      detailEl.style.display = 'none';
+    }
+
+    if (opts.isPrompt) {
+      inputEl.style.display = '';
+      inputEl.type = opts.inputType || 'text';
+      inputEl.placeholder = opts.placeholder || '';
+      inputEl.value = opts.inputVal != null ? opts.inputVal : '';
+      setTimeout(() => inputEl.focus(), 280);
+    } else {
+      inputEl.style.display = 'none';
+    }
+
+    cancelBtn.textContent = opts.cancelLabel || 'Cancelar';
+    okBtn.textContent     = opts.okLabel || 'Aceptar';
+    okBtn.className = 'cf-btn ' + (opts.okClass || 'cf-btn-confirm');
+
+    if (opts.showCancel === false) {
+      cancelBtn.style.display = 'none';
+      actionsEl.className = 'cf-modal-actions single';
+    } else {
+      cancelBtn.style.display = '';
+      actionsEl.className = 'cf-modal-actions';
+    }
+
+    overlay.classList.add('cf-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _close() {
+    overlay.classList.remove('cf-open');
+    document.body.style.overflow = '';
+    setTimeout(() => { inputEl.value = ''; }, 260);
+  }
+
+  okBtn.addEventListener('click', function() {
+    if (_resolveFn) {
+      const val = inputEl.style.display !== 'none' ? inputEl.value : true;
+      _resolveFn(val);
+      _resolveFn = null;
+    }
+    _close();
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    if (_resolveFn) { _resolveFn(null); _resolveFn = null; }
+    _close();
+  });
+
+  /* Close on overlay click (not on card) */
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      if (_resolveFn) { _resolveFn(null); _resolveFn = null; }
+      _close();
+    }
+  });
+
+  /* Enter key in prompt input */
+  inputEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') okBtn.click();
+    if (e.key === 'Escape') cancelBtn.click();
+  });
+
+  /* ── Escape key ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlay.classList.contains('cf-open')) cancelBtn.click();
+  });
+
+  /* ══════════════════════════
+     TOAST SYSTEM
+  ═══════════════════════════ */
+  const toastContainer = document.getElementById('cfToastContainer');
+
+  function cfToast(msg, type, title, duration) {
+    type     = type     || 'info';
+    duration = duration || 3500;
+    const icons = { success:'✅', danger:'🚨', warning:'⚠️', info:'💡' };
+    const id = 'cft' + Date.now();
+    const t = document.createElement('div');
+    t.className = 'cf-toast ' + type;
+    t.id = id;
+    t.innerHTML =
+      '<span class="cf-toast-icon">' + (icons[type]||'💡') + '</span>' +
+      '<div class="cf-toast-body">' +
+        (title ? '<div class="cf-toast-title">' + title + '</div>' : '') +
+        '<div class="cf-toast-msg">' + msg + '</div>' +
+      '</div>' +
+      '<button class="cf-toast-close" onclick="cfDismissToast(\'' + id + '\')">✕</button>';
+    toastContainer.appendChild(t);
+    setTimeout(() => cfDismissToast(id), duration);
+  }
+
+  window.cfDismissToast = function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('cf-toast-out');
+    setTimeout(() => el.remove(), 320);
+  };
+
+  /* ══════════════════════════════════════════════
+     FUNCIONES PÚBLICAS — reemplazan alert/confirm/prompt
+  ═══════════════════════════════════════════════ */
+
+  /**
+   * cfAlert(msg, opts) — reemplaza alert()
+   * opts: { title, type, icon, useToast }
+   */
+  window.cfAlert = function(msg, opts) {
+    opts = opts || {};
+    /* Detectar tipo automáticamente por el comienzo del mensaje */
+    let autoType = 'info';
+    if (/^✅/.test(msg)) autoType = 'success';
+    else if (/^❌|^🚨/.test(msg)) autoType = 'danger';
+    else if (/^⚠️/.test(msg)) autoType = 'warning';
+    const type = opts.type || autoType;
+
+    /* Limpiar emojis de prefijo del mensaje para mostrarlo limpio */
+    const cleanMsg = msg.replace(/^[✅❌🚨⚠️]\s*/, '').replace(/^[✅❌🚨⚠️]\s*/, '');
+    const titles = { success:'¡Operación exitosa!', danger:'Error', warning:'Atención', info:'Información' };
+    const title = opts.title || titles[type] || 'Información';
+
+    /* Para mensajes de éxito simples, usar toast; para errores/advertencias, usar modal */
+    if (opts.useToast !== false && type === 'success') {
+      cfToast(cleanMsg, 'success', title, 3500);
+      return;
+    }
+
+    return new Promise(function(resolve) {
+      _resolveFn = resolve;
+      _open({ type, title, msg: cleanMsg, showCancel: false,
+               okLabel: type === 'danger' ? 'Entendido' : type === 'warning' ? 'Entendido' : 'Aceptar',
+               okClass: type === 'danger' ? 'cf-btn-danger' : type === 'warning' ? 'cf-btn cf-btn-confirm' : 'cf-btn-confirm' });
+    });
+  };
+
+  /**
+   * cfConfirm(msg, opts) — reemplaza confirm()
+   * opts: { title, type, detail, okLabel, cancelLabel }
+   * Retorna Promise<boolean>
+   */
+  window.cfConfirm = function(msg, opts) {
+    opts = opts || {};
+    /* Detectar tipo de acción por palabras clave */
+    let type = opts.type || 'confirm';
+    if (/cerrar sesión|logout/i.test(msg)) type = 'logout';
+    else if (/elimin|borrar|irreversible|eliminar/i.test(msg)) type = 'delete';
+    else if (/pago|confirmar pago/i.test(msg)) type = 'confirm';
+    else if (/desmarcar/i.test(msg)) type = 'warning';
+    else if (/recepción/i.test(msg)) type = 'confirm';
+    else if (/transferi/i.test(msg)) type = 'confirm';
+
+    const titles = {
+      logout: 'Cerrar sesión',
+      delete: 'Confirmar eliminación',
+      warning: 'Confirmar acción',
+      confirm: 'Confirmar acción'
+    };
+    const okLabels = {
+      logout: 'Sí, cerrar sesión',
+      delete: '🗑️ Sí, eliminar',
+      warning: 'Confirmar',
+      confirm: 'Confirmar'
+    };
+    const okClasses = {
+      logout: 'cf-btn-danger',
+      delete: 'cf-btn-danger',
+      warning: 'cf-btn cf-btn-confirm',
+      confirm: 'cf-btn-confirm'
+    };
+
+    /* Separar mensaje principal de detalles (\n\n) */
+    const parts = msg.split(/\n\n+/);
+    const mainMsg = parts[0].replace(/^[¿?]/,'').replace(/\?$/,'').trim();
+    const detail  = parts.slice(1).join('\n').trim() || null;
+
+    return new Promise(function(resolve) {
+      _resolveFn = function(v) { resolve(v === true || v === null ? v === true : !!v); };
+      _open({
+        type,
+        title: opts.title || titles[type] || 'Confirmar',
+        msg: mainMsg + (mainMsg.endsWith('?') ? '' : '?'),
+        detail: opts.detail || detail,
+        showCancel: true,
+        okLabel: opts.okLabel || okLabels[type] || 'Confirmar',
+        cancelLabel: opts.cancelLabel || 'Cancelar',
+        okClass: opts.okClass || okClasses[type] || 'cf-btn-confirm'
+      });
+    });
+  };
+
+  /**
+   * cfPrompt(msg, defaultVal, opts) — reemplaza prompt()
+   * Retorna Promise<string|null>
+   */
+  window.cfPrompt = function(msg, defaultVal, opts) {
+    opts = opts || {};
+    /* Limpiar emojis del mensaje */
+    const cleanMsg = msg.replace(/^[💰📝📅✏️🏦]\s*/, '').trim();
+    /* Extraer líneas de contexto */
+    const lines = cleanMsg.split('\n');
+    const title = opts.title || lines[0].replace(/[:\?]/g,'').trim();
+    const detail = lines.slice(1).join('\n').trim() || null;
+
+    return new Promise(function(resolve) {
+      _resolveFn = resolve;
+      _open({
+        type: 'info',
+        title: title,
+        msg: '',
+        detail: detail,
+        isPrompt: true,
+        placeholder: opts.placeholder || '',
+        inputVal: defaultVal != null ? defaultVal : '',
+        showCancel: true,
+        okLabel: opts.okLabel || 'Aceptar',
+        cancelLabel: 'Cancelar',
+        okClass: 'cf-btn-confirm'
+      });
+    });
+  };
+
+  /* ══════════════════════════════════════════════════════
+     PATCH DE FUNCIONES EXISTENTES — reemplaza usos de
+     alert/confirm/prompt con la nueva API asíncrona
+  ══════════════════════════════════════════════════════ */
+
+  /* Sobreescribir window.alert, window.confirm, window.prompt  */
+  /* NOTA: Solo para catches futuros; los usos explícitos están  */
+  /* remplazados en las funciones de abajo.                      */
+  const _nativeAlert   = window.alert.bind(window);
+  const _nativeConfirm = window.confirm.bind(window);
+  const _nativePrompt  = window.prompt.bind(window);
+
+  /* No sobreescribimos globalmente porque las funciones que usan
+     confirm() sincrónicamente necesitan refactorizarse caso por caso.
+     Las funciones clave están redefinidas abajo. */
+
+})(); /* fin IIFE */
+</script>
 
 <!-- FAB OVERLAY (fondo oscuro al abrir el menú +) -->
 <div class="bk-fab-overlay" id="bkFabOverlay" onclick="bkCloseFab()"></div>
