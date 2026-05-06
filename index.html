@@ -72,6 +72,7 @@
             padding: 2px;
 
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            padding-top: env(safe-area-inset-top);
 
             max-width: 1200px;
             margin: 0 auto;
@@ -2439,6 +2440,17 @@ input, select, textarea { border-radius: 12px !important; }
             </div>
         </div>
 
+        <!-- ⑦b INGRESOS FIJOS — estado del mes -->
+        <div class="panel-section">
+            <div class="panel-section-header">
+                <div class="panel-section-title">💰 Ingresos Fijos del Mes</div>
+                <div id="panelFixedIncomeBadge" class="panel-section-badge" style="background:rgba(245,158,11,0.12); color:var(--color-warning);">0 pendientes</div>
+            </div>
+            <div id="panelFixedIncomeList">
+                <div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No hay ingresos fijos configurados.</div>
+            </div>
+        </div>
+
         <!-- ⑧ DESGLOSE FINANCIERO colapsable -->
         <div style="margin-bottom:1.25rem;">
             <div class="panel-desglose-toggle" onclick="toggleDesglose()">
@@ -3604,7 +3616,13 @@ input, select, textarea { border-radius: 12px !important; }
             const loginScreen = document.getElementById('loginOverlay')||document.querySelector('[style*="z-index: 9999"]');
             if (loginScreen) {
                 loginScreen.style.animation = 'slideOut 0.5s ease-out';
-                setTimeout(() => { loginScreen.remove(); initApp(); checkMonthlyReset(); checkUpcomingPayments(); }, 500);
+                setTimeout(() => {
+                    loginScreen.remove();
+                    initApp();
+                    checkMonthlyReset();
+                    checkUpcomingPayments();
+                    setTimeout(() => cfToast('¡Bienvenido de nuevo, ' + (user.name || 'usuario') + '!', 'success', '👋 Sesión iniciada', 3000), 600);
+                }, 500);
             }
         }
 
@@ -3903,6 +3921,9 @@ input, select, textarea { border-radius: 12px !important; }
             // Panel: gastos fijos del mes
             renderPanelFixedExpenses();
 
+            // Panel: ingresos fijos del mes
+            renderPanelFixedIncomes();
+
             document.getElementById('monthlyAlert').innerHTML = '';
             updateNonPrioritySpending();
         }
@@ -4048,6 +4069,49 @@ input, select, textarea { border-radius: 12px !important; }
                                 <div class="panel-fixed-day">Día ${item.paymentDay} · ${item.category}${acct ? ' · 🏦 ' + acct.name : ''}</div>
                             </div>
                             <div class="panel-fixed-amount" style="color:${isPaid ? 'var(--color-text-muted)' : 'var(--color-danger)'};">
+                                ${formatCurrency(item.amount)}
+                            </div>
+                        </div>`;
+                }).join('') +
+            '</div>';
+        }
+
+        /* ── Ingresos fijos del mes en el panel ── */
+        function renderPanelFixedIncomes() {
+            const list  = document.getElementById('panelFixedIncomeList');
+            const badge = document.getElementById('panelFixedIncomeBadge');
+            if (!list) return;
+
+            const items = AppState.fixedIncomes;
+            const pending = items.filter(f => f.status === 'pending').length;
+            if (badge) {
+                badge.textContent = pending > 0 ? pending + ' pendiente' + (pending !== 1 ? 's' : '') : '✅ Todo recibido';
+                badge.style.background = pending > 0 ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)';
+                badge.style.color      = pending > 0 ? 'var(--color-warning)' : 'var(--color-success)';
+            }
+
+            if (items.length === 0) {
+                list.innerHTML = '<div style="font-size:0.82rem; color:var(--color-text-muted); text-align:center; padding:0.75rem 0;">No hay ingresos fijos configurados.</div>';
+                return;
+            }
+
+            // Ordenar: primero pendientes, luego recibidos; dentro de cada grupo por día
+            const sorted = [...items].sort((a, b) => {
+                if (a.status === b.status) return (a.paymentDay || 0) - (b.paymentDay || 0);
+                return a.status === 'pending' ? -1 : 1;
+            });
+
+            list.innerHTML = '<div class="panel-fixed-list">' +
+                sorted.map(item => {
+                    const isReceived = item.status === 'received';
+                    const acct = item.accountId ? AppState.accounts.find(a => a.id === item.accountId) : null;
+                    return `
+                        <div class="panel-fixed-item ${isReceived ? 'done' : ''}" style="border-left-color:${isReceived ? 'var(--color-success)' : 'var(--color-primary)'};">
+                            <div>
+                                <div class="panel-fixed-name">${isReceived ? '✅' : '⏳'} ${item.name}</div>
+                                <div class="panel-fixed-day">Día ${item.paymentDay || '—'} · ${item.category}${acct ? ' · 🏦 ' + acct.name : ''}</div>
+                            </div>
+                            <div class="panel-fixed-amount" style="color:${isReceived ? 'var(--color-text-muted)' : 'var(--color-success)'};">
                                 ${formatCurrency(item.amount)}
                             </div>
                         </div>`;
@@ -4260,6 +4324,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.fixedExpenses.splice(index, 1);
                 AppState.notifyStateChange();
+                cfToast('Gasto fijo eliminado del listado', 'info', '🗑️ Eliminado');
             });
         }
 
@@ -4386,6 +4451,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.fixedIncomes.splice(index, 1);
                 AppState.notifyStateChange();
+                cfToast('Ingreso fijo eliminado del listado', 'info', '🗑️ Eliminado');
             });
         }
 
@@ -4479,6 +4545,7 @@ input, select, textarea { border-radius: 12px !important; }
                 }
                 AppState.transactions.splice(index, 1);
                 AppState.notifyStateChange();
+                cfToast('Transacción eliminada del historial', 'info', '🗑️ Eliminada');
             });
         }
 
@@ -6172,6 +6239,8 @@ if (document.readyState === 'loading') {
     toastContainer.appendChild(t);
     setTimeout(() => cfDismissToast(id), duration);
   }
+
+  window.cfToast = cfToast;
 
   window.cfDismissToast = function(id) {
     const el = document.getElementById(id);
