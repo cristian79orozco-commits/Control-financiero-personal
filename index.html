@@ -1891,6 +1891,96 @@ input, select, textarea { border-radius: 12px !important; }
 @media(max-width:480px){.ob-card{padding:1.15rem 1.1rem .95rem}.ob-welcome-card{padding:2rem 1.4rem 1.5rem}}
 
 /* ══════════════════════════════════════════════════════
+   TABLA DE AHORRO — Módulo complementario independiente
+══════════════════════════════════════════════════════ */
+.ta-wrapper{padding-bottom:2rem}
+.ta-hero{background:linear-gradient(135deg,rgba(34,197,94,.15) 0%,rgba(16,163,74,.06) 100%);border:2px solid var(--color-success);border-radius:20px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.ta-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(34,197,94,.07);pointer-events:none}
+.ta-hero-label{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--color-success);font-weight:700;margin-bottom:.3rem}
+.ta-hero-title{font-size:1.6rem;font-weight:800;color:var(--color-text-primary);margin-bottom:.25rem}
+.ta-hero-sub{font-size:.8rem;color:var(--color-text-muted);line-height:1.5}
+.ta-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:1.25rem}
+@media(max-width:600px){.ta-stats-row{grid-template-columns:repeat(2,1fr)}}
+.ta-stat-card{background:var(--color-bg-elevated);border-radius:14px;padding:.9rem 1rem;border:1px solid rgba(255,255,255,.05);position:relative;overflow:hidden}
+.ta-stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;background:var(--color-primary)}
+.ta-stat-card.green::after{background:var(--color-success)}
+.ta-stat-card.warn::after{background:var(--color-warning)}
+.ta-stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-muted);margin-bottom:.25rem}
+.ta-stat-value{font-size:1.25rem;font-weight:800;color:var(--color-text-primary)}
+.ta-stat-sub{font-size:.68rem;color:var(--color-text-muted);margin-top:.1rem}
+.ta-progress-wrap{background:var(--color-bg-elevated);border-radius:14px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,.05)}
+.ta-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.ta-progress-title{font-size:.85rem;font-weight:700;color:var(--color-text-secondary)}
+.ta-progress-pct{font-size:1.4rem;font-weight:800;color:var(--color-success)}
+.ta-progress-track{width:100%;height:14px;background:rgba(255,255,255,.06);border-radius:10px;overflow:hidden;position:relative}
+.ta-progress-fill{height:100%;background:linear-gradient(90deg,var(--color-success),#4ade80);border-radius:10px;transition:width .9s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.ta-progress-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2.5s infinite}
+.ta-motivacion{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1.25rem;font-size:.85rem;color:var(--color-success);font-weight:600;display:flex;align-items:center;gap:.65rem}
+.ta-motivacion-icon{font-size:1.2rem;flex-shrink:0}
+.ta-controls{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.ta-btn-iniciar{flex:1;padding:.85rem 1.5rem;background:linear-gradient(135deg,var(--color-success),#16a34a);color:white;border:none;border-radius:12px;font-size:.95rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:50px;box-shadow:0 4px 16px rgba(34,197,94,.35);transition:all .2s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent}
+.ta-btn-iniciar:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.ta-btn-iniciar:active{transform:scale(.97)}
+.ta-btn-iniciar:disabled{background:var(--color-bg-surface);color:var(--color-text-muted);box-shadow:none;cursor:not-allowed;transform:none;filter:none}
+.ta-btn-cancelar{padding:.85rem 1.25rem;background:rgba(239,68,68,.12);border:1.5px solid rgba(239,68,68,.3);color:var(--color-danger);border-radius:12px;font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem;min-height:50px;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.ta-btn-cancelar:hover{background:rgba(239,68,68,.2)}
+.ta-btn-cancelar:disabled{opacity:.35;cursor:not-allowed}
+.ta-status-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem 1rem;border-radius:20px;font-size:.8rem;font-weight:700;margin-top:.6rem}
+.ta-status-inactivo{background:rgba(148,163,184,.12);color:var(--color-text-muted);border:1px solid rgba(148,163,184,.2)}
+.ta-status-activo{background:rgba(34,197,94,.12);color:var(--color-success);border:1px solid rgba(34,197,94,.25)}
+.ta-grid-section{background:var(--color-bg-elevated);border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,.05)}
+.ta-grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.ta-grid-title{font-size:.9rem;font-weight:700;color:var(--color-text-primary)}
+.ta-grid-legend{display:flex;gap:.75rem;align-items:center;font-size:.7rem;color:var(--color-text-muted)}
+.ta-legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ta-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+@media(max-width:480px){.ta-grid{grid-template-columns:repeat(8,1fr);gap:5px}}
+@media(max-width:340px){.ta-grid{grid-template-columns:repeat(6,1fr);gap:4px}}
+.ta-casilla{aspect-ratio:1;border-radius:8px;border:none;cursor:pointer;font-size:.55rem;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;transition:all .2s cubic-bezier(.34,1.56,.64,1);background:var(--color-bg-surface);color:var(--color-text-muted);border:1.5px solid transparent;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+@media(max-width:480px){.ta-casilla{font-size:.5rem;border-radius:6px}}
+.ta-casilla:not(.ta-done):not(.ta-disabled):hover{background:rgba(34,197,94,.12);border-color:var(--color-success);color:var(--color-success);transform:scale(1.08)}
+.ta-casilla:not(.ta-done):not(.ta-disabled):active{transform:scale(.94)}
+.ta-casilla.ta-done{background:linear-gradient(135deg,var(--color-success),#16a34a);color:white;border-color:transparent;cursor:default}
+.ta-casilla.ta-done::after{content:'✓';position:absolute;top:1px;right:2px;font-size:.55rem;opacity:.7}
+.ta-casilla.ta-disabled{opacity:.45;cursor:not-allowed}
+.ta-casilla-amount{font-size:.55rem;font-weight:700}
+@media(max-width:480px){.ta-casilla-amount{font-size:.45rem}}
+@keyframes taCasillaPop{0%{transform:scale(1)}40%{transform:scale(1.25)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+.ta-casilla.ta-pop{animation:taCasillaPop .4s cubic-bezier(.34,1.56,.64,1)}
+.ta-complete-overlay{display:none;position:fixed;inset:0;z-index:99980;background:rgba(0,0,10,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);align-items:center;justify-content:center;padding:1.5rem}
+.ta-complete-overlay.show{display:flex}
+.ta-complete-card{background:linear-gradient(145deg,#162a20 0%,#0f172a 100%);border:2px solid rgba(34,197,94,.4);border-radius:28px;padding:2.5rem 2rem 2rem;width:min(420px,100%);text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 60px rgba(34,197,94,.12);animation:obPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
+.ta-complete-icon{font-size:4rem;display:block;margin-bottom:1rem;animation:obBounce 1.5s ease infinite}
+.ta-complete-title{font-size:1.6rem;font-weight:900;color:var(--color-success);margin-bottom:.6rem;line-height:1.2}
+.ta-complete-sub{font-size:.9rem;color:rgba(185,198,214,.85);line-height:1.7;margin-bottom:1.5rem}
+.ta-complete-btn{width:100%;padding:.9rem;background:linear-gradient(135deg,var(--color-success),#16a34a);color:white;font-weight:900;font-size:1rem;border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(34,197,94,.4);transition:filter .15s,transform .15s}
+.ta-complete-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.ta-reto-info{background:var(--color-bg-elevated);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,.05);display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:480px){.ta-reto-info{grid-template-columns:1fr}}
+.ta-reto-item{display:flex;flex-direction:column;gap:.2rem}
+.ta-reto-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-muted)}
+.ta-reto-val{font-size:.95rem;font-weight:700;color:var(--color-text-primary)}
+
+/* Tarjeta mini tabla ahorro en panel */
+.ta-panel-mini {
+    background: var(--color-bg-elevated);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(34,197,94,.18);
+    position: relative;
+    overflow: hidden;
+}
+.ta-panel-mini::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-success), #4ade80);
+    border-radius: 16px 16px 0 0;
+}
+
+/* ══════════════════════════════════════════════════════
    SISTEMA DE MODALES Y TOASTS PERSONALIZADOS
    Reemplaza alert(), confirm() y prompt() del navegador
 ══════════════════════════════════════════════════════ */
@@ -2339,7 +2429,31 @@ input, select, textarea { border-radius: 12px !important; }
             </div>
         </div>
 
-        <!-- ③ BARRA PRESUPUESTO -->
+        <!-- ③ TARJETA MINI — Tabla de Ahorro -->
+        <div class="ta-panel-mini" id="taPanelMiniCard">
+            <!-- Contenido dinámico generado por taPanelMiniUpdate() -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+                <div>
+                    <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-success);font-weight:700;margin-bottom:.15rem;">🐷 Tabla de Ahorro</div>
+                    <div style="font-size:1.5rem;font-weight:800;color:var(--color-text-primary);">$0</div>
+                    <div style="font-size:.72rem;color:var(--color-text-muted);margin-top:.1rem;">de $5.000.000 · 0/100 casillas</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.3rem;font-weight:800;color:var(--color-primary);">0%</div>
+                    <div style="font-size:.7rem;color:var(--color-text-muted);">⏸ Inactivo</div>
+                </div>
+            </div>
+            <div style="width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin:.55rem 0;">
+                <div style="height:100%;width:0%;background:linear-gradient(90deg,var(--color-success),#4ade80);border-radius:8px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem;">
+                <div style="font-size:.72rem;color:var(--color-text-muted);">📅 Fin: <strong style="color:var(--color-text-secondary);">—</strong></div>
+                <div style="font-size:.72rem;color:var(--color-text-muted);">⏳ 365 días restantes</div>
+                <button onclick="switchBankTab('tablaahorro',null)" style="font-size:.72rem;padding:.25rem .7rem;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--color-success);border-radius:8px;cursor:pointer;font-weight:700;-webkit-tap-highlight-color:transparent;">Ver tabla →</button>
+            </div>
+        </div>
+
+        <!-- ④ BARRA PRESUPUESTO -->
         <div class="panel-budget-wrap">
             <div class="panel-budget-header">
                 <div>
@@ -4154,6 +4268,8 @@ input, select, textarea { border-radius: 12px !important; }
             renderAccountsBreakdown();
             populateAccountSelectors();
             updateNoAccountsWarnings();
+            // Actualizar tarjeta mini de Tabla de Ahorro en panel de inicio
+            if (typeof taRenderStats === 'function') taRenderStats();
         }
 
         // Muestra u oculta los banners de "sin cuentas" según el estado actual
@@ -6057,6 +6173,110 @@ if (document.readyState === 'loading') {
 }
 
 </script>
+    <!-- ═══ TABLA DE AHORRO ═══ -->
+    <div id="tablaahorro" class="tab-content">
+        <div class="ta-wrapper">
+
+            <!-- Hero -->
+            <div class="ta-hero">
+                <div class="ta-hero-label">🐷 Reto de Ahorro</div>
+                <div class="ta-hero-title">Tabla de Ahorro</div>
+                <div class="ta-hero-sub">100 casillas · $1.000 a $99.000 COP · Meta: $5.000.000 · 12 meses</div>
+                <div id="taStatusBadge" class="ta-status-badge ta-status-inactivo">⏸ Reto no iniciado</div>
+            </div>
+
+            <!-- Stats -->
+            <div class="ta-stats-row">
+                <div class="ta-stat-card green">
+                    <div class="ta-stat-label">💰 Acumulado</div>
+                    <div class="ta-stat-value" id="taAcumulado">$0</div>
+                    <div class="ta-stat-sub">de $5.000.000</div>
+                </div>
+                <div class="ta-stat-card blue">
+                    <div class="ta-stat-label">✅ Casillas</div>
+                    <div class="ta-stat-value" id="taCasillasOk">0 / 100</div>
+                    <div class="ta-stat-sub">completadas</div>
+                </div>
+                <div class="ta-stat-card warn">
+                    <div class="ta-stat-label">📅 Días rest.</div>
+                    <div class="ta-stat-value" id="taDiasRestantes">365</div>
+                    <div class="ta-stat-sub">del reto</div>
+                </div>
+                <div class="ta-stat-card">
+                    <div class="ta-stat-label">📊 Avance</div>
+                    <div class="ta-stat-value" id="taPorcentaje">0%</div>
+                    <div class="ta-stat-sub">completado</div>
+                </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="ta-progress-wrap">
+                <div class="ta-progress-header">
+                    <div class="ta-progress-title">🎯 Progreso hacia $5.000.000</div>
+                    <div class="ta-progress-pct" id="taPctDisplay">0%</div>
+                </div>
+                <div class="ta-progress-track">
+                    <div class="ta-progress-fill" id="taProgressFill" style="width:0%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.7rem;color:var(--color-text-muted);">
+                    <span>$0</span>
+                    <span id="taProgressLegend">$5.000.000 meta total</span>
+                </div>
+            </div>
+
+            <!-- Motivational message -->
+            <div class="ta-motivacion" id="taMotivacion">
+                <span class="ta-motivacion-icon">💡</span>
+                <span id="taMotivacionText">Presiona <strong>"Iniciar Reto"</strong> para comenzar tu camino al ahorro. ¡Cada casilla te acerca más a tu meta!</span>
+            </div>
+
+            <!-- Controls -->
+            <div class="ta-controls">
+                <button class="ta-btn-iniciar" id="taBtnIniciar" onclick="taIniciarReto()">
+                    🚀 Iniciar Reto
+                </button>
+                <button class="ta-btn-cancelar" id="taBtnCancelar" onclick="taCancelarReto()" disabled>
+                    🔄 Cancelar
+                </button>
+            </div>
+
+            <!-- Reto info -->
+            <div class="ta-reto-info" id="taRetoInfo" style="display:none;">
+                <div class="ta-reto-item">
+                    <div class="ta-reto-label">📅 Fecha inicio</div>
+                    <div class="ta-reto-val" id="taFechaInicio">—</div>
+                </div>
+                <div class="ta-reto-item">
+                    <div class="ta-reto-label">🏁 Fecha meta</div>
+                    <div class="ta-reto-val" id="taFechaMeta">—</div>
+                </div>
+                <div class="ta-reto-item">
+                    <div class="ta-reto-label">💵 Promedio/casilla</div>
+                    <div class="ta-reto-val">$50.000 COP</div>
+                </div>
+                <div class="ta-reto-item">
+                    <div class="ta-reto-label">📈 Ritmo sugerido</div>
+                    <div class="ta-reto-val" id="taRitmo">~8-9 casillas/mes</div>
+                </div>
+            </div>
+
+            <!-- Grid de casillas -->
+            <div class="ta-grid-section">
+                <div class="ta-grid-header">
+                    <div class="ta-grid-title">💰 Las 100 Casillas de Ahorro</div>
+                    <div class="ta-grid-legend">
+                        <span><span class="ta-legend-dot" style="background:var(--color-bg-surface);border:1.5px solid var(--color-text-muted)"></span> Pendiente</span>
+                        <span><span class="ta-legend-dot" style="background:var(--color-success)"></span> Completada</span>
+                    </div>
+                </div>
+                <div class="ta-grid" id="taGrid">
+                    <!-- Generado por JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </main><!-- /bk-main -->
 
 <!-- ═══ BOTTOM NAV ═══ -->
@@ -6416,7 +6636,468 @@ if (document.readyState === 'loading') {
     <span class="bk-fab-opt-icon" style="background:rgba(148,163,184,.12);color:var(--color-text-muted);">⚙️</span>
     <div><strong>Configuración</strong><small>Ajustes de tu cuenta</small></div>
   </button>
+  <button class="bk-fab-opt" onclick="switchBankTab('tablaahorro',null);bkCloseFab()">
+    <span class="bk-fab-opt-icon" style="background:rgba(34,197,94,.15);color:var(--color-success);">🐷</span>
+    <div><strong>Tabla de Ahorro</strong><small>Reto 100 casillas · $5M</small></div>
+  </button>
 </div>
+
+<!-- ═══ TABLA DE AHORRO — Modal de finalización ═══ -->
+<div class="ta-complete-overlay" id="taCompleteOverlay">
+  <div class="ta-complete-card">
+    <span class="ta-complete-icon">🏆</span>
+    <div class="ta-complete-title">¡Felicidades!<br>¡Completaste tu Tabla de Ahorro!</div>
+    <div class="ta-complete-sub">
+      Lograste ahorrar <strong style="color:var(--color-success);">$5.000.000 COP</strong> completando las 100 casillas.<br>
+      Has demostrado una disciplina financiera increíble. ¡Eres un campeón del ahorro!<br><br>
+      <span style="font-size:.8rem;color:var(--color-text-muted);">La tabla se reiniciará para que puedas comenzar un nuevo reto.</span>
+    </div>
+    <button class="ta-complete-btn" onclick="taCompletarYReiniciar()">🚀 ¡Comenzar nuevo reto!</button>
+  </div>
+</div>
+
+<!-- ═══ TABLA DE AHORRO — JavaScript módulo independiente ═══ -->
+<script>
+/* ═══════════════════════════════════════════════════════════
+   TABLA DE AHORRO v1.0 — Módulo complementario independiente
+   No modifica ninguna lógica financiera existente
+═══════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+/* ── Configuración del reto ── */
+const TA_CONFIG = {
+    META_TOTAL:   5000000,
+    TOTAL_DIAS:   365,
+    STORAGE_KEY:  'ta_reto_v1',
+    // 100 casillas ordenadas: $1.000 a $99.000 (= $4.950.000) + casilla 100 = $50.000 (= $5.000.000 exactos)
+    VALORES: (function() {
+        const vals = [];
+        for (let i = 1; i <= 99; i++) vals.push(i * 1000); // casillas 0-98: $1K...$99K
+        vals.push(50000); // casilla 99 (número 100): $50K → total = $4.950.000 + $50.000 = $5.000.000
+        return vals;
+    })()
+};
+
+/* ── Estado interno ── */
+let TA = {
+    activo:    false,
+    casillas:  new Array(100).fill(false), // true = completada
+    fechaInicio: null,
+    userId:    null
+};
+
+/* ── Helpers ── */
+function taFmtCOP(n) {
+    return '$' + Math.round(n).toLocaleString('es-CO');
+}
+function taFmtDate(d) {
+    return new Date(d + 'T00:00:00').toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' });
+}
+function taGetUserId() {
+    const activeKey = localStorage.getItem('finanzas_active_user') || '';
+    if (!activeKey) return 'guest';
+    const u = JSON.parse(localStorage.getItem(activeKey) || '{}');
+    return u.supabaseId || u.name || 'guest';
+}
+
+/* ── Persistencia local (independiente de AppState) ── */
+function taSave() {
+    const uid = taGetUserId();
+    const payload = {
+        activo:      TA.activo,
+        casillas:    TA.casillas,
+        fechaInicio: TA.fechaInicio
+    };
+    localStorage.setItem(TA_CONFIG.STORAGE_KEY + '_' + uid, JSON.stringify(payload));
+    // Persistencia Supabase asíncrona (solo si hay usuario cloud)
+    taSaveSupabase().catch(() => {});
+}
+
+function taLoad() {
+    const uid = taGetUserId();
+    const raw = localStorage.getItem(TA_CONFIG.STORAGE_KEY + '_' + uid);
+    if (!raw) return;
+    try {
+        const d = JSON.parse(raw);
+        TA.activo      = d.activo      || false;
+        TA.casillas    = d.casillas    || new Array(100).fill(false);
+        TA.fechaInicio = d.fechaInicio || null;
+    } catch(e) { /* ignore */ }
+}
+
+/* ── Persistencia Supabase (tabla tabla_ahorro) ── */
+async function taSaveSupabase() {
+    if (typeof _sb === 'undefined' || typeof CURRENT_USER_ID === 'undefined' || !CURRENT_USER_ID) return;
+    try {
+        await _sb.from('tabla_ahorro').upsert({
+            user_id:      CURRENT_USER_ID,
+            activo:       TA.activo,
+            casillas:     JSON.stringify(TA.casillas),
+            fecha_inicio: TA.fechaInicio,
+            updated_at:   new Date().toISOString()
+        }, { onConflict: 'user_id' });
+    } catch(e) { console.warn('[TablaAhorro] Supabase save:', e.message); }
+}
+
+async function taLoadSupabase() {
+    if (typeof _sb === 'undefined' || typeof CURRENT_USER_ID === 'undefined' || !CURRENT_USER_ID) return;
+    try {
+        const { data } = await _sb.from('tabla_ahorro')
+            .select('activo,casillas,fecha_inicio')
+            .eq('user_id', CURRENT_USER_ID)
+            .maybeSingle();
+        if (!data) return;
+        TA.activo      = data.activo      || false;
+        TA.casillas    = JSON.parse(data.casillas || '[]') || new Array(100).fill(false);
+        TA.fechaInicio = data.fecha_inicio || null;
+        // Sincronizar a local
+        taSave();
+        taRenderAll();
+    } catch(e) { console.warn('[TablaAhorro] Supabase load:', e.message); }
+}
+
+/* ── Renderizado del grid ── */
+function taRenderGrid() {
+    const grid = document.getElementById('taGrid');
+    if (!grid) return;
+    grid.innerHTML = TA_CONFIG.VALORES.map((val, i) => {
+        const done = TA.casillas[i];
+        const k = Math.round(val / 1000);
+        const label = k >= 1000 ? (k/1000).toFixed(0)+'M' : k+'K';
+        const disabled = !TA.activo ? 'ta-disabled' : '';
+        return `<button
+            class="ta-casilla ${done ? 'ta-done' : ''} ${disabled}"
+            id="taCasilla${i}"
+            onclick="taToggleCasilla(${i})"
+            title="${done ? '✓ Ahorrado: ' : 'Ahorrar: '}${taFmtCOP(val)}"
+            aria-label="${done ? 'Completado' : 'Pendiente'}: ${taFmtCOP(val)}">
+            <span class="ta-casilla-amount">${label}</span>
+        </button>`;
+    }).join('');
+}
+
+/* ── Cálculos ── */
+function taCalcAcumulado() {
+    return TA.casillas.reduce((sum, done, i) => done ? sum + TA_CONFIG.VALORES[i] : sum, 0);
+}
+function taCalcCompletadas() {
+    return TA.casillas.filter(Boolean).length;
+}
+function taCalcDiasRestantes() {
+    if (!TA.activo || !TA.fechaInicio) return TA_CONFIG.TOTAL_DIAS;
+    const inicio = new Date(TA.fechaInicio);
+    const fin    = new Date(inicio);
+    fin.setDate(fin.getDate() + TA_CONFIG.TOTAL_DIAS);
+    const hoy    = new Date();
+    const diff   = Math.ceil((fin - hoy) / (1000*60*60*24));
+    return Math.max(0, diff);
+}
+
+/* ── Mensajes motivacionales ── */
+function taMensaje(completadas, acumulado, pct) {
+    if (!TA.activo) return '💡 Presiona <strong>"Iniciar Reto"</strong> para comenzar tu camino al ahorro. ¡Cada casilla te acerca más a tu meta!';
+    if (completadas === 0)  return '🌱 El reto ha comenzado. ¡Toca tu primera casilla para empezar a ahorrar!';
+    if (pct < 10)  return `🚀 ¡Gran comienzo! Llevas ${taFmtCOP(acumulado)} ahorrados. ¡Sigue así!`;
+    if (pct < 25)  return `💪 ¡Fantástico! Ya completaste ${completadas} casillas. Vas construyendo el hábito del ahorro.`;
+    if (pct < 50)  return `🌟 Ya llevas el ${pct.toFixed(0)}% de tu meta. ¡Estás a mitad del camino!`;
+    if (pct < 75)  return `🔥 ¡Increíble disciplina! Más del 50% completado. ${taFmtCOP(acumulado)} ahorrados. ¡No pares!`;
+    if (pct < 90)  return `🏅 ¡Casi lo logras! Solo te faltan ${100 - completadas} casillas para alcanzar $5.000.000. ¡Eres imparable!`;
+    if (pct < 100) return `🎯 ¡La meta está a tu alcance! Solo ${100 - completadas} casilla${(100-completadas)!==1?'s':''} más y habrás ahorrado $5.000.000. ¡TÚ PUEDES!`;
+    return '🏆 ¡INCREÍBLE! ¡Lo lograste! ¡$5.000.000 ahorrados!';
+}
+
+/* ── Actualizar UI ── */
+function taRenderStats() {
+    const completadas  = taCalcCompletadas();
+    const acumulado    = taCalcAcumulado();
+    const pct          = (acumulado / TA_CONFIG.META_TOTAL) * 100;
+    const diasRestantes= taCalcDiasRestantes();
+
+    const elAcum  = document.getElementById('taAcumulado');
+    const elCas   = document.getElementById('taCasillasOk');
+    const elDias  = document.getElementById('taDiasRestantes');
+    const elPct   = document.getElementById('taPorcentaje');
+    const elPctD  = document.getElementById('taPctDisplay');
+    const elFill  = document.getElementById('taProgressFill');
+    const elMsg   = document.getElementById('taMotivacionText');
+    const elBadge = document.getElementById('taStatusBadge');
+    const elRetoInfo = document.getElementById('taRetoInfo');
+    const elBtnIniciar = document.getElementById('taBtnIniciar');
+    const elBtnCancel  = document.getElementById('taBtnCancelar');
+    const elFechaIn    = document.getElementById('taFechaInicio');
+    const elFechaMeta  = document.getElementById('taFechaMeta');
+    const elRitmo      = document.getElementById('taRitmo');
+
+    if (elAcum)  elAcum.textContent  = taFmtCOP(acumulado);
+    if (elCas)   elCas.textContent   = completadas + ' / 100';
+    if (elDias)  elDias.textContent  = diasRestantes;
+    if (elPct)   elPct.textContent   = pct.toFixed(1) + '%';
+    if (elPctD)  elPctD.textContent  = pct.toFixed(1) + '%';
+    if (elFill)  elFill.style.width  = Math.min(pct, 100).toFixed(2) + '%';
+    if (elMsg)   elMsg.innerHTML     = taMensaje(completadas, acumulado, pct);
+
+    if (elBadge) {
+        elBadge.className = 'ta-status-badge ' + (TA.activo ? 'ta-status-activo' : 'ta-status-inactivo');
+        elBadge.textContent = TA.activo ? '▶ Reto en curso' : '⏸ Reto no iniciado';
+    }
+    if (elRetoInfo) elRetoInfo.style.display = TA.activo ? 'grid' : 'none';
+    if (elBtnIniciar) elBtnIniciar.disabled = TA.activo;
+    if (elBtnCancel)  elBtnCancel.disabled  = !TA.activo;
+
+    if (TA.fechaInicio) {
+        if (elFechaIn) elFechaIn.textContent = taFmtDate(TA.fechaInicio);
+        const fin = new Date(TA.fechaInicio);
+        fin.setDate(fin.getDate() + TA_CONFIG.TOTAL_DIAS);
+        if (elFechaMeta) elFechaMeta.textContent = fin.toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' });
+        const mesesRestantes = Math.max(1, Math.ceil(diasRestantes / 30));
+        const casillasRestantes = 100 - completadas;
+        if (elRitmo) elRitmo.textContent = '~' + Math.ceil(casillasRestantes / mesesRestantes) + ' casillas/mes';
+    }
+
+    // ── Actualizar tarjeta mini en el panel de Inicio ──
+    taPanelMiniUpdate(completadas, acumulado, pct, diasRestantes);
+}
+
+/* ── Tarjeta mini del panel de Inicio ── */
+function taPanelMiniUpdate(completadas, acumulado, pct, diasRestantes) {
+    const card = document.getElementById('taPanelMiniCard');
+    if (!card) return;
+
+    // Calcular fecha de finalización
+    let fechaFin = '—';
+    if (TA.fechaInicio) {
+        const fin = new Date(TA.fechaInicio);
+        fin.setDate(fin.getDate() + TA_CONFIG.TOTAL_DIAS);
+        fechaFin = fin.toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' });
+    }
+
+    const barColor = pct >= 75 ? 'var(--color-success)' : pct >= 40 ? 'var(--color-warning)' : 'var(--color-primary)';
+
+    card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem;flex-wrap:wrap;gap:.4rem;">
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-success);font-weight:700;margin-bottom:.15rem;">🐷 Tabla de Ahorro</div>
+                <div style="font-size:1.5rem;font-weight:800;color:var(--color-text-primary);">${taFmtCOP(acumulado)}</div>
+                <div style="font-size:.72rem;color:var(--color-text-muted);margin-top:.1rem;">de $5.000.000 · ${completadas}/100 casillas</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:1.3rem;font-weight:800;color:${barColor};">${pct.toFixed(1)}%</div>
+                <div style="font-size:.7rem;color:var(--color-text-muted);">${TA.activo ? '▶ Activo' : '⏸ Inactivo'}</div>
+            </div>
+        </div>
+        <div style="width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin-bottom:.55rem;">
+            <div style="height:100%;width:${Math.min(pct,100).toFixed(1)}%;background:linear-gradient(90deg,${barColor},${pct>=75?'#4ade80':'#7dd3fc'});border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1);"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem;">
+            <div style="font-size:.72rem;color:var(--color-text-muted);">📅 Fin: <strong style="color:var(--color-text-secondary);">${fechaFin}</strong></div>
+            <div style="font-size:.72rem;color:var(--color-text-muted);">⏳ ${diasRestantes} días restantes</div>
+            <button onclick="switchBankTab('tablaahorro',null)" style="font-size:.72rem;padding:.25rem .7rem;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--color-success);border-radius:8px;cursor:pointer;font-weight:700;-webkit-tap-highlight-color:transparent;">Ver tabla →</button>
+        </div>
+    `;
+}
+
+function taRenderAll() {
+    taRenderGrid();
+    taRenderStats();
+}
+
+/* ── Acciones principales ── */
+window.taIniciarReto = function() {
+    if (TA.activo) return;
+    cfConfirm('¿Iniciar el Reto de Ahorro?', {
+        type: 'confirm',
+        title: '🚀 Iniciar Reto de Ahorro',
+        detail: 'Tendrás 365 días para completar las 100 casillas y ahorrar $5.000.000 COP.\n\nCada casilla que marques representa ese dinero ahorrado en la vida real.',
+        okLabel: '🚀 ¡Iniciar!',
+        cancelLabel: 'Cancelar'
+    }).then(function(ok) {
+        if (!ok) return;
+        TA.activo      = true;
+        TA.fechaInicio = new Date().toISOString().split('T')[0];
+        TA.casillas    = new Array(100).fill(false);
+        taSave();
+        taRenderAll();
+        cfToast('¡El reto ha comenzado! Toca una casilla para ahorrar 💪', 'success', '🚀 Reto iniciado', 4000);
+    });
+};
+
+window.taCancelarReto = function() {
+    if (!TA.activo) return;
+    const completadas = taCalcCompletadas();
+    const acum = taCalcAcumulado();
+    cfConfirm('¿Cancelar el reto de ahorro?', {
+        type: 'delete',
+        title: '⚠️ Cancelar Reto',
+        detail: 'Se reiniciará toda la tabla.\nHas completado ' + completadas + ' casillas (' + taFmtCOP(acum) + ').\n\nEsta acción no puede deshacerse.',
+        okLabel: '🔄 Sí, cancelar',
+        cancelLabel: 'Seguir con el reto'
+    }).then(function(ok) {
+        if (!ok) return;
+        // Eliminar transacciones de tabla de ahorro de AppState
+        if (AppState) {
+            AppState.transactions = AppState.transactions.filter(t => !t._tablaAhorro);
+            AppState.notifyStateChange();
+        }
+        TA.activo      = false;
+        TA.casillas    = new Array(100).fill(false);
+        TA.fechaInicio = null;
+        taSave();
+        taRenderAll();
+        cfToast('Reto cancelado. Los ahorros se revirtieron en tu disponible.', 'info', '🔄 Reto reiniciado', 3500);
+    });
+};
+
+window.taToggleCasilla = function(idx) {
+    if (!TA.activo) {
+        cfToast('Primero debes iniciar el reto presionando "Iniciar Reto"', 'warning', '⚠️ Reto no iniciado', 3000);
+        return;
+    }
+    if (TA.casillas[idx]) {
+        cfToast('Esta casilla ya fue completada. ¡Sigue con las demás! 💪', 'info', '✅ Ya ahorrado', 2500);
+        return;
+    }
+    const valor = TA_CONFIG.VALORES[idx];
+    const completadas = taCalcCompletadas();
+
+    // Buscar cuenta Efectivo (o la primera disponible si no existe Efectivo)
+    const cuentaEfectivo = AppState && AppState.accounts
+        ? (AppState.accounts.find(a => /efectivo/i.test(a.name)) || AppState.accounts[0])
+        : null;
+
+    const cuentaLabel = cuentaEfectivo
+        ? '\n🏦 Cuenta: ' + (cuentaEfectivo.icon || '💵') + ' ' + cuentaEfectivo.name
+        : '\n⚠️ Sin cuenta asignada (crea una cuenta "Efectivo" para mayor control)';
+
+    const disponible = AppState ? AppState.getCurrentAvailable() : Infinity;
+    const advertencia = (AppState && disponible < valor)
+        ? '\n\n⚠️ Tu disponible actual (' + taFmtCOP(disponible) + ') es menor al valor de esta casilla. Este ahorro es físico — asegúrate de tener el efectivo.'
+        : '';
+
+    cfConfirm('¿Marcar casilla como ahorrada?', {
+        type: 'confirm',
+        title: '💰 Confirmar ahorro',
+        detail: 'Valor de la casilla: ' + taFmtCOP(valor) + cuentaLabel + '\nEste monto se descontará de tu disponible.' + advertencia + '\n\nCasillas completadas: ' + completadas + ' / 100',
+        okLabel: '✅ Sí, lo ahorré',
+        cancelLabel: 'Cancelar'
+    }).then(function(ok) {
+        if (!ok) return;
+        TA.casillas[idx] = true;
+        taSave();
+
+        // ── SINERGIA CON AppState: registrar como transacción de ahorro ──
+        if (AppState) {
+            const tx = {
+                id:          'ta_' + Date.now() + '_' + idx,
+                type:        'Gasto',
+                description: '🐷 Tabla de Ahorro — Casilla #' + (idx + 1) + ' (' + taFmtCOP(valor) + ')',
+                amount:      valor,
+                date:        new Date().toISOString().split('T')[0],
+                category:    'Ahorro Físico',
+                accountId:   cuentaEfectivo ? cuentaEfectivo.id : null,
+                _tablaAhorro: true  // marcador para identificar estas tx
+            };
+            AppState.transactions.push(tx);
+            AppState.notifyStateChange(); // guarda y actualiza todas las vistas
+        }
+
+        // Animación pop en la casilla
+        const btn = document.getElementById('taCasilla' + idx);
+        if (btn) {
+            btn.classList.add('ta-done');
+            btn.classList.remove('ta-disabled');
+            btn.classList.add('ta-pop');
+            btn.setAttribute('title', '✓ Ahorrado: ' + taFmtCOP(valor));
+            setTimeout(() => btn.classList.remove('ta-pop'), 450);
+        }
+
+        taRenderStats();
+
+        const nuevasCompletadas = taCalcCompletadas();
+        const acum = taCalcAcumulado();
+        const pct  = (acum / TA_CONFIG.META_TOTAL * 100).toFixed(1);
+
+        const cuentaTxt = cuentaEfectivo ? ' · 🏦 ' + cuentaEfectivo.name : '';
+        cfToast(taFmtCOP(valor) + ' descontados del disponible · Total ahorrado: ' + taFmtCOP(acum) + ' (' + pct + '%)' + cuentaTxt, 'success', '💰 ¡Casilla completada!', 4500);
+
+        // Hitos
+        const hitos = [10, 25, 50, 75, 90];
+        if (hitos.includes(nuevasCompletadas)) {
+            setTimeout(() => {
+                const msgs = {
+                    10: '🌱 ¡10 casillas completadas! Llevas ' + taFmtCOP(acum) + ' ahorrados. ¡El hábito está tomando forma!',
+                    25: '🌟 ¡25% del reto completado! ' + taFmtCOP(acum) + ' ahorrados. ¡Un cuarto del camino recorrido!',
+                    50: '🔥 ¡MITAD DEL RETO! 50 casillas completadas · ' + taFmtCOP(acum) + ' ahorrados. ¡Eres increíble!',
+                    75: '🏅 ¡75% completado! Solo 25 casillas más para $5.000.000. ¡Estás en la recta final!',
+                    90: '🎯 ¡90 casillas! ¡Ya casi! Solo 10 más. Llevas ' + taFmtCOP(acum) + ' ahorrados. ¡TÚ PUEDES!'
+                };
+                cfAlert(msgs[nuevasCompletadas], { type: 'success', title: '🏆 ¡Hito alcanzado!' });
+            }, 500);
+        }
+
+        // ¿Completó el reto?
+        if (nuevasCompletadas === 100) {
+            setTimeout(() => taMostrarComplecion(), 800);
+        }
+    });
+};
+
+function taMostrarComplecion() {
+    const overlay = document.getElementById('taCompleteOverlay');
+    if (overlay) overlay.classList.add('show');
+}
+
+window.taCompletarYReiniciar = function() {
+    const overlay = document.getElementById('taCompleteOverlay');
+    if (overlay) overlay.classList.remove('show');
+    // Al completar el reto exitosamente, las transacciones quedan en el historial
+    // Solo reiniciamos el estado de la tabla
+    TA.activo      = false;
+    TA.casillas    = new Array(100).fill(false);
+    TA.fechaInicio = null;
+    taSave();
+    taRenderAll();
+    cfToast('¡Reto reiniciado! El historial de $5.000.000 queda en tu registro. 🚀', 'success', '🏆 ¡Hasta la próxima!', 5000);
+};
+
+/* ── Inicialización ── */
+function taInit() {
+    taLoad();
+    taRenderAll();
+    // Intentar cargar desde Supabase (async, no bloquea)
+    setTimeout(() => taLoadSupabase(), 2000);
+}
+
+/* ── Enganchar al login existente (sin romper nada) ── */
+const _taOrigLogin = window._completarLogin;
+if (typeof _taOrigLogin === 'function') {
+    window._completarLogin = function(user) {
+        _taOrigLogin(user);
+        requestAnimationFrame(() => setTimeout(taInit, 1500));
+    };
+} else {
+    // Fallback: inicializar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', taInit);
+    } else {
+        setTimeout(taInit, 1000);
+    }
+}
+
+/* ── También inicializar al navegar a la pestaña ── */
+const _taOrigSwitch = window.switchBankTab;
+if (typeof _taOrigSwitch === 'function') {
+    window.switchBankTab = function(tabId, clickedNav) {
+        _taOrigSwitch(tabId, clickedNav);
+        if (tabId === 'tablaahorro') {
+            // Pequeño refresco al entrar a la pestaña
+            setTimeout(() => { taLoad(); taRenderAll(); }, 100);
+        }
+    };
+}
+
+})(); /* fin IIFE TablaAhorro */
+</script>
 
 </body>
 </html>
