@@ -2593,7 +2593,7 @@ input, select, textarea { border-radius: 12px !important; }
             </div>
             <div class="sbd-detail" id="sbd-detail-panel">
                 <div class="sbd-dr"><span class="sbd-dl">Disponible actual</span><span class="sbd-dv" id="sbd-d-available">$0</span></div>
-                <div class="sbd-dr"><span class="sbd-dl">Reserva seguridad (70%)</span><span class="sbd-dv" id="sbd-d-reserve">$0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Reserva segura (70%)</span><span class="sbd-dv" id="sbd-d-reserve">$0</span></div>
                 <div class="sbd-dr"><span class="sbd-dl">Fijos pendientes</span><span class="sbd-dv" id="sbd-d-pending">$0</span></div>
                 <div class="sbd-dr" style="border-top:1px solid rgba(56,189,248,.2);padding-top:.45rem;margin-top:.2rem">
                     <span class="sbd-dl" style="font-weight:600;color:var(--color-text-primary)">Fondo libre neto</span>
@@ -4113,16 +4113,16 @@ input, select, textarea { border-radius: 12px !important; }
 
             var pc='#22c55e', pl='', pd='';
             if(pace<=0.75){
-                pc='#22c55e'; pl='&#x1F7E2; Excelente ritmo ('+pacePct+'%)';
+                pc='#22c55e'; pl='🟢 Excelente ritmo ('+pacePct+'%)';
                 pd='Llevas '+formatCurrency(mExp)+' gastados. Lo esperado es '+formatCurrency(gEsp)+'. Vas muy bien.';
             } else if(pace<=1.0){
-                pc='#22c55e'; pl='&#x1F7E2; Ritmo normal ('+pacePct+'%)';
+                pc='#22c55e'; pl='🟢 Ritmo normal ('+pacePct+'%)';
                 pd='Gastos en linea con lo planeado. Llevas '+formatCurrency(mExp)+' de '+formatCurrency(gEsp)+' esperado.';
             } else if(pace<=1.25){
-                pc='#f59e0b'; pl='&#x1F7E1; Ritmo acelerado ('+pacePct+'%)';
+                pc='#f59e0b'; pl='🟡 Ritmo acelerado ('+pacePct+'%)';
                 pd='Llevas '+formatCurrency(mExp)+' gastados, un '+Math.round((pace-1)*100)+'% sobre el ritmo ideal.';
             } else {
-                pc='#ef4444'; pl='&#x1F534; Ritmo de alerta ('+pacePct+'%)';
+                pc='#ef4444'; pl='🔴 Ritmo de alerta ('+pacePct+'%)';
                 pd='Gastos '+Math.round((pace-1)*100)+'% sobre lo esperado. Riesgo de agotar el fondo este mes.';
             }
             var pf=sbdEl('sbd-pace-fill');
