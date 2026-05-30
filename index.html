@@ -2473,37 +2473,147 @@ input, select, textarea { border-radius: 12px !important; }
             </div>
         </div>
 
-        <!-- ④ CAPACIDAD DE GASTO — Reserva + Libre -->
-        <div class="panel-section">
-            <div class="panel-section-header">
-                <div class="panel-section-title">💳 Capacidad de Gasto</div>
-                <div id="nonp-recommendations"></div>
+                <!-- ④ PULSO FINANCIERO DIARIO -->
+        <div class="panel-section" id="sbd-section">
+            <style>
+            .sbd-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem}
+            .sbd-title{font-size:.9rem;font-weight:700;color:var(--color-text-primary)}
+            .sbd-info-btn{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--color-primary);border-radius:50%;width:22px;height:22px;font-size:.7rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+            .sbd-main-card{background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(14,165,233,.03));border:1.5px solid rgba(56,189,248,.22);border-radius:16px;padding:1.1rem 1.25rem;margin-bottom:.9rem;position:relative;overflow:hidden}
+            .sbd-main-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--color-primary),#38bdf8,var(--color-primary));border-radius:16px 16px 0 0}
+            .sbd-main-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;color:var(--color-text-muted);margin-bottom:.25rem;font-weight:600}
+            .sbd-main-value{font-size:2.1rem;font-weight:900;color:var(--color-primary);letter-spacing:-.5px;line-height:1;margin-bottom:.3rem;transition:color .3s}
+            .sbd-main-value.pace-ok{color:#22c55e}.sbd-main-value.pace-warn{color:#f59e0b}.sbd-main-value.pace-danger{color:#ef4444}
+            .sbd-today-row{display:flex;justify-content:space-between;margin-top:.65rem;padding-top:.65rem;border-top:1px solid rgba(255,255,255,.07)}
+            .sbd-today-item{display:flex;flex-direction:column;gap:.1rem}
+            .sbd-today-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-muted)}
+            .sbd-today-val{font-size:.95rem;font-weight:700}
+            .sbd-today-val.spent{color:#f59e0b}.sbd-today-val.left.pos{color:#22c55e}.sbd-today-val.left.zer{color:#ef4444}
+            .sbd-ref-row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:.4rem;font-size:.75rem;color:var(--color-text-muted)}
+            .sbd-rbadge{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border-radius:20px;padding:.15rem .55rem;font-size:.7rem;font-weight:600;border:1px solid rgba(255,255,255,.07)}
+            .sbd-rbadge.up{color:#22c55e;border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.08)}
+            .sbd-rbadge.dn{color:#ef4444;border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.08)}
+            .sbd-rbadge.eq{color:#38bdf8;border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.08)}
+            .sbd-pace-wrap{margin-bottom:.9rem}
+            .sbd-pace-hd{display:flex;justify-content:space-between;margin-bottom:.45rem}
+            .sbd-pace-title{font-size:.72rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.4px}
+            .sbd-pace-pct{font-size:.82rem;font-weight:700;max-width:65%;text-align:right}
+            .sbd-pace-track{height:8px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
+            .sbd-pace-fill{height:100%;border-radius:6px;transition:width .7s cubic-bezier(.4,0,.2,1),background .5s}
+            .sbd-pace-desc{font-size:.72rem;color:var(--color-text-muted);margin-top:.35rem;line-height:1.45}
+            .sbd-alert{border-radius:12px;padding:.8rem 1rem;margin-bottom:.7rem;display:flex;gap:.7rem;align-items:flex-start}
+            .sbd-ai{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+            .sbd-ab{flex:1;min-width:0}
+            .sbd-at{font-size:.8rem;font-weight:700;margin-bottom:.2rem}
+            .sbd-am{font-size:.75rem;line-height:1.55;color:var(--color-text-muted)}
+            .sbd-aa{font-size:.71rem;font-weight:600;margin-top:.3rem;opacity:.9}
+            .sbd-alert.green{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22)}
+            .sbd-alert.green .sbd-at{color:#22c55e}.sbd-alert.green .sbd-aa{color:#4ade80}
+            .sbd-alert.yellow{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
+            .sbd-alert.yellow .sbd-at{color:#f59e0b}.sbd-alert.yellow .sbd-aa{color:#fbbf24}
+            .sbd-alert.red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22)}
+            .sbd-alert.red .sbd-at{color:#ef4444}.sbd-alert.red .sbd-aa{color:#f87171}
+            .sbd-alert.blue{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2)}
+            .sbd-alert.blue .sbd-at{color:#38bdf8}.sbd-alert.blue .sbd-aa{color:#7dd3fc}
+            .sbd-metrics{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.7rem}
+            .sbd-metric{background:var(--color-bg-elevated,#1a2540);border-radius:12px;padding:.75rem .9rem;border:1px solid rgba(255,255,255,.05)}
+            .sbd-metric-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-muted);margin-bottom:.2rem}
+            .sbd-metric-value{font-size:1rem;font-weight:700;color:var(--color-text-primary)}
+            .sbd-metric-sub{font-size:.65rem;color:var(--color-text-muted);margin-top:.1rem}
+            .sbd-fwarn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:.65rem .9rem;margin-bottom:.65rem;font-size:.74rem;color:#f59e0b;display:flex;align-items:flex-start;gap:.6rem;line-height:1.45}
+            .sbd-toggle{display:flex;justify-content:space-between;cursor:pointer;user-select:none;padding:.6rem .85rem;background:rgba(255,255,255,.03);border-radius:10px;margin-top:.5rem;border:1px solid rgba(255,255,255,.05)}
+            .sbd-toggle-lbl{font-size:.78rem;font-weight:600;color:var(--color-text-muted)}
+            .sbd-toggle-ico{font-size:.75rem;color:var(--color-primary);font-weight:700;transition:transform .3s}
+            .sbd-toggle-ico.open{transform:rotate(180deg)}
+            .sbd-detail{display:none;padding:.85rem .9rem .6rem;background:rgba(255,255,255,.02);border-radius:0 0 12px 12px;border:1px solid rgba(255,255,255,.05);border-top:none;margin-top:-2px}
+            .sbd-dr{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.78rem;border-bottom:1px solid rgba(255,255,255,.04)}
+            .sbd-dr:last-child{border-bottom:none}
+            .sbd-dl{color:var(--color-text-muted)}
+            .sbd-dv{font-weight:600;color:var(--color-text-primary)}
+            </style>
+
+            <div class="sbd-header">
+                <div class="sbd-title">&#x1F4B3; Pulso Financiero Diario</div>
+                <button class="sbd-info-btn" onclick="sbdShowInfo()" title="Como se calcula">?</button>
             </div>
-            <p style="font-size:0.78rem; color:var(--color-text-muted); margin-bottom:1rem; line-height:1.5;">
-                Basado en tu <strong style="color:var(--color-text-secondary);">Disponible Actual</strong>. El 70% se reserva como colchón obligatorio para imprevistos y compromisos. Solo el 30% es seguro para gastar libremente.
-            </p>
-            <div class="panel-reserve-block">
-                <div class="panel-reserve-item">
-                    <div class="panel-reserve-label">🛡️ Reserva Obligatoria</div>
-                    <div class="panel-reserve-value" style="color:var(--color-warning);" id="nonp-minimum-balance">$0</div>
-                    <div class="panel-reserve-desc">No toques este dinero — cubre imprevistos, deudas y obligaciones futuras</div>
+
+            <div class="sbd-main-card">
+                <div class="sbd-main-label">Puedes gastar hoy</div>
+                <div class="sbd-main-value" id="sbd-limit-today">$0</div>
+                <div class="sbd-ref-row">
+                    <span style="font-size:.72rem">Base del mes:</span>
+                    <span style="font-weight:600;font-size:.78rem" id="sbd-base-label">$0/dia</span>
+                    <span id="sbd-diff-badge" class="sbd-rbadge eq">= igual</span>
                 </div>
-                <div class="panel-reserve-item" style="border:1.5px solid var(--color-primary); background:linear-gradient(135deg,rgba(56,189,248,0.1) 0%,rgba(14,165,233,0.04) 100%);">
-                    <div class="panel-reserve-label">✅ Libre para gastar</div>
-                    <div class="panel-reserve-value" style="color:var(--color-primary);" id="nonp-safe-spending">$0</div>
-                    <div class="panel-reserve-desc">Puedes usar esto sin comprometer tu estabilidad financiera</div>
+                <div class="sbd-today-row">
+                    <div class="sbd-today-item">
+                        <span class="sbd-today-label">Gastado hoy</span>
+                        <span class="sbd-today-val spent" id="sbd-spent-today">$0</span>
+                    </div>
+                    <div class="sbd-today-item" style="text-align:right">
+                        <span class="sbd-today-label">Te queda hoy</span>
+                        <span class="sbd-today-val left pos" id="sbd-left-today">$0</span>
+                    </div>
                 </div>
             </div>
-            <!-- Gasto diario -->
-            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--color-bg-base); border-radius:10px; padding:0.75rem 1rem;">
-                <div>
-                    <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); margin-bottom:0.15rem;">💵 Límite diario recomendado</div>
-                    <div style="font-size:0.75rem; color:var(--color-text-muted);">Para los días restantes del mes, sin exceder el gasto libre</div>
+
+            <div class="sbd-pace-wrap">
+                <div class="sbd-pace-hd">
+                    <span class="sbd-pace-title">Ritmo del mes</span>
+                    <span class="sbd-pace-pct" id="sbd-pace-pct">Calculando...</span>
                 </div>
-                <div style="font-size:1.75rem; font-weight:800; color:var(--color-primary); white-space:nowrap; margin-left:1rem;" id="canSpendPerDay">$0</div>
+                <div class="sbd-pace-track">
+                    <div class="sbd-pace-fill" id="sbd-pace-fill" style="width:0%;background:#22c55e"></div>
+                </div>
+                <div class="sbd-pace-desc" id="sbd-pace-desc"></div>
             </div>
-            <!-- Base de cálculo oculta para actualizarla desde JS -->
-            <span id="nonp-base-calculation" style="display:none;">$0</span>
+
+            <div id="sbd-alert-box"></div>
+
+            <div id="sbd-fixed-warn" class="sbd-fwarn" style="display:none">
+                <span>&#x26A0;&#xFE0F;</span><span id="sbd-fixed-warn-text"></span>
+            </div>
+
+            <div class="sbd-metrics">
+                <div class="sbd-metric">
+                    <div class="sbd-metric-label">Fondo libre del mes</div>
+                    <div class="sbd-metric-value" id="sbd-monthly-fund">$0</div>
+                    <div class="sbd-metric-sub">30% del disponible</div>
+                </div>
+                <div class="sbd-metric">
+                    <div class="sbd-metric-label">Proyeccion al cierre</div>
+                    <div class="sbd-metric-value" id="sbd-projection">$0</div>
+                    <div class="sbd-metric-sub" id="sbd-projection-sub">Si mantienes el ritmo</div>
+                </div>
+            </div>
+
+            <div class="sbd-toggle" onclick="sbdToggleDetail()">
+                <span class="sbd-toggle-lbl">Ver desglose del calculo</span>
+                <span class="sbd-toggle-ico" id="sbd-toggle-icon">&#9662;</span>
+            </div>
+            <div class="sbd-detail" id="sbd-detail-panel">
+                <div class="sbd-dr"><span class="sbd-dl">Disponible actual</span><span class="sbd-dv" id="sbd-d-available">$0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Reserva seguridad (70%)</span><span class="sbd-dv" id="sbd-d-reserve">$0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Fijos pendientes</span><span class="sbd-dv" id="sbd-d-pending">$0</span></div>
+                <div class="sbd-dr" style="border-top:1px solid rgba(56,189,248,.2);padding-top:.45rem;margin-top:.2rem">
+                    <span class="sbd-dl" style="font-weight:600;color:var(--color-text-primary)">Fondo libre neto</span>
+                    <span class="sbd-dv" style="color:var(--color-primary)" id="sbd-d-fund">$0</span>
+                </div>
+                <div class="sbd-dr"><span class="sbd-dl">Dias transcurridos / totales</span><span class="sbd-dv" id="sbd-d-days-elapsed">0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Dias restantes</span><span class="sbd-dv" id="sbd-d-days-rem">0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Gastado del fondo libre</span><span class="sbd-dv" id="sbd-d-used">$0</span></div>
+                <div class="sbd-dr"><span class="sbd-dl">Fondo libre restante</span><span class="sbd-dv" style="color:#22c55e" id="sbd-d-remaining">$0</span></div>
+            </div>
+
+            <!-- IDs legacy: compatibilidad total con el resto del codigo -->
+            <span id="nonp-minimum-balance" style="display:none">$0</span>
+            <span id="nonp-safe-spending" style="display:none">$0</span>
+            <span id="nonp-base-calculation" style="display:none">$0</span>
+            <div id="nonp-recommendations" style="display:none"></div>
+            <div id="nonp-status" style="display:none"></div>
+            <span id="nonp-status-icon" style="display:none"></span>
+            <span id="nonp-status-text" style="display:none"></span>
+            <div style="display:none" id="canSpendPerDay">$0</div>
         </div>
 
         <!-- ⑤ DISTRIBUCIÓN POR CUENTAS -->
@@ -3894,50 +4004,176 @@ input, select, textarea { border-radius: 12px !important; }
         }
 
         /* ============================================
-           1️⃣ CÁLCULO CORRECTO DE CAPACIDAD DE GASTO NO PRIORITARIO
+           1⃣ PULSO FINANCIERO DIARIO
            ============================================ */
+        function sbdEl(id){ return document.getElementById(id); }
+        function sbdSet(id,v){ var e=sbdEl(id); if(e) e.textContent=v; }
+
+        function sbdToggleDetail(){
+            var p=sbdEl('sbd-detail-panel'), ic=sbdEl('sbd-toggle-icon');
+            if(!p) return;
+            var o=p.style.display==='block';
+            p.style.display=o?'none':'block';
+            if(ic) ic.classList.toggle('open',!o);
+        }
+
+        function sbdShowInfo(){
+            cfAlert(
+                '&#x1F4B3; Pulso Financiero Diario\n\n' +
+                '\u2022 El 70% de tu disponible es el colchon de seguridad.\n' +
+                '\u2022 Los gastos fijos pendientes se descuentan antes de calcular.\n' +
+                '\u2022 El 30% restante = fondo libre del mes.\n' +
+                '\u2022 Fondo libre \u00f7 dias restantes = limite diario ajustado.\n' +
+                '\u2022 La "Base del mes" es el promedio ideal desde el dia 1.\n' +
+                '\u2022 Cada ingreso nuevo recalcula todo automaticamente.\n\n' +
+                '&#x1F4CC; Sigue el limite diario y al cierre tendras sobrante real.',
+                { title: 'Como se calcula?', type: 'info' }
+            );
+        }
+
         function updateNonPrioritySpending() {
-            const available = AppState.getCurrentAvailable();
-            
-            const baseCalculation = Math.max(0, available);
-            const reservaObligatoria = baseCalculation * 0.70;
-            const gastoNoPrioritario = baseCalculation * 0.30;
+            var now   = new Date();
+            var cMon  = now.getMonth();
+            var cYear = now.getFullYear();
+            var cDay  = now.getDate();
+            var dim   = new Date(cYear, cMon + 1, 0).getDate();
+            var elap  = cDay;
+            var rem   = dim - cDay;
 
-            document.getElementById('nonp-base-calculation').textContent = formatCurrency(baseCalculation);
-            document.getElementById('nonp-minimum-balance').textContent = formatCurrency(reservaObligatoria);
-            document.getElementById('nonp-safe-spending').textContent = formatCurrency(gastoNoPrioritario);
+            var avail    = AppState.getCurrentAvailable();
+            var availPos = Math.max(0, avail);
 
-            const statusElement = document.getElementById('nonp-status');
-            const statusIconElement = document.getElementById('nonp-status-icon');
-            const statusTextElement = document.getElementById('nonp-status-text');
-            const recommendationsElement = document.getElementById('nonp-recommendations');
+            var pendFix = AppState.fixedExpenses
+                .filter(function(f){ return f.status === 'pending'; })
+                .reduce(function(s,f){ return s + (f.amount||0); }, 0);
 
-            let recommendations = [];
+            var dispProt = Math.max(0, availPos - pendFix);
+            var reserva  = dispProt * 0.70;
+            var fondo    = dispProt * 0.30;
 
-            if (gastoNoPrioritario <= 0) {
-                statusElement.className = 'status-indicator status-risk';
-                statusIconElement.textContent = '🔴';
-                statusTextElement.textContent = 'Sin Margen Disponible';
-                recommendations.push('⚠️ No tienes margen para gastos no prioritarios. Prioriza solo gastos esenciales.');
-            } else if (gastoNoPrioritario < baseCalculation * 0.20) {
-                statusElement.className = 'status-indicator status-caution';
-                statusIconElement.textContent = '🟡';
-                statusTextElement.textContent = 'Margen Limitado';
-                recommendations.push('⚠️ Tienes margen limitado. Evalúa cuidadosamente cada gasto adicional.');
-            } else {
-                statusElement.className = 'status-indicator status-stable';
-                statusIconElement.textContent = '🟢';
-                statusTextElement.textContent = 'Margen Saludable';
-                recommendations.push('✅ Tienes margen saludable para gastos no prioritarios.');
+            var mExp = AppState.getCurrentMonthTransactions()
+                .filter(function(t){ return t.type==='Gasto' || t.type==='Gasto Fijo'; })
+                .reduce(function(s,t){ return s + t.amount; }, 0);
+
+            var todayStr = now.toISOString().split('T')[0];
+            var spHoy    = AppState.transactions
+                .filter(function(t){ return (t.type==='Gasto'||t.type==='Gasto Fijo') && t.date===todayStr; })
+                .reduce(function(s,t){ return s + t.amount; }, 0);
+
+            var sinReg = 0;
+            for(var d=cDay-1; d>=1; d--){
+                var dd=String(d).padStart(2,'0');
+                var mm=String(cMon+1).padStart(2,'0');
+                if(AppState.transactions.some(function(t){ return t.date===(cYear+'-'+mm+'-'+dd); })) break;
+                sinReg++;
             }
 
-            if (recommendations.length > 0) {
-                recommendationsElement.innerHTML = recommendations.map(rec => 
-                    `<div class="alert-badge ${gastoNoPrioritario <= 0 ? 'alert-danger' : gastoNoPrioritario < baseCalculation * 0.20 ? 'alert-warning' : 'alert-success'}" style="display: block; margin-top: 0.5rem;">${rec}</div>`
-                ).join('');
-            } else {
-                recommendationsElement.innerHTML = '';
+            var base  = dim > 0 ? fondo / dim : 0;
+            var fUsed = Math.min(fondo, mExp);
+            var fRest = Math.max(0, fondo - fUsed);
+            var dfc   = Math.max(1, rem + 1);
+            var lim   = fRest / dfc;
+            var left  = Math.max(0, lim - spHoy);
+            var diff  = lim - base;
+
+            var gEsp  = elap > 0 ? (fondo / dim) * elap : 0;
+            var pace  = gEsp > 0 ? mExp / gEsp : 0;
+            var pacePct = Math.min(Math.round(pace * 100), 200);
+
+            var avgD  = elap > 0 ? mExp / elap : 0;
+            var proj  = avgD * dim;
+            var sob   = Math.max(0, fondo - proj);
+
+            /* DOM */
+            var mEl = sbdEl('sbd-limit-today');
+            if(mEl){
+                mEl.textContent = formatCurrency(Math.max(0, lim));
+                mEl.className = 'sbd-main-value ' +
+                    (pace<=0.85?'pace-ok':pace<=1.10?'':pace<=1.30?'pace-warn':'pace-danger');
             }
+
+            sbdSet('sbd-base-label', formatCurrency(base)+'/dia');
+
+            var db = sbdEl('sbd-diff-badge');
+            if(db){
+                var abs=Math.abs(diff);
+                if(abs<500){ db.className='sbd-rbadge eq'; db.textContent='= igual al promedio'; }
+                else if(diff>0){ db.className='sbd-rbadge up'; db.textContent='▲ '+formatCurrency(abs)+' extra'; }
+                else { db.className='sbd-rbadge dn'; db.textContent='▼ '+formatCurrency(abs)+' menos'; }
+            }
+
+            sbdSet('sbd-spent-today', formatCurrency(spHoy));
+            var le = sbdEl('sbd-left-today');
+            if(le){ le.textContent=formatCurrency(left); le.className='sbd-today-val left '+(left>0?'pos':'zer'); }
+
+            sbdSet('sbd-monthly-fund', formatCurrency(fondo));
+            sbdSet('sbd-projection', formatCurrency(sob));
+            var ps = sbdEl('sbd-projection-sub');
+            if(ps) ps.textContent = sob>0 ? 'Ahorro estimado al cierre' : 'Riesgo de agotar el fondo';
+
+            var pc='#22c55e', pl='', pd='';
+            if(pace<=0.75){
+                pc='#22c55e'; pl='&#x1F7E2; Excelente ritmo ('+pacePct+'%)';
+                pd='Llevas '+formatCurrency(mExp)+' gastados. Lo esperado es '+formatCurrency(gEsp)+'. Vas muy bien.';
+            } else if(pace<=1.0){
+                pc='#22c55e'; pl='&#x1F7E2; Ritmo normal ('+pacePct+'%)';
+                pd='Gastos en linea con lo planeado. Llevas '+formatCurrency(mExp)+' de '+formatCurrency(gEsp)+' esperado.';
+            } else if(pace<=1.25){
+                pc='#f59e0b'; pl='&#x1F7E1; Ritmo acelerado ('+pacePct+'%)';
+                pd='Llevas '+formatCurrency(mExp)+' gastados, un '+Math.round((pace-1)*100)+'% sobre el ritmo ideal.';
+            } else {
+                pc='#ef4444'; pl='&#x1F534; Ritmo de alerta ('+pacePct+'%)';
+                pd='Gastos '+Math.round((pace-1)*100)+'% sobre lo esperado. Riesgo de agotar el fondo este mes.';
+            }
+            var pf=sbdEl('sbd-pace-fill');
+            if(pf){ pf.style.width=Math.min(pacePct,100)+'%'; pf.style.background=pc; }
+            sbdSet('sbd-pace-pct', pl);
+            sbdSet('sbd-pace-desc', pd);
+
+            var ah='';
+            if(fondo<=0){
+                ah='<div class="sbd-alert red"><span class="sbd-ai">&#x1F6A8;</span><div class="sbd-ab"><div class="sbd-at">Sin margen de gasto libre</div><div class="sbd-am">Tu disponible esta comprometido. Cualquier gasto toca el colchon de seguridad.</div><div class="sbd-aa">→ Evita gastos no esenciales hasta recibir el proximo ingreso.</div></div></div>';
+            } else if(pace>1.25){
+                var dc=avgD>0?Math.floor(fRest/avgD):rem;
+                ah='<div class="sbd-alert red"><span class="sbd-ai">&#x26A1;</span><div class="sbd-ab"><div class="sbd-at">Ritmo de gasto critico</div><div class="sbd-am">Al ritmo actual agotarias el fondo en ~'+dc+' dias, pero quedan '+rem+'. Llevas '+formatCurrency(mExp)+' cuando lo esperado es '+formatCurrency(gEsp)+'.</div><div class="sbd-aa">→ Reduce a '+formatCurrency(Math.max(0,lim*0.7))+'/dia los proximos 7 dias.</div></div></div>';
+            } else if(spHoy>lim && lim>0){
+                var ex=spHoy-lim;
+                var nl=Math.max(0,(fRest-spHoy)/Math.max(1,rem));
+                ah='<div class="sbd-alert yellow"><span class="sbd-ai">&#x1F4B8;</span><div class="sbd-ab"><div class="sbd-at">Limite diario superado hoy</div><div class="sbd-am">Gastaste '+formatCurrency(ex)+' mas de tu limite. Ese exceso reduce la cuota de los dias siguientes.</div><div class="sbd-aa">→ Tu limite ajustado para manana sera '+formatCurrency(nl)+'.</div></div></div>';
+            } else if(sinReg>=3){
+                ah='<div class="sbd-alert blue"><span class="sbd-ai">&#x1F4CB;</span><div class="sbd-ab"><div class="sbd-at">Llevas '+sinReg+' dias sin registrar gastos</div><div class="sbd-am">Tu limite diario puede estar inflado. Registra los gastos pendientes para mayor precision.</div><div class="sbd-aa">→ Actualiza tus gastos para un calculo exacto.</div></div></div>';
+            } else if(sob>base*5 && elap>5){
+                ah='<div class="sbd-alert green"><span class="sbd-ai">&#x1F3C6;</span><div class="sbd-ab"><div class="sbd-at">Vas muy bien este mes</div><div class="sbd-am">Si mantienes el ritmo, cerraras el mes con un sobrante de '+formatCurrency(sob)+'.</div><div class="sbd-aa">→ Considera asignar parte a tu meta de ahorro mas cercana.</div></div></div>';
+            } else if(pace<=1.0 && elap>3){
+                ah='<div class="sbd-alert green"><span class="sbd-ai">&#x2705;</span><div class="sbd-ab"><div class="sbd-at">Ritmo financiero saludable</div><div class="sbd-am">Tus gastos estan dentro del limite ideal para terminar el mes con sobrante.</div><div class="sbd-aa">→ Manten el limite de '+formatCurrency(lim)+'/dia y el ahorro llegara solo.</div></div></div>';
+            }
+            var ab=sbdEl('sbd-alert-box');
+            if(ab) ab.innerHTML=ah;
+
+            var we=sbdEl('sbd-fixed-warn'), wt=sbdEl('sbd-fixed-warn-text');
+            if(we && wt){
+                if(pendFix>0){
+                    var ns=AppState.fixedExpenses
+                        .filter(function(f){return f.status==='pending';})
+                        .map(function(f){return f.name;}).slice(0,3).join(', ');
+                    wt.textContent=formatCurrency(pendFix)+' en compromisos pendientes ('+ns+') ya descontados.';
+                    we.style.display='flex';
+                } else { we.style.display='none'; }
+            }
+
+            sbdSet('sbd-d-available',    formatCurrency(avail));
+            sbdSet('sbd-d-reserve',      formatCurrency(reserva));
+            sbdSet('sbd-d-pending',      formatCurrency(pendFix));
+            sbdSet('sbd-d-fund',         formatCurrency(fondo));
+            sbdSet('sbd-d-days-elapsed', elap+' de '+dim);
+            sbdSet('sbd-d-days-rem',     rem+' dias');
+            sbdSet('sbd-d-used',         formatCurrency(fUsed));
+            sbdSet('sbd-d-remaining',    formatCurrency(fRest));
+
+            sbdSet('nonp-minimum-balance', formatCurrency(reserva));
+            sbdSet('nonp-safe-spending',   formatCurrency(fondo));
+            sbdSet('nonp-base-calculation',formatCurrency(dispProt));
+            sbdSet('canSpendPerDay',       formatCurrency(Math.max(0, lim)));
         }
 
         /* ============================================
