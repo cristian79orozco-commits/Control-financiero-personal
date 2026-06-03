@@ -2016,7 +2016,7 @@ input, select, textarea { border-radius: 12px !important; }
 .ob-overlay.active{background:transparent;pointer-events:all;}
 .ob-highlight{
   position:fixed;z-index:9100;border-radius:16px;pointer-events:none;
-  box-shadow:0 0 0 9999px rgba(0,0,10,.72),0 0 0 3px rgba(246,201,14,.8),0 0 32px 8px rgba(246,201,14,.25);
+  box-shadow:0 0 0 9999px rgba(0,0,10,.75),0 0 0 2.5px rgba(246,201,14,.9),0 0 0 5px rgba(246,201,14,.15),0 0 40px 10px rgba(246,201,14,.2);
   transition:top .45s cubic-bezier(.16,1,.3,1),left .45s cubic-bezier(.16,1,.3,1),
              width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1)
 }
@@ -2025,44 +2025,50 @@ input, select, textarea { border-radius: 12px !important; }
   background:linear-gradient(145deg,#1a2540 0%,#0f172a 100%);
   border:1.5px solid rgba(246,201,14,.3);border-radius:22px;
   padding:1.4rem 1.5rem 1.2rem;width:min(340px,calc(100vw - 1.5rem));
-  box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);
+  box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04),0 0 0 6px rgba(246,201,14,.06);
   transition:opacity .35s ease,transform .35s cubic-bezier(.16,1,.3,1);
   opacity:0;transform:translateY(14px) scale(.97)
 }
 .ob-card.visible{opacity:1;transform:translateY(0) scale(1)}
-.ob-card-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.65rem}
-.ob-step-badge{font-size:.66rem;font-weight:800;color:#f6c90e;background:rgba(246,201,14,.12);border:1px solid rgba(246,201,14,.25);padding:.18rem .6rem;border-radius:20px;letter-spacing:.05em;white-space:nowrap;flex-shrink:0}
+.ob-card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.65rem}
+.ob-step-badge{font-size:.62rem;font-weight:800;color:#f6c90e;background:rgba(246,201,14,.12);border:1px solid rgba(246,201,14,.25);padding:.2rem .65rem;border-radius:20px;letter-spacing:.06em;white-space:nowrap;flex-shrink:0;margin-top:.12rem}
+.ob-new-badge{font-size:.6rem;font-weight:800;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);padding:.2rem .6rem;border-radius:20px;letter-spacing:.06em;white-space:nowrap;flex-shrink:0;margin-top:.12rem;animation:obPulse 1.8s ease infinite}
+@keyframes obPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.3)}50%{box-shadow:0 0 0 4px rgba(34,197,94,.0)}}
 .ob-title{font-size:.97rem;font-weight:800;color:#dce8f8;line-height:1.25;flex:1}
-.ob-text{font-size:.83rem;color:rgba(185,198,214,.88);line-height:1.65;margin-bottom:1rem}
+.ob-text{font-size:.83rem;color:rgba(185,198,214,.88);line-height:1.68;margin-bottom:1rem}
 .ob-text strong{color:#7dd3fc;font-weight:700}
-.ob-progress{display:flex;gap:.28rem;margin-bottom:.9rem}
+.ob-progress{display:flex;gap:.22rem;margin-bottom:.9rem}
 .ob-dot{height:3px;flex:1;border-radius:3px;background:rgba(255,255,255,.1);transition:background .3s}
-.ob-dot.done{background:rgba(246,201,14,.45)}
-.ob-dot.active{background:#f6c90e}
+.ob-dot.done{background:rgba(246,201,14,.4)}
+.ob-dot.active{background:#f6c90e;box-shadow:0 0 6px rgba(246,201,14,.4)}
 .ob-actions{display:flex;gap:.55rem;align-items:center}
-.ob-btn-next{flex:1;padding:.62rem 1rem;background:linear-gradient(135deg,#f6c90e 0%,#d4a800 100%);color:#0a1020;font-weight:800;font-size:.87rem;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:0 4px 16px rgba(246,201,14,.3);transition:filter .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.ob-btn-next{flex:1;padding:.65rem 1rem;background:linear-gradient(135deg,#f6c90e 0%,#d4a800 100%);color:#0a1020;font-weight:800;font-size:.87rem;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:0 4px 16px rgba(246,201,14,.3);transition:filter .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.ob-btn-next:hover{filter:brightness(1.06)}
 .ob-btn-next:active{transform:scale(.96)}
-.ob-btn-skip{padding:.62rem .85rem;background:transparent;color:rgba(148,163,184,.65);font-size:.78rem;font-weight:600;border:1px solid rgba(255,255,255,.07);border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;flex-shrink:0}
+.ob-btn-skip{padding:.65rem .85rem;background:transparent;color:rgba(148,163,184,.6);font-size:.78rem;font-weight:600;border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;flex-shrink:0;transition:color .15s,border-color .15s}
+.ob-btn-skip:hover{color:rgba(148,163,184,.85);border-color:rgba(255,255,255,.15)}
 .ob-btn-skip:active{background:rgba(255,255,255,.05)}
-.ob-welcome{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .4s ease}
+.ob-welcome{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;pointer-events:none;transition:opacity .4s ease}
 .ob-welcome.active{opacity:1;pointer-events:all}
-.ob-welcome-card{background:linear-gradient(145deg,#1a2540 0%,#0f172a 100%);border:1.5px solid rgba(246,201,14,.25);border-radius:28px;padding:2.5rem 2rem 2rem;width:min(400px,100%);text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);animation:obPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
+.ob-welcome-card{background:linear-gradient(145deg,#1a2540 0%,#0f172a 100%);border:1.5px solid rgba(246,201,14,.25);border-radius:28px;padding:2.5rem 2rem 2rem;width:min(420px,100%);text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);animation:obPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes obPop{from{transform:scale(.86) translateY(28px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .ob-welcome-icon{font-size:3.4rem;margin-bottom:1rem;display:block;animation:obBounce 2s ease infinite}
 @keyframes obBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.ob-welcome-title{font-size:1.5rem;font-weight:900;color:#dce8f8;margin-bottom:.65rem;line-height:1.2}
+.ob-welcome-title{font-size:1.55rem;font-weight:900;color:#dce8f8;margin-bottom:.65rem;line-height:1.2}
 .ob-welcome-sub{font-size:.87rem;color:rgba(185,198,214,.82);line-height:1.7;margin-bottom:1.75rem}
 .ob-welcome-sub strong{color:#7dd3fc;font-weight:700}
-.ob-welcome-features{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem;text-align:left}
-.ob-welcome-feat{display:flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.04);border-radius:12px;padding:.6rem .9rem;font-size:.82rem;color:rgba(185,198,214,.85)}
+.ob-welcome-features{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.75rem;text-align:left}
+.ob-welcome-feat{display:flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:.6rem .9rem;font-size:.81rem;color:rgba(185,198,214,.85);transition:background .2s}
+.ob-welcome-feat strong{color:#dce8f8;font-weight:700}
 .ob-welcome-feat-icon{font-size:1.1rem;flex-shrink:0}
 .ob-btn-start{width:100%;padding:.88rem;background:linear-gradient(135deg,#f6c90e 0%,#d4a800 100%);color:#0a1020;font-weight:900;font-size:1rem;border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(246,201,14,.35);transition:filter .15s,transform .15s;margin-bottom:.75rem;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:.5rem}
 .ob-btn-start:hover{filter:brightness(1.07);transform:translateY(-1px)}
 .ob-btn-start:active{transform:scale(.97)}
-.ob-btn-omitir{background:transparent;border:none;color:rgba(148,163,184,.55);font-size:.78rem;cursor:pointer;padding:.35rem;-webkit-tap-highlight-color:transparent}
-.ob-final{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .4s ease}
+.ob-btn-omitir{background:transparent;border:none;color:rgba(148,163,184,.5);font-size:.78rem;cursor:pointer;padding:.35rem;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.ob-btn-omitir:hover{color:rgba(148,163,184,.75)}
+.ob-final{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,10,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;pointer-events:none;transition:opacity .4s ease}
 .ob-final.active{opacity:1;pointer-events:all}
-.ob-config-btn{display:flex;align-items:center;gap:.75rem;width:100%;padding:.9rem 1.1rem;background:rgba(246,201,14,.07);border:1.5px solid rgba(246,201,14,.2);border-radius:14px;cursor:pointer;text-align:left;color:var(--color-text-primary);transition:background .15s,border-color .15s;-webkit-tap-highlight-color:transparent;margin-top:1rem}
+.ob-config-btn{display:flex;align-items:center;gap:.75rem;width:100%;padding:.9rem 1.1rem;background:rgba(246,201,14,.07);border:1.5px solid rgba(246,201,14,.2);border-radius:14px;cursor:pointer;text-align:left;color:var(--color-text-primary);transition:background .15s,border-color .15s,transform .15s;-webkit-tap-highlight-color:transparent;margin-top:1rem}
 .ob-config-btn:hover{background:rgba(246,201,14,.12);border-color:rgba(246,201,14,.35)}
 .ob-config-btn:active{transform:scale(.98)}
 .ob-config-btn-icon{width:40px;height:40px;border-radius:50%;background:rgba(246,201,14,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
@@ -3345,8 +3351,8 @@ input, select, textarea { border-radius: 12px !important; }
           <button class="ob-config-btn" onclick="OB.reset()">
            <div class="ob-config-btn-icon">🎓</div>
            <div>
-             <strong>Ver guía de la app</strong>
-             <small>Vuelve a ver el recorrido interactivo de todas las funciones</small>
+             <strong>Ver guía interactiva</strong>
+             <small>Recorrido completo · 13 pasos · incluye Tabla de Ahorro</small>
            </div>
          </button>
         </div>
@@ -6492,18 +6498,19 @@ const OB = {
   _overlay: null, _highlight: null, _card: null,
 
   steps: [
-    { target: '.panel-hero', title: 'Tu dinero disponible', text: 'Aquí ves tu <strong>Disponible Actual</strong>: el dinero real que puedes usar, ya descontando gastos, compromisos y metas de ahorro.', pos: 'bottom' },
-    { target: '.panel-trio', title: 'Resumen del mes', text: 'De un vistazo: <strong>Ingresos</strong>, <strong>Gastos</strong> del mes actual y los <strong>días restantes</strong> para planificar tu gasto diario.', pos: 'bottom' },
-    { target: '.panel-budget-wrap', title: 'Barra de presupuesto', text: 'Muestra qué porcentaje de tu ingreso ya usaste. <strong>Se vuelve roja al superar el 90%</strong> como alerta de gasto excesivo.', pos: 'bottom' },
-    { target: '#bkNav', title: 'Navegación principal', text: 'Accede a <strong>Inicio, Cuentas, Historial y Metas</strong> desde aquí. En pantallas grandes aparece como menú lateral.', pos: 'top' },
-    { target: '#bkFab', title: 'Botón de acción rápida ＋', text: 'Presiona <strong>＋</strong> para registrar ingresos o gastos rápidamente desde cualquier sección de la app.', pos: 'top' },
-    { target: '#cuentas', title: 'Tus cuentas', text: 'Gestiona <strong>Bancolombia, Nequi, Efectivo</strong> y más. Cada transacción actualiza el saldo de la cuenta automáticamente.', pos: 'auto' },
-    { target: '#gastos', title: 'Registro de gastos', text: 'Registra aquí tus <strong>gastos variables</strong> del día a día. Asígnalos a una cuenta y categoría para ver tus patrones de consumo.', pos: 'auto' },
-    { target: '#ingresos', title: 'Registro de ingresos', text: 'Agrega <strong>ingresos variables</strong> como bonos, freelance o ventas. Estos sí se suman de inmediato a tu disponible.', pos: 'auto' },
-    { target: '#gastosfijos', title: 'Gastos fijos mensuales', text: 'Configura gastos recurrentes como <strong>arriendo, internet, servicios</strong>. Solo impactan tu disponible cuando presionas <strong>Marcar como Pagado</strong>.', pos: 'auto' },
-    { target: '#historial', title: 'Historial completo', text: 'Revisa y filtra <strong>todas tus transacciones</strong>. Busca por descripción, categoría o fecha para analizar tus finanzas.', pos: 'auto' },
-    { target: '#metas', title: 'Metas de ahorro', text: 'Crea objetivos con monto y fecha límite. La app <strong>descuenta ese dinero de tu disponible</strong> automáticamente para que no lo gastes.', pos: 'auto' },
-    { target: '#configuracion', title: 'Configuración', text: 'Exporta tus datos, importa transacciones CSV y gestiona tu usuario. Aquí también puedes <strong>volver a ver esta guía</strong> cuando quieras.', pos: 'auto' }
+    { target: '.panel-hero', title: 'Tu dinero disponible', text: 'El número más importante: tu <strong>Disponible Actual</strong> es lo que realmente puedes gastar hoy, ya descontando compromisos, metas de ahorro y gastos fijos pendientes.', pos: 'bottom' },
+    { target: '.panel-trio', title: 'Resumen del mes', text: 'De un vistazo: <strong>Ingresos totales</strong>, <strong>Gastos</strong> acumulados y los <strong>días restantes</strong> del mes para que planifiques cuánto puedes gastar por día.', pos: 'bottom' },
+    { target: '.panel-budget-wrap', title: 'Barra de presupuesto', text: 'Indica qué porcentaje de tu ingreso ya consumiste. <strong>Se torna amarilla al 75%</strong> como aviso temprano, y <strong>roja al superar el 90%</strong> para alertarte de gasto excesivo.', pos: 'bottom' },
+    { target: '#bkNav', title: 'Navegación principal', text: 'Accede a <strong>Inicio, Cuentas, Historial, Metas</strong> y la <strong>Tabla de Ahorro</strong> desde aquí. En pantallas grandes aparece como menú lateral fijo.', pos: 'top' },
+    { target: '#bkFab', title: 'Botón de acción rápida ＋', text: 'Presiona <strong>＋</strong> para registrar ingresos, gastos, gastos fijos o acceder a la Tabla de Ahorro rápidamente desde cualquier sección.', pos: 'top' },
+    { target: '#cuentas', title: 'Cuentas financieras', text: 'Gestiona <strong>Bancolombia, Nequi, Efectivo</strong> y más. Cada transacción actualiza el saldo en tiempo real. Puedes ver el balance de cada cuenta de forma independiente.', pos: 'auto' },
+    { target: '#gastos', title: 'Registro de gastos', text: 'Registra tus <strong>gastos variables</strong> del día a día — mercado, transporte, ocio. Asígnalos a una cuenta y categoría para descubrir tus patrones de consumo.', pos: 'auto' },
+    { target: '#ingresos', title: 'Registro de ingresos', text: 'Agrega <strong>ingresos variables</strong> como bonos, freelance o ventas eventuales. Se suman de inmediato a tu disponible y quedan registrados en el historial.', pos: 'auto' },
+    { target: '#gastosfijos', title: 'Gastos fijos mensuales', text: 'Configura compromisos recurrentes como <strong>arriendo, internet o servicios</strong>. Solo impactan tu disponible cuando presionas <strong>Marcar como Pagado</strong>, evitando descuentos anticipados.', pos: 'auto' },
+    { target: '#historial', title: 'Historial completo', text: 'Consulta y filtra <strong>todas tus transacciones</strong>. Busca por descripción, categoría o rango de fechas. Incluye también los registros de la Tabla de Ahorro.', pos: 'auto' },
+    { target: '#metas', title: 'Metas de ahorro', text: 'Define objetivos con monto y fecha límite: vacaciones, fondo de emergencia, tecnología. La app <strong>reserva ese dinero de tu disponible</strong> automáticamente hasta que la alcances.', pos: 'auto' },
+    { target: '#tablaahorro', title: '🐷 Tabla de Ahorro — ¡Nuevo!', text: 'El <strong>Reto de 100 casillas</strong>: ahorra entre $1.000 y $99.000 por casilla, en el orden que prefieras. Al completar las 100, habrás acumulado <strong>$5.000.000</strong>. Cada casilla se descuenta automáticamente de tu disponible.', pos: 'auto' },
+    { target: '#configuracion', title: 'Configuración', text: 'Exporta tus datos en CSV, importa transacciones y gestiona tu sesión. También puedes <strong>cambiar entre modo oscuro y claro</strong>, y volver a ver esta guía cuando quieras.', pos: 'auto' }
   ],
 
   init() {
@@ -6517,12 +6524,13 @@ const OB = {
     w.innerHTML = `<div class="ob-welcome-card">
       <span class="ob-welcome-icon">💰</span>
       <div class="ob-welcome-title">¡Bienvenido a<br>Control Financiero!</div>
-      <p class="ob-welcome-sub">Hagamos un <strong>recorrido rápido</strong> para que conozcas todas las funciones de tu app.<br>Solo toma <strong>1 minuto</strong>.</p>
+      <p class="ob-welcome-sub">Hagamos un <strong>recorrido rápido</strong> por todas las funciones de tu app.<br>Solo toma <strong>1 minuto</strong>.</p>
       <div class="ob-welcome-features">
-        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">📊</span>Panel financiero inteligente</div>
-        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">💳</span>Gestión de múltiples cuentas</div>
-        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🎯</span>Metas y presupuesto automático</div>
-        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🔔</span>Alertas de pagos y vencimientos</div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">📊</span><span><strong>Panel financiero inteligente</strong> — Disponible real en tiempo real</span></div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">💳</span><span><strong>Cuentas múltiples</strong> — Bancolombia, Nequi, Efectivo y más</span></div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🎯</span><span><strong>Metas y presupuesto</strong> — Ahorra con propósito automáticamente</span></div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🐷</span><span><strong>Tabla de Ahorro</strong> — Reto de 100 casillas · Meta $5.000.000</span></div>
+        <div class="ob-welcome-feat"><span class="ob-welcome-feat-icon">🔔</span><span><strong>Alertas inteligentes</strong> — Hitos, pagos y vencimientos</span></div>
       </div>
       <button class="ob-btn-start" onclick="OB._iniciarRecorrido()">🚀 Comenzar recorrido</button>
       <button class="ob-btn-omitir" onclick="OB.terminar(true)">Omitir, ya conozco la app</button>
@@ -6574,8 +6582,10 @@ const OB = {
     this._highlight.style.cssText = `top:${rect.top-pad}px;left:${rect.left-pad}px;width:${rect.width+pad*2}px;height:${rect.height+pad*2}px;`;
     const dots = Array.from({length:total},(_,i)=>`<div class="ob-dot ${i<idx?'done':i===idx?'active':''}"></div>`).join('');
     const isLast = idx === total - 1;
+    const isNew = step.title.includes('Nuevo') || step.title.includes('nuevo');
+    const badgeExtra = isNew ? `<span class="ob-new-badge">✦ NUEVO</span>` : '';
     this._card.innerHTML = `
-      <div class="ob-card-header"><span class="ob-step-badge">PASO ${idx+1} / ${total}</span><div class="ob-title">${step.title}</div></div>
+      <div class="ob-card-header"><span class="ob-step-badge">PASO ${idx+1} / ${total}</span>${badgeExtra}<div class="ob-title">${step.title.replace(' — ¡Nuevo!','').replace(' — Nuevo','')}</div></div>
       <p class="ob-text">${step.text}</p>
       <div class="ob-progress">${dots}</div>
       <div class="ob-actions">
@@ -6609,7 +6619,7 @@ const OB = {
       setTimeout(() => {
         const fin = document.createElement('div');
         fin.className = 'ob-final';
-        fin.innerHTML = `<div class="ob-welcome-card"><span class="ob-welcome-icon" style="animation:none">🎉</span><div class="ob-welcome-title">¡Ya conoces tu app!</div><p class="ob-welcome-sub">Puedes volver a ver este recorrido en cualquier momento desde la sección de <strong>Configuración</strong>.</p><button class="ob-btn-start" onclick="this.closest('.ob-final').classList.remove('active');setTimeout(()=>this.closest('.ob-final')?.remove(),400)">✓ ¡Empezar a usar la app!</button></div>`;
+        fin.innerHTML = `<div class="ob-welcome-card"><span class="ob-welcome-icon" style="animation:none">🎉</span><div class="ob-welcome-title">¡Ya dominas tu app!</div><p class="ob-welcome-sub">Ahora tienes todo lo que necesitas: <strong>panel financiero, cuentas, metas</strong> y el nuevo <strong>Reto de Ahorro 🐷</strong>.<br><br>Puedes volver a ver este recorrido desde la sección de <strong>Configuración → Ayuda y Guía</strong>.</p><button class="ob-btn-start" onclick="this.closest('.ob-final').classList.remove('active');setTimeout(()=>this.closest('.ob-final')?.remove(),400)">✓ ¡Empezar a usar la app!</button></div>`;
         document.body.appendChild(fin);
         requestAnimationFrame(() => fin.classList.add('active'));
       }, 450);
