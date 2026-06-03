@@ -17,7 +17,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <style>
-        :root {
+        /* ── TEMA OSCURO (por defecto) ── */
+        :root,
+        [data-theme="dark"] {
             --color-bg-base: #0f172a;
             --color-bg-elevated: #1e293b;
             --color-bg-surface: #334155;
@@ -29,22 +31,83 @@
             --color-success: #22c55e;
             --color-danger: #ef4444;
             --color-warning: #f59e0b;
+            --color-border: rgba(255,255,255,0.07);
+            /* design-system tokens */
+            --cf-s1:#0f172a; --cf-s2:#1a2540; --cf-s3:#243050;
+            --cf-b:rgba(255,255,255,.07);
+            --cf-gold:#f6c90e; --cf-gold-dim:rgba(246,201,14,0.15); --cf-gold-glow:rgba(246,201,14,0.25);
+            --cf-blue:#38bdf8; --cf-blue-dim:rgba(56,189,248,0.1);
+            --cf-b-gold:rgba(246,201,14,.22); --cf-b-blue:rgba(56,189,248,.2);
+            /* modal/toast dark */
+            --tm-modal-bg: linear-gradient(160deg,#1a2744 0%,#0f172a 100%);
+            --tm-modal-border: rgba(56,189,248,.18);
+            --tm-modal-title: #dce8f8;
+            --tm-modal-msg: rgba(185,198,214,.8);
+            --tm-modal-detail-bg: rgba(255,255,255,.04);
+            --tm-modal-detail-border: rgba(255,255,255,.07);
+            --tm-modal-detail-color: rgba(185,198,214,.75);
+            --tm-input-bg: rgba(255,255,255,.06);
+            --tm-input-border: rgba(56,189,248,.25);
+            --tm-input-color: #dce8f8;
+            --tm-cancel-bg: rgba(255,255,255,.07);
+            --tm-cancel-color: rgba(185,198,214,.8);
+            --tm-cancel-border: rgba(255,255,255,.1);
+            --tm-toast-bg: linear-gradient(145deg,#1a2744 0%,#0f172a 100%);
+            --tm-toast-border: rgba(255,255,255,.08);
+            --tm-toast-title: #dce8f8;
+            --tm-toast-msg: rgba(185,198,214,.75);
+            /* nav/header dark */
+            --tm-header-bg: rgba(15,23,42,.92);
+            --tm-header-border: rgba(255,255,255,.06);
+            --tm-nav-bg: rgba(15,23,42,.96);
+            --tm-nav-border: rgba(255,255,255,.06);
+            --tm-nav-active-bg: rgba(56,189,248,.1);
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                --color-bg-base: #ffffff;
-                --color-bg-elevated: #f8fafc;
-                --color-bg-surface: #f1f5f9;
-                --color-text-primary: #0f172a;
-                --color-text-secondary: #475569;
-                --color-text-muted: #64748b;
-                --color-primary: #0284c7;
-                --color-primary-hover: #0369a1;
-                --color-success: #16a34a;
-                --color-danger: #dc2626;
-                --color-warning: #b99973;
-            }
+        /* ── TEMA CLARO ── */
+        [data-theme="light"] {
+            --color-bg-base: #f0f4f8;
+            --color-bg-elevated: #ffffff;
+            --color-bg-surface: #e8eef4;
+            --color-text-primary: #0f172a;
+            --color-text-secondary: #334155;
+            --color-text-muted: #64748b;
+            --color-primary: #0284c7;
+            --color-primary-hover: #0369a1;
+            --color-success: #16a34a;
+            --color-danger: #dc2626;
+            --color-warning: #b45309;
+            --color-border: rgba(0,0,0,0.08);
+            /* design-system tokens light */
+            --cf-s1:#f0f4f8; --cf-s2:#ffffff; --cf-s3:#e8eef4;
+            --cf-b:rgba(0,0,0,.07);
+            --cf-gold:#c49a00; --cf-gold-dim:rgba(196,154,0,0.12); --cf-gold-glow:rgba(196,154,0,0.2);
+            --cf-blue:#0284c7; --cf-blue-dim:rgba(2,132,199,0.1);
+            --cf-b-gold:rgba(196,154,0,.2); --cf-b-blue:rgba(2,132,199,.18);
+            /* modal/toast light */
+            --tm-modal-bg: linear-gradient(160deg,#f8fafc 0%,#fff 100%);
+            --tm-modal-border: rgba(2,132,199,.18);
+            --tm-modal-title: #0f172a;
+            --tm-modal-msg: #475569;
+            --tm-modal-detail-bg: #f1f5f9;
+            --tm-modal-detail-border: #e2e8f0;
+            --tm-modal-detail-color: #64748b;
+            --tm-input-bg: #f1f5f9;
+            --tm-input-border: rgba(2,132,199,.3);
+            --tm-input-color: #0f172a;
+            --tm-cancel-bg: #f1f5f9;
+            --tm-cancel-color: #475569;
+            --tm-cancel-border: #e2e8f0;
+            --tm-toast-bg: linear-gradient(145deg,#f8fafc 0%,#fff 100%);
+            --tm-toast-border: #e2e8f0;
+            --tm-toast-title: #0f172a;
+            --tm-toast-msg: #64748b;
+            /* nav/header light */
+            --tm-header-bg: rgba(240,244,248,.95);
+            --tm-header-border: rgba(0,0,0,.08);
+            --tm-nav-bg: rgba(255,255,255,.97);
+            --tm-nav-border: rgba(0,0,0,.08);
+            --tm-nav-active-bg: rgba(2,132,199,.1);
         }
 
         * {
@@ -1481,15 +1544,11 @@
            DESIGN SYSTEM — UNIFIED UPGRADE v3
            ============================================================ */
         :root {
-            --cf-gold:#f6c90e;--cf-gold-dim:rgba(246,201,14,0.15);--cf-gold-glow:rgba(246,201,14,0.25);
-            --cf-blue:#38bdf8;--cf-blue-dim:rgba(56,189,248,0.1);
             --cf-r-sm:8px;--cf-r-md:12px;--cf-r-lg:16px;--cf-r-xl:20px;
             --cf-t:0.18s cubic-bezier(0.16,1,0.3,1);
             --cf-s-sm:0 2px 8px rgba(0,0,0,.18);--cf-s-md:0 6px 24px rgba(0,0,0,.22);--cf-s-lg:0 12px 40px rgba(0,0,0,.3);
-            --cf-b:rgba(255,255,255,.07);--cf-b-gold:rgba(246,201,14,.22);--cf-b-blue:rgba(56,189,248,.2);
-            --cf-s1:#0f172a;--cf-s2:#1a2540;--cf-s3:#243050;
         }
-        body{background:var(--cf-s1);background-image:radial-gradient(ellipse 70% 40% at 0% 0%,rgba(246,201,14,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(56,189,248,.04) 0%,transparent 55%);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+        body{background:var(--cf-s1);background-image:radial-gradient(ellipse 70% 40% at 0% 0%,rgba(246,201,14,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(56,189,248,.04) 0%,transparent 55%);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;transition:background .3s,color .3s}
         .tabs{background:var(--cf-s2);border-radius:var(--cf-r-lg)!important;padding:.35rem;gap:.25rem!important;border-bottom:none!important;margin-bottom:1.5rem!important;box-shadow:var(--cf-s-sm)}
         .tab-btn{border-radius:var(--cf-r-md)!important;padding:.6rem 1.1rem!important;font-size:.85rem!important;font-weight:600;color:rgba(160,185,220,.7)!important;border-bottom:none!important;transition:all var(--cf-t)!important;white-space:nowrap}
         .tab-btn.active{background:linear-gradient(135deg,rgba(246,201,14,.15) 0%,rgba(56,189,248,.1) 100%)!important;color:var(--cf-gold)!important;box-shadow:0 2px 10px rgba(246,201,14,.15),inset 0 1px 0 rgba(255,255,255,.06);border-bottom:none!important}
@@ -1560,6 +1619,98 @@
             .card{border-radius:var(--cf-r-lg)!important}
             .btn{border-radius:var(--cf-r-md)!important}
         }
+
+        /* ── Transición suave de tema: solo en elementos contenedor, no en interactivos ── */
+        body,
+        .bk-header, .bk-nav, .bk-main,
+        .card, .form-section, .account-card, .chart-container,
+        .transaction-item, .fixed-item, .goal-item, .stat-item,
+        .panel-section, .panel-hero, .panel-budget-wrap,
+        .panel-fixed-item, .panel-account-chip,
+        .sbd-main-card, .sbd-metric, .sbd-alert,
+        .cf-modal-card, .cf-modal-overlay,
+        .bk-brand-name, .bk-user-chip,
+        input, select, textarea,
+        .tabs,
+        .no-accounts-notice {
+            transition-property: background-color, border-color, color, box-shadow;
+            transition-duration: .25s;
+            transition-timing-function: ease;
+        }
+
+        /* ── Modo claro: ajustes de contraste específicos ── */
+        [data-theme="light"] .card::before,
+        [data-theme="light"] .account-card::before {
+            background: linear-gradient(90deg,var(--cf-gold),var(--cf-blue)) !important;
+        }
+        [data-theme="light"] input:not(.lc-input):not([type="file"]):not([type="checkbox"]),
+        [data-theme="light"] select:not(.lc-input),
+        [data-theme="light"] textarea {
+            background: #f8fafc !important;
+            border-color: rgba(2,132,199,.25) !important;
+            color: #0f172a !important;
+        }
+        [data-theme="light"] .tabs {
+            background: #fff !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08) !important;
+        }
+        [data-theme="light"] .tab-btn { color: #475569 !important; }
+        [data-theme="light"] .tab-btn.active {
+            background: linear-gradient(135deg,rgba(196,154,0,.12) 0%,rgba(2,132,199,.08) 100%) !important;
+            color: #c49a00 !important;
+        }
+        [data-theme="light"] .bk-user-chip {
+            background: rgba(2,132,199,.1) !important;
+            border-color: rgba(2,132,199,.2) !important;
+            color: #0284c7 !important;
+        }
+        [data-theme="light"] .bk-brand-name { color: #0f172a !important; }
+        [data-theme="light"] .panel-hero {
+            background: linear-gradient(135deg,rgba(196,154,0,.08) 0%,rgba(2,132,199,.05) 60%,transparent 100%) !important;
+            border-color: rgba(196,154,0,.2) !important;
+        }
+        [data-theme="light"] .account-total-card {
+            background: linear-gradient(135deg,rgba(196,154,0,.08) 0%,rgba(2,132,199,.05) 100%) !important;
+        }
+        [data-theme="light"] .transaction-item:hover { background: rgba(2,132,199,.04) !important; }
+        [data-theme="light"] .fixed-item { background: #fff !important; }
+        [data-theme="light"] .panel-section { background: #fff !important; }
+        [data-theme="light"] .panel-fixed-item { background: #f1f5f9 !important; }
+        [data-theme="light"] .sbd-main-card {
+            background: linear-gradient(135deg,rgba(2,132,199,.06),rgba(14,165,233,.02)) !important;
+            border-color: rgba(2,132,199,.18) !important;
+        }
+        [data-theme="light"] .sbd-metric { background: #f8fafc !important; border-color: rgba(0,0,0,.06) !important; }
+        [data-theme="light"] .stat-item { background: #f8fafc !important; }
+        [data-theme="light"] .goal-item { background: #fff !important; border-color: rgba(0,0,0,.06) !important; }
+        [data-theme="light"] .chart-container { background: #fff !important; }
+        [data-theme="light"] .cf-modal-card { box-shadow: 0 20px 60px rgba(0,0,0,.15) !important; }
+        [data-theme="light"] .cf-toast { box-shadow: 0 8px 32px rgba(0,0,0,.12) !important; }
+        [data-theme="light"] #loginOverlay .lc-card {
+            background: rgba(255,255,255,.97) !important;
+            border-color: rgba(2,132,199,.15) !important;
+        }
+        [data-theme="light"] .lc-title { color: #0f172a !important; }
+        [data-theme="light"] .lc-subtitle { color: #475569 !important; }
+        [data-theme="light"] .lc-label { color: rgba(71,85,105,.75) !important; }
+        [data-theme="light"] .lc-input {
+            background: #f8fafc !important;
+            border-color: rgba(2,132,199,.25) !important;
+            color: #0f172a !important;
+        }
+        [data-theme="light"] .lc-bg {
+            background: radial-gradient(ellipse 80% 60% at 20% 10%,rgba(196,154,0,.05) 0%,transparent 60%),
+                        radial-gradient(ellipse 70% 50% at 80% 90%,rgba(2,132,199,.06) 0%,transparent 55%),
+                        linear-gradient(160deg,#f0f4f8 0%,#e8eef4 50%,#f0f4f8 100%) !important;
+        }
+        [data-theme="light"] .ta-panel-mini,
+        [data-theme="light"] [class*="ta-"] { color: var(--color-text-primary); }
+        [data-theme="light"] .panel-budget-wrap { background: #fff !important; border-color: rgba(0,0,0,.06) !important; }
+        [data-theme="light"] .no-accounts-notice {
+            background: #fef9c3 !important;
+            border-color: #fde68a !important;
+            color: #92400e !important;
+        }
         /* ══════════════════════════════════════════
    BANK UI — Layout y navegación bancaria
 ══════════════════════════════════════════ */
@@ -1578,8 +1729,8 @@ body {
     position: sticky;
     top: 0;
     z-index: 500;
-    background: var(--color-bg-base);
-    border-bottom: 1px solid rgba(255,255,255,.06);
+    background: var(--tm-header-bg);
+    border-bottom: 1px solid var(--tm-header-border);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 2px 12px rgba(0,0,0,.18);
@@ -1629,6 +1780,35 @@ body {
     justify-content: center;
 }
 .bk-logout-btn:hover { background: rgba(239,68,68,.22); }
+
+/* ── Botón de tema ── */
+.bk-theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    cursor: pointer;
+    transition: background .2s, border-color .2s, transform .15s;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+}
+.bk-theme-btn:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-primary);
+    transform: scale(1.06);
+}
+.bk-theme-btn:active { transform: scale(.93); }
+.bk-theme-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    display: block;
+}
+.bk-theme-btn:active .bk-theme-icon { transform: rotate(30deg) scale(.9); }
 .bk-main {
     flex: 1;
     max-width: 760px;
@@ -1644,8 +1824,8 @@ body {
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 400;
-    background: var(--color-bg-base);
-    border-top: 1px solid rgba(255,255,255,.06);
+    background: var(--tm-nav-bg);
+    border-top: 1px solid var(--tm-nav-border);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -1675,7 +1855,7 @@ body {
 }
 .bk-nav-item.active {
     color: var(--color-primary);
-    background: rgba(56,189,248,.1);
+    background: var(--tm-nav-active-bg);
 }
 .bk-nav-item:active { transform: scale(.93); }
 .bk-nav-fab {
@@ -2174,24 +2354,26 @@ input, select, textarea { border-radius: 12px !important; }
   @keyframes cfToastOut { from { transform: translateY(0); opacity:1; } to { transform: translateY(60px); opacity:0; } }
 }
 
-/* light-mode adjustments */
-@media(prefers-color-scheme:light){
-  .cf-modal-card {
-    background: linear-gradient(160deg, #f8fafc 0%, #fff 100%);
-    border-color: rgba(2,132,199,.18);
-  }
-  .cf-modal-title { color: #0f172a; }
-  .cf-modal-msg   { color: #475569; }
-  .cf-modal-detail{ background: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
-  .cf-modal-input { background: #f1f5f9; border-color: rgba(2,132,199,.3); color: #0f172a; }
-  .cf-btn-cancel  { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
-  .cf-toast       { background: linear-gradient(145deg,#f8fafc 0%,#fff 100%); border-color: #e2e8f0; }
-  .cf-toast-title { color: #0f172a; }
-  .cf-toast-msg   { color: #64748b; }
+/* light-mode adjustments — now handled via data-theme */
+.cf-modal-card {
+  background: var(--tm-modal-bg);
+  border-color: var(--tm-modal-border);
 }
+.cf-modal-title { color: var(--tm-modal-title); }
+.cf-modal-msg   { color: var(--tm-modal-msg); }
+.cf-modal-detail{ background: var(--tm-modal-detail-bg); border-color: var(--tm-modal-detail-border); color: var(--tm-modal-detail-color); }
+.cf-modal-input { background: var(--tm-input-bg); border-color: var(--tm-input-border); color: var(--tm-input-color); }
+.cf-btn-cancel  { background: var(--tm-cancel-bg); color: var(--tm-cancel-color); border-color: var(--tm-cancel-border); }
+.cf-toast       { background: var(--tm-toast-bg); border-color: var(--tm-toast-border); }
+.cf-toast-title { color: var(--tm-toast-title); }
+.cf-toast-msg   { color: var(--tm-toast-msg); }
     </style>
     <!-- SUPABASE: Conexión con la base de datos en la nube -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Tema: evitar flash aplicando el tema guardado antes del primer render -->
+    <script>
+    (function(){var t=localStorage.getItem('cf_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+    </script>
     <script>
     // ═══════════════════════════════════════════════════════════
     //  ⚙️  REEMPLAZA LOS DOS VALORES DE ABAJO CON LOS TUYOS
@@ -2372,9 +2554,13 @@ input, select, textarea { border-radius: 12px !important; }
         <circle cx="21" cy="19" r="5" stroke="#38bdf8" stroke-width="2" fill="none"/>
         <path d="M21 17v2l1.5 1.5" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
-      <span class="bk-brand-name">Control Financiero</span>
+      <span class="bk-brand-name">Ctrol</span>
     </div>
     <div class="bk-header-right">
+      <!-- Botón de tema -->
+      <button id="themeToggleBtn" class="bk-theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema" title="Cambiar tema">
+        <span id="themeToggleIcon" class="bk-theme-icon">🌙</span>
+      </button>
       <div class="bk-user-chip">👤 <span id="currentUserDisplay">Usuario</span></div>
       <button class="bk-logout-btn" onclick="logoutUser()" title="Cerrar sesión">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -7367,6 +7553,42 @@ if (typeof _taOrigSwitch === 'function') {
 }
 
 })(); /* fin IIFE TablaAhorro */
+</script>
+
+<script>
+/* ════════════════════════════════════════════
+   SISTEMA DE TEMAS — Modo Oscuro / Modo Día
+════════════════════════════════════════════ */
+(function() {
+    var THEME_KEY = 'cf_theme';
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        var icon = document.getElementById('themeToggleIcon');
+        if (icon) icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        // Ajustar meta theme-color para iOS
+        var metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0f172a' : '#f0f4f8');
+    }
+
+    window.toggleTheme = function() {
+        var current = document.documentElement.getAttribute('data-theme') || 'dark';
+        var next    = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+    };
+
+    // Aplicar al cargar (el inline snippet ya lo hizo, pero también actualizar el icono)
+    document.addEventListener('DOMContentLoaded', function() {
+        var saved = localStorage.getItem(THEME_KEY) || 'dark';
+        applyTheme(saved);
+    });
+    // Por si el DOM ya cargó antes de este script
+    if (document.readyState !== 'loading') {
+        var saved = localStorage.getItem(THEME_KEY) || 'dark';
+        applyTheme(saved);
+    }
+})();
 </script>
 
 </body>
