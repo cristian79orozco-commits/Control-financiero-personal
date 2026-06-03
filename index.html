@@ -3834,6 +3834,7 @@ input, select, textarea { border-radius: 12px !important; }
                             accounts: AppState.accounts, monthlyBalance: AppState.monthlyBalance };
                         localStorage.setItem(activeKey, JSON.stringify(u));
                     }
+                    checkMonthlyReset(); // re-run now that CURRENT_USER_ID is confirmed
                     updateAllViews();
                 });
             }
@@ -3986,7 +3987,11 @@ input, select, textarea { border-radius: 12px !important; }
             if (!AppState.currentUser) return;
 
             const currentMonthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
-            const resetKey = `lastReset_${AppState.currentUser}`;
+
+            // Use the real user ID (Supabase) or username for the reset key,
+            // NOT AppState.currentUser which is always boolean true.
+            const userId = CURRENT_USER_ID || (localStorage.getItem('finanzas_active_user') || 'default');
+            const resetKey = `lastReset_${userId}`;
             const lastReset = localStorage.getItem(resetKey);
 
             if (lastReset !== currentMonthYear) {
@@ -3998,8 +4003,12 @@ input, select, textarea { border-radius: 12px !important; }
                 AppState.fixedIncomes.forEach(f => { f.status = 'pending'; });
 
                 localStorage.setItem(resetKey, currentMonthYear);
-                // Persistir solo el cambio de estado (sin disparar updateAllViews extra)
+                // Persistir el cambio de estado localmente y en Supabase
                 saveToLocalStorage();
+                if (CURRENT_USER_ID) {
+                    sb_sync_gastos_fijos().catch(e => console.warn('[Reset] sync gastos_fijos:', e.message));
+                    sb_sync_ingresos_fijos().catch(e => console.warn('[Reset] sync ingresos_fijos:', e.message));
+                }
             }
         }
 
@@ -4207,9 +4216,7 @@ input, select, textarea { border-radius: 12px !important; }
             const allIncome  = AppState.getTotalIncome();
             const allExpense = AppState.getTotalExpense();
 
-            const displayMonthIncome = hasAccounts
-                ? (AppState.getInitialAccountsTotal() + monthIncome)
-                : monthIncome;
+            const displayMonthIncome = monthIncome;
 
             // ── Elementos del panel nuevo ──────────────────────────────────
 
@@ -4217,6 +4224,33 @@ input, select, textarea { border-radius: 12px !important; }
             const availEl = document.getElementById('currentAvailable');
             availEl.textContent = formatCurrency(available);
             availEl.style.color = available >= 0 ? 'var(--color-text-primary)' : 'var(--color-danger)';
+
+            // Estado descriptivo del disponible actual
+            const statusBadge = document.getElementById('nonp-status');
+            const statusIcon  = document.getElementById('nonp-status-icon');
+            const statusText  = document.getElementById('nonp-status-text');
+            if (statusBadge && statusText) {
+                let sClass, sIcon, sMsg;
+                const totalBase = AppState.accounts.length > 0
+                    ? AppState.getInitialAccountsTotal() + AppState.getTotalIncome()
+                    : AppState.monthlyBalance + AppState.getTotalIncome();
+                const ratio = totalBase > 0 ? available / totalBase : (available >= 0 ? 1 : -1);
+                if (available < 0) {
+                    sClass = 'panel-hero-badge status-risk';   sIcon = '🔴'; sMsg = 'Déficit financiero.';
+                } else if (ratio < 0.10) {
+                    sClass = 'panel-hero-badge status-risk';   sIcon = '🟠'; sMsg = 'Riesgo de déficit.';
+                } else if (ratio < 0.30) {
+                    sClass = 'panel-hero-badge status-caution'; sIcon = '🟡'; sMsg = 'Atención al nivel de gastos.';
+                } else if (ratio < 0.60) {
+                    sClass = 'panel-hero-badge status-stable'; sIcon = '🟢'; sMsg = 'Situación estable.';
+                } else {
+                    sClass = 'panel-hero-badge status-stable'; sIcon = '✨'; sMsg = 'Excelente liquidez financiera.';
+                }
+                statusBadge.className = sClass;
+                statusBadge.style.display = '';
+                if (statusIcon) statusIcon.textContent = sIcon;
+                statusText.textContent = sMsg;
+            }
 
             // Trío
             document.getElementById('currentMonthIncome').textContent  = formatCurrency(displayMonthIncome);
