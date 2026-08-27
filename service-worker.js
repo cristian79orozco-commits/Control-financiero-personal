@@ -13,7 +13,7 @@
 //  ✅ Toda la lógica financiera original intacta
 // ============================================================
 
-const CACHE_NAME = 'finanzas-v7';   // bump para limpiar caché anterior
+const CACHE_NAME = 'finanzas-v8';   // bump para limpiar caché anterior
 const BASE = '/Control-financiero-personal/';
 
 const ARCHIVOS = [
@@ -224,19 +224,33 @@ function construirAlarmas(payload) {
         fixedPendientes = 0,
         metasActivas    = 0,
         libreParaGastar = 0,
-        diasRestantes   = 0
+        diasRestantes   = 0,
+        // ✅ nuevos campos — mismo cálculo que el panel "Gasto no prioritario"
+        limiteDiario    = null,
+        spHoy           = 0,
+        fRest           = 0,
+        pendFix         = 0,
+        pace            = 0
     } = payload;
 
     // ── 1. RESUMEN DIARIO — 8:30 AM ──────────────────────────
     const resumen8am = tsHoy(8, 30, hoy);
     const tsResumen  = resumen8am > ahora ? resumen8am : resumen8am + msDia;
 
-    const limiteDiario    = diasRestantes > 0 ? Math.max(0, libreParaGastar / diasRestantes) : 0;
-    const disponibleFmt   = formatNum(disponible);
-    const limiteDiarioFmt = formatNum(limiteDiario);
+    // ✅ CORRECCIÓN: si la app envía el límite ya calculado (igual que el
+    // panel, descontando lo ya gastado hoy/mes), se usa directamente.
+    // Si no llega (compatibilidad con versiones viejas del payload), se
+    // recalcula con la fórmula anterior como respaldo.
+    const limiteDiarioReal = limiteDiario !== null
+        ? Math.max(0, limiteDiario)
+        : (diasRestantes > 0 ? Math.max(0, libreParaGastar / diasRestantes) : 0);
+
+    const disponibleFmt    = formatNum(disponible);
+    const limiteDiarioFmt  = formatNum(limiteDiarioReal);
+    const gastadoHoyFmt    = formatNum(spHoy);
 
     const resumenBody = disponible > 0
-        ? `Disponible: $${disponibleFmt} | Gastos del mes: $${formatNum(gastosMes)} | Fijos pendientes: ${fixedPendientes} | Metas: ${metasActivas}\nHoy puedes gastar hasta: $${limiteDiarioFmt}`
+        ? `Disponible: $${disponibleFmt} | Gastos del mes: $${formatNum(gastosMes)} | Fijos pendientes: ${fixedPendientes} | Metas: ${metasActivas}\nGastado hoy: $${gastadoHoyFmt} | Hoy puedes gastar hasta: $${limiteDiarioFmt}`
         : `⚠️ Sin margen disponible — revisa tus finanzas | Fijos pendientes: ${fixedPendientes} | Metas: ${metasActivas}`;
 
     alarmas.push({
@@ -385,27 +399,40 @@ function construirAlarmas(payload) {
     });
 
     // ── 6. BALANCE CRÍTICO / ADVERTENCIA ─────────────────────
-    // CORRECCIÓN: programado a las 9:05 AM (no ahora + 5s) para evitar
-    // spam cada vez que la app se abre. Solo se añade si aún no pasó esa hora.
-    if (presupuesto > 0) {
-        const pct      = ((presupuesto - disponible) / presupuesto) * 100;
+    // ✅ CORRECCIÓN: antes comparaba disponible vs. TODO el ingreso
+    // histórico (un % que casi nunca coincidía con lo que mostraba el
+    // panel). Ahora usa el mismo "ritmo de gasto" (pace) que el panel
+    // "Gasto no prioritario": pace<=0.85 verde | 0.85–1.10 normal |
+    // 1.10–1.30 amarillo | >1.30 rojo. Se programa a las 9:05 AM para
+    // evitar spam cada vez que la app se abre.
+    {
         const tsAlerta = tsHoy(9, 5, hoy);
 
-        if (pct >= 90 && tsAlerta > ahora) {
+        if (fRest <= 0 && tsAlerta > ahora) {
             alarmas.push({
                 id:         'balance-critico',
-                titulo:     '🚨 Balance Crítico',
-                cuerpo:     `Has usado el ${pct.toFixed(0)}% de tu presupuesto. Solo te quedan $${formatNum(disponible)} disponibles.`,
+                titulo:     '🚨 Sin margen de gasto libre',
+                cuerpo:     `Tu fondo de gasto libre de este mes ya se agotó. Disponible: $${formatNum(disponible)}.`,
                 timestamp:  tsAlerta,
                 tag:        'balance-critico',
                 disparada:  false,
                 soloUnaVez: true
             });
-        } else if (pct >= 75 && pct < 90 && tsAlerta > ahora) {
+        } else if (pace > 1.30 && tsAlerta > ahora) {
+            alarmas.push({
+                id:         'balance-critico',
+                titulo:     '🚨 Ritmo de gasto crítico',
+                cuerpo:     `Vas ${Math.round((pace - 1) * 100)}% por encima de lo esperado este mes. Gastado hoy: $${formatNum(spHoy)} | Límite de hoy: $${limiteDiarioFmt}.`,
+                timestamp:  tsAlerta,
+                tag:        'balance-critico',
+                disparada:  false,
+                soloUnaVez: true
+            });
+        } else if (pace > 1.10 && pace <= 1.30 && tsAlerta > ahora) {
             alarmas.push({
                 id:         'balance-advertencia',
-                titulo:     '⚠️ Presupuesto al 75%',
-                cuerpo:     `Llevas el ${pct.toFixed(0)}% del presupuesto usado. Disponible restante: $${formatNum(disponible)}.`,
+                titulo:     '⚠️ Ritmo de gasto acelerado',
+                cuerpo:     `Vas ${Math.round((pace - 1) * 100)}% por encima de lo esperado este mes. Disponible: $${formatNum(disponible)}.`,
                 timestamp:  tsAlerta,
                 tag:        'balance-advertencia',
                 disparada:  false,

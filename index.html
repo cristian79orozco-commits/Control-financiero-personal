@@ -4232,7 +4232,13 @@ input, select, textarea { border-radius: 12px !important; }
             );
         }
 
-        function updateNonPrioritySpending() {
+        /* ============================================
+           ⭐ FUENTE ÚNICA DE VERDAD — Estado financiero
+           Usada por el panel "Gasto no prioritario" Y por las
+           notificaciones nativas (Notifs.programar), para que
+           ambos SIEMPRE muestren los mismos números.
+           ============================================ */
+        function calcularEstadoFinanciero() {
             var now   = new Date();
             var cMon  = now.getMonth();
             var cYear = now.getFullYear();
@@ -4284,6 +4290,25 @@ input, select, textarea { border-radius: 12px !important; }
             var avgD  = elap > 0 ? mExp / elap : 0;
             var proj  = avgD * dim;
             var sob   = Math.max(0, fondo - proj);
+
+            return {
+                cMon: cMon, cYear: cYear, cDay: cDay, dim: dim, elap: elap, rem: rem,
+                avail: avail, availPos: availPos, pendFix: pendFix, dispProt: dispProt,
+                reserva: reserva, fondo: fondo, mExp: mExp, spHoy: spHoy, sinReg: sinReg,
+                base: base, fUsed: fUsed, fRest: fRest, lim: lim, left: left, diff: diff,
+                gEsp: gEsp, pace: pace, pacePct: pacePct, avgD: avgD, proj: proj, sob: sob
+            };
+        }
+
+        function updateNonPrioritySpending() {
+            var E = calcularEstadoFinanciero();
+            var avail = E.avail, dim = E.dim, elap = E.elap, rem = E.rem;
+            var pendFix = E.pendFix, reserva = E.reserva, fondo = E.fondo;
+            var mExp = E.mExp, spHoy = E.spHoy, sinReg = E.sinReg;
+            var base = E.base, fUsed = E.fUsed, fRest = E.fRest;
+            var lim = E.lim, left = E.left, diff = E.diff;
+            var gEsp = E.gEsp, pace = E.pace, pacePct = E.pacePct;
+            var avgD = E.avgD, sob = E.sob;
 
             /* DOM */
             var mEl = sbdEl('sbd-limit-today');
@@ -6310,8 +6335,11 @@ const Notifs = {
         const diaHoy        = hoy.getDate();
         const diasEnMes     = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
         const diasRestantes = diasEnMes - diaHoy;
-        const disponible    = AppState.getCurrentAvailable();
-        const libre         = Math.max(0, disponible * 0.30);
+
+        // ⭐ Usa EXACTAMENTE el mismo cálculo que el panel "Gasto no
+        // prioritario" (calcularEstadoFinanciero), para que las
+        // notificaciones nunca queden desactualizadas respecto al panel.
+        const E = calcularEstadoFinanciero();
 
         const activeKey = localStorage.getItem('finanzas_active_user') || '';
         let usr = {};
@@ -6321,8 +6349,13 @@ const Notifs = {
             type: 'SCHEDULE_NOTIFICATIONS',
             payload: {
                 username:        usr.name || usr.username || 'Usuario',
-                disponible,
-                libreParaGastar: libre,
+                disponible:      E.avail,
+                libreParaGastar: E.fondo,   // ✅ ya descuenta gastos fijos pendientes
+                limiteDiario:    E.lim,     // ✅ nuevo: límite real de HOY (ya descuenta lo gastado este mes)
+                spHoy:           E.spHoy,   // ✅ nuevo: lo gastado hoy
+                fRest:           E.fRest,   // ✅ nuevo: fondo libre restante del mes
+                pendFix:         E.pendFix, // ✅ nuevo: compromisos fijos pendientes
+                pace:            E.pace,    // ✅ nuevo: ritmo de gasto del mes (mismo del panel)
                 diasRestantes,
                 gastosMes:       AppState.getCurrentMonthExpense(),
                 ingresosMes:     AppState.getCurrentMonthIncome(),
